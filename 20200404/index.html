@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yuanlehome.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="数据结构 相互之间存在一种或多种特定关系的数据元素的集合。研究数据结构，关心的是数据对象的描述以及相关操作函数的实现。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据结构与算法学习笔记之概论">
+<meta property="og:url" content="https://yuanlehome.github.io/20200404/index.html">
+<meta property="og:site_name" content="LYL&#39;s Blog">
+<meta property="og:description" content="数据结构 相互之间存在一种或多种特定关系的数据元素的集合。研究数据结构，关心的是数据对象的描述以及相关操作函数的实现。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yuanlehome.github.io/20200404/image-20200101210400776.png">
+<meta property="og:image" content="https://yuanlehome.github.io/20200404/image-20200101210742484.png">
+<meta property="og:image" content="https://yuanlehome.github.io/20200404/image-20200101211150536.png">
+<meta property="og:image" content="https://yuanlehome.github.io/20200404/image-20200101211909446.png">
+<meta property="article:published_time" content="2020-04-04T05:54:42.000Z">
+<meta property="article:modified_time" content="2020-04-04T06:48:08.827Z">
+<meta property="article:author" content="Liu Y.L.">
+<meta property="article:tag" content="数据结构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yuanlehome.github.io/20200404/image-20200101210400776.png">
+
+<link rel="canonical" href="https://yuanlehome.github.io/20200404/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>数据结构与算法学习笔记之概论 | LYL's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">LYL's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/20200404/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数据结构与算法学习笔记之概论
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-04-04 13:54:42 / 修改时间：14:48:08" itemprop="dateCreated datePublished" datetime="2020-04-04T13:54:42+08:00">2020-04-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">数据结构与算法</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><blockquote>
+<p>相互之间存在一种或多种特定关系的数据元素的集合。研究数据结构，关心的是数据对象的描述以及相关操作函数的实现。</p>
+</blockquote>
+<a id="more"></a>
+
+<h4 id="数据"><a href="#数据" class="headerlink" title="数据"></a>数据</h4><blockquote>
+<p>是描述客观事物的符号，是计算机中可以操作的对象，是能被计算机识别，并输入给计算机处理的符号集合。如整型、浮点型等数值类型，以及声音、图像等非数值类型。</p>
+</blockquote>
+<h4 id="数据元素"><a href="#数据元素" class="headerlink" title="数据元素"></a>数据元素</h4><blockquote>
+<p>是组成数据的、具有一定意义的基本单位，在计算机中通常作为整体处理。也被称作记录。</p>
+</blockquote>
+<h4 id="数据项"><a href="#数据项" class="headerlink" title="数据项"></a>数据项</h4><blockquote>
+<p>一个数据元素可以由若干个数据项组成。它是数据不可分割的最小单位。</p>
+</blockquote>
+<h4 id="数据对象"><a href="#数据对象" class="headerlink" title="数据对象"></a>数据对象</h4><blockquote>
+<p>是性质相同的数据元素（即有相同的数量和类型的数据项）的集合，是数据的子集。</p>
+</blockquote>
+<h4 id="常见的数据结构"><a href="#常见的数据结构" class="headerlink" title="常见的数据结构"></a>常见的数据结构</h4><ul>
+<li><p>线性数据结构：向量vector（顺序存储）、链表list（链式存储）、栈stack和队列queue（优先队列）。</p>
+</li>
+<li><p>半线性数据结构：二叉树、搜索树（二叉搜索树BST、AVL树、B树、红黑树）、竞赛树等。</p>
+</li>
+<li><p>非线性数据结构：图。</p>
+</li>
+<li><p>哈希表hashing table、字典dictionary。</p>
+</li>
+</ul>
+<h4 id="抽象数据类型"><a href="#抽象数据类型" class="headerlink" title="抽象数据类型"></a>抽象数据类型</h4><ul>
+<li><p>数据类型：指一组性质相同的值的集合及定义在此集合上的一些操作的总称。</p>
+</li>
+<li><p>抽象数据类型：指一个数学模型及定义在该模型上的一组操作。可以理解为C++中的类class。它体现的是程序设计中问题分解、抽象和信息隐藏的特性。</p>
+</li>
+</ul>
+<h4 id="抽象数据类型的标准格式"><a href="#抽象数据类型的标准格式" class="headerlink" title="抽象数据类型的标准格式"></a>抽象数据类型的标准格式</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ADT 抽象数据类型名</span><br><span class="line">Data</span><br><span class="line">	数据元素之间逻辑关系的定义</span><br><span class="line">Operation</span><br><span class="line">	操作<span class="number">1</span></span><br><span class="line">	操作<span class="number">2</span></span><br><span class="line">	...</span><br><span class="line">endADT</span><br></pre></td></tr></table></figure>
+
+<h3 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h3><blockquote>
+<p>算法是解决指定问题求解步骤的描述。在计算机中是指基于特定的计算模型，旨在解决某一信息处理问题而设计的一个指令序列。</p>
+</blockquote>
+<h4 id="计算或信息处理"><a href="#计算或信息处理" class="headerlink" title="计算或信息处理"></a>计算或信息处理</h4><blockquote>
+<p>指借助某种工具，按照一定的规则，以明确而机械的形式进行。</p>
+</blockquote>
+<p>算法中的计算模型就是计算机，即信息处理工具。</p>
+<h4 id="算法必须具备的几大要素"><a href="#算法必须具备的几大要素" class="headerlink" title="算法必须具备的几大要素"></a>算法必须具备的几大要素</h4><ol>
+<li>输入：待处理的信息或问题。</li>
+<li>输出：经处理的信息，即答案。</li>
+<li>正确性：的确可以解决指定的问题。</li>
+<li>确定性：任何一个算法都可以描述为一个由基本操作组成的序列。</li>
+<li>可行性：每一基本操作都可实现，且能在常数时间内完成。</li>
+<li>有穷性：对于任何输入，经有限次的基本操作，都可以得到输出。</li>
+</ol>
+<h4 id="一个好的算法"><a href="#一个好的算法" class="headerlink" title="一个好的算法"></a>一个好的算法</h4><ol>
+<li>正确，即符合语法，能够编译、链接。</li>
+</ol>
+<blockquote>
+<ul>
+<li>能够正确处理<strong>简单的</strong>、<strong>大规模的</strong>、<strong>一般性的</strong>、<strong>退化的</strong>、<strong>任意合法</strong>的输入。</li>
+</ul>
+</blockquote>
+<ol start="2">
+<li>健壮，能够辨别不合法的输入并做适当处理，而不致非正常退出。</li>
+<li>可读，结构化 + 准确命名 + 注释 + …。</li>
+<li>效率，运行速度尽可能快，用到的存储空间尽可能少。</li>
+</ol>
+<h4 id="常见的算法"><a href="#常见的算法" class="headerlink" title="常见的算法"></a>常见的算法</h4><ol>
+<li>查找</li>
+</ol>
+<blockquote>
+<p>顺序查找、二分查找、插值查找、斐波那契查找、分块查找和哈希查找等。</p>
+</blockquote>
+<ol start="2">
+<li>排序</li>
+</ol>
+<blockquote>
+<p>冒泡排序、选择排序、插入排序、归并排序、快速排序、堆排序和希尔排序等。</p>
+</blockquote>
+<ol start="3">
+<li>递归、分而治之、动态规划、回溯法和分支定界法等。</li>
+</ol>
+<p>要对数据结构和算法设计方法给予评价，就必须能够计算程序性能。</p>
+<h4 id="数据结构和算法的关系"><a href="#数据结构和算法的关系" class="headerlink" title="数据结构和算法的关系"></a>数据结构和算法的关系</h4><ul>
+<li><p>数据结构(data structures) + 算法(algorithms) = 程序(programs)</p>
+</li>
+<li><p>(data structures + algorithms) x efficiency = computation</p>
+</li>
+</ul>
+<h3 id="程序性能分析"><a href="#程序性能分析" class="headerlink" title="程序性能分析"></a>程序性能分析</h3><blockquote>
+<p>是指分析一个程序对于内存空间和运行时间的需求。</p>
+</blockquote>
+<h4 id="空间复杂度"><a href="#空间复杂度" class="headerlink" title="空间复杂度"></a>空间复杂度</h4><blockquote>
+<p>指程序运行时临时占用内存的大小。广义上的概念是包括存储算法本身所占用的空间、算法的输入输出数据所占用的空间以及算法在运行过程中临时占用的存储空间这三个方面。</p>
+</blockquote>
+<h4 id="时间复杂度"><a href="#时间复杂度" class="headerlink" title="时间复杂度"></a>时间复杂度</h4><blockquote>
+<p>指运行程序所需要的时间。这里度量的是程序中基本操作执行的次数，它是问题规模n的函数f(n)。记T(n)=O(f(n))，它表示随问题规模n的增大，算法执行时间的增长率和f(n)相同，称作算法的渐进时间复杂度。</p>
+</blockquote>
+<h4 id="复杂度分析"><a href="#复杂度分析" class="headerlink" title="复杂度分析"></a>复杂度分析</h4><p>这里的复杂度分析通常指的是最坏时间复杂度分析。</p>
+<ul>
+<li>常数阶O(1)</li>
+</ul>
+<p><img src="image-20200101210400776.png" alt=""></p>
+<p>取前三个元素x = S[0]、y = S[1]和z = S[2]，这一步只需执行三次（从特定单元读取元素的）基本操作，耗费O(3)时间。接下来，为确定这三个元素的大小次序，最多需要做三次比较，也需O(3)时间。最后，输出居中的非极端元素只需O(1)时间。因此，上面取非极端元素算法的时间复杂度为：<br>T(n) = O(3) + O(3) + O(1) = O(7) = O(1)。</p>
+<ul>
+<li>对数阶O(logn)</li>
+</ul>
+<p><img src="image-20200101210742484.png" alt=""></p>
+<p>根据右移运算的性质，每右移一位，n都至少缩减一半。也就是说，至多经过1 + log2n次循环，n必然缩减至0，从而算法终止。因此时间复杂度为：O(1 + log2n) = O(log2n) 。</p>
+<ul>
+<li>线性阶O(n)</li>
+</ul>
+<p><img src="image-20200101211150536.png" alt=""></p>
+<ul>
+<li>平方阶O(n)</li>
+</ul>
+<p><img src="image-20200101211909446.png" alt=""></p>
+<p>时间复杂度为：O(2n^2 + n + 1) = O(n^2)。</p>
+<h4 id="常见的算法时间复杂度排序"><a href="#常见的算法时间复杂度排序" class="headerlink" title="常见的算法时间复杂度排序"></a>常见的算法时间复杂度排序</h4><blockquote>
+<p> Ο(1) ＜ Ο(logn) ＜ Ο(n) ＜ Ο(nlogn) ＜ Ο(n^2) ＜ … ＜ Ο(2^n) ＜ Ο(n!)</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
+          </div>
+
+        
+
+
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC80OTQ0NS8yNTkzNw=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据结构"><span class="nav-number">1.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数据"><span class="nav-number">1.1.</span> <span class="nav-text">数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据元素"><span class="nav-number">1.2.</span> <span class="nav-text">数据元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据项"><span class="nav-number">1.3.</span> <span class="nav-text">数据项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据对象"><span class="nav-number">1.4.</span> <span class="nav-text">数据对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常见的数据结构"><span class="nav-number">1.5.</span> <span class="nav-text">常见的数据结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#抽象数据类型"><span class="nav-number">1.6.</span> <span class="nav-text">抽象数据类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#抽象数据类型的标准格式"><span class="nav-number">1.7.</span> <span class="nav-text">抽象数据类型的标准格式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法"><span class="nav-number">2.</span> <span class="nav-text">算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#计算或信息处理"><span class="nav-number">2.1.</span> <span class="nav-text">计算或信息处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#算法必须具备的几大要素"><span class="nav-number">2.2.</span> <span class="nav-text">算法必须具备的几大要素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一个好的算法"><span class="nav-number">2.3.</span> <span class="nav-text">一个好的算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常见的算法"><span class="nav-number">2.4.</span> <span class="nav-text">常见的算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据结构和算法的关系"><span class="nav-number">2.5.</span> <span class="nav-text">数据结构和算法的关系</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#程序性能分析"><span class="nav-number">3.</span> <span class="nav-text">程序性能分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#空间复杂度"><span class="nav-number">3.1.</span> <span class="nav-text">空间复杂度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#时间复杂度"><span class="nav-number">3.2.</span> <span class="nav-text">时间复杂度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#复杂度分析"><span class="nav-number">3.3.</span> <span class="nav-text">复杂度分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常见的算法时间复杂度排序"><span class="nav-number">3.4.</span> <span class="nav-text">常见的算法时间复杂度排序</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Liu Y.L."
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Liu Y.L.</p>
+  <div class="site-description" itemprop="description">寒江孤影-江湖故人-相逢何必曾相识</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">1</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yuanlehome" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuanlehome" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yuanlehome@163.com" title="E-Mail → mailto:yuanlehome@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Liu Y.L.</span>
+</div>
+
+<span>我已在此等候你 <span id="showDays"></span></span>
+<script>
+  var seconds = 1000;
+  var minutes = seconds * 60;
+  var hours = minutes * 60;
+  var days = hours * 24;
+  var years = days * 365;
+  var birthDay = Date.UTC(2020,04,04,00,00,00); // 这里设置建站时间
+  setInterval(function() {
+    var today = new Date();
+    var todayYear = today.getFullYear();
+    var todayMonth = today.getMonth()+1;
+    var todayDate = today.getDate();
+    var todayHour = today.getHours();
+    var todayMinute = today.getMinutes();
+    var todaySecond = today.getSeconds();
+    var now = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+    var diff = now - birthDay;
+    var diffYears = Math.floor(diff/years);
+    var diffDays = Math.floor((diff/days)-diffYears*365);
+    var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+    var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+    var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+      document.getElementById('showDays').innerHTML=""+diffYears+" 年 "+diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+  }, 1000);
+</script>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
