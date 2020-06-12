@@ -20,30 +20,34 @@
     var CONFIG = {"hostname":"yuanlehome.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="寒江孤影-江湖故人-相逢何必曾相识">
-<meta property="og:type" content="website">
-<meta property="og:title" content="LYL&#39;s Blog">
-<meta property="og:url" content="https://yuanlehome.github.io/index.html">
+  <meta name="description" content="一种在 Linux 平台下的划词翻译工具原理及实现 这里将要介绍的是一种在 Linux 平台实现的划词翻译工具，当然在考虑自己实现一个如此功能的工具前，本人也是在网上搜索了一些在 Linux 平台实现的类似的开源工具，例如 pdfTranslator，popup-dict，但它们的安装和配置都显得比较麻烦，而且使用起来也并不方便。 本人实现这个工具的初衷本是方便自己看一些英文文献和书籍的，极为方便">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一种在Linux平台下的划词翻译工具原理及实现">
+<meta property="og:url" content="https://yuanlehome.github.io/undefined/index.html">
 <meta property="og:site_name" content="LYL&#39;s Blog">
-<meta property="og:description" content="寒江孤影-江湖故人-相逢何必曾相识">
+<meta property="og:description" content="一种在 Linux 平台下的划词翻译工具原理及实现 这里将要介绍的是一种在 Linux 平台实现的划词翻译工具，当然在考虑自己实现一个如此功能的工具前，本人也是在网上搜索了一些在 Linux 平台实现的类似的开源工具，例如 pdfTranslator，popup-dict，但它们的安装和配置都显得比较麻烦，而且使用起来也并不方便。 本人实现这个工具的初衷本是方便自己看一些英文文献和书籍的，极为方便">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yuanlehome.github.io/undefined/iKnVA63lpy.gif">
+<meta property="article:published_time" content="2020-06-12T13:28:11.036Z">
+<meta property="article:modified_time" content="2020-06-12T13:28:40.399Z">
 <meta property="article:author" content="Liu Y.L.">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yuanlehome.github.io/undefined/iKnVA63lpy.gif">
 
-<link rel="canonical" href="https://yuanlehome.github.io/">
+<link rel="canonical" href="https://yuanlehome.github.io/undefined/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>LYL's Blog</title>
+  <title>一种在Linux平台下的划词翻译工具原理及实现 | LYL's Blog</title>
   
 
 
@@ -180,9 +184,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
+
+    
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
@@ -198,10 +203,9 @@
       <meta itemprop="name" content="LYL's Blog">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/undefined/" class="post-title-link" itemprop="url">一种在Linux平台下的划词翻译工具原理及实现</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          一种在Linux平台下的划词翻译工具原理及实现
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -214,7 +218,14 @@
               <time title="创建时间：2020-06-12 21:28:11 / 修改时间：21:28:40" itemprop="dateCreated datePublished" datetime="2020-06-12T21:28:11+08:00">2020-06-12</time>
             </span>
 
-          <br>
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
             <span class="post-meta-item" title="本文字数">
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
@@ -239,7 +250,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h4 id="一种在-Linux-平台下的划词翻译工具原理及实现"><a href="#一种在-Linux-平台下的划词翻译工具原理及实现" class="headerlink" title="一种在 Linux 平台下的划词翻译工具原理及实现"></a>一种在 <em>Linux</em> 平台下的划词翻译工具原理及实现</h4><hr>
+        <h4 id="一种在-Linux-平台下的划词翻译工具原理及实现"><a href="#一种在-Linux-平台下的划词翻译工具原理及实现" class="headerlink" title="一种在 Linux 平台下的划词翻译工具原理及实现"></a>一种在 <em>Linux</em> 平台下的划词翻译工具原理及实现</h4><hr>
 <p>这里将要介绍的是一种在 <em>Linux</em> 平台实现的划词翻译工具，当然在考虑自己实现一个如此功能的工具前，本人也是在网上搜索了一些在 <em>Linux</em> 平台实现的类似的开源工具，例如 <a href="https://github.com/axipo/pdfTranslator" target="_blank" rel="noopener">pdfTranslator</a>，<a href="https://github.com/bianjp/popup-dict" target="_blank" rel="noopener">popup-dict</a>，但它们的安装和配置都显得比较麻烦，而且使用起来也并不方便。</p>
 <p>本人实现这个工具的初衷本是方便自己看一些英文文献和书籍的，极为方便，考虑到分享出去可以让更多人受惠，因此这里详细介绍一下它的实现步骤。</p>
 <p>本文所实现的划词翻译工具主要有以下特性：</p>
@@ -312,128 +323,41 @@
 <p><em>haha, good job!</em> </p>
 <h5 id="三-结束语"><a href="#三-结束语" class="headerlink" title="三. 结束语"></a>三. 结束语</h5><p>这里有一些小技巧。可以更方便的使用这个工具。比如，把终端设为置顶并缩小到合适的尺寸，这样在阅读文献划词翻译时终端屏幕不会遮挡我们的视线。值得说明的是，由于本人完全是为了方便自己的使用，而且在搞出这么个工具时仅仅接触 <em>Linux</em> 系统才不到两周，所以里面的实现对于有经验的朋友来说略显的有些笨拙了，请理解哈。个人觉得这个工具使用起来还是很方便的，你觉得呢？</p>
 
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/20200404/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Liu Y.L.">
-      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="LYL's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/20200404/" class="post-title-link" itemprop="url">数据结构与算法学习笔记之概论</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-04-04 13:54:42 / 修改时间：21:09:39" itemprop="dateCreated datePublished" datetime="2020-04-04T13:54:42+08:00">2020-04-04</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">数据结构与算法</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.8k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><blockquote>
-<p>相互之间存在一种或多种特定关系的数据元素的集合。研究数据结构，关心的是数据对象的描述以及相关操作函数的实现。</p>
-</blockquote>
-<h4 id="数据"><a href="#数据" class="headerlink" title="数据"></a>数据</h4><blockquote>
-<p>是描述客观事物的符号，是计算机中可以操作的对象，是能被计算机识别，并输入给计算机处理的符号集合。如整型、浮点型等数值类型，以及声音、图像等非数值类型。</p>
-</blockquote>
-<h4 id="数据元素"><a href="#数据元素" class="headerlink" title="数据元素"></a>数据元素</h4><blockquote>
-<p>是组成数据的、具有一定意义的基本单位，在计算机中通常作为整体处理。也被称作记录。</p>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/20200404/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/20200404/" rel="prev" title="数据结构与算法学习笔记之概论">
+      <i class="fa fa-chevron-left"></i> 数据结构与算法学习笔记之概论
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
       </footer>
+    
   </article>
   
   
-  
-
-
   
 
 
 
           </div>
           
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC80OTQ0NS8yNTkzNw=="></div>
+  </div>
+  
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -480,6 +404,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#一种在-Linux-平台下的划词翻译工具原理及实现"><span class="nav-number">1.</span> <span class="nav-text">一种在 Linux 平台下的划词翻译工具原理及实现</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#一-安装必要的命令"><span class="nav-number">1.1.</span> <span class="nav-text">一. 安装必要的命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#二-编程实现"><span class="nav-number">1.2.</span> <span class="nav-text">二. 编程实现</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#三-结束语"><span class="nav-number">1.3.</span> <span class="nav-text">三. 结束语</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -650,6 +575,21 @@
 
   
 
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
 
 </body>
 </html>
