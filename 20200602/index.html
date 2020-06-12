@@ -20,16 +20,16 @@
     var CONFIG = {"hostname":"yuanlehome.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="这里将要介绍的是一种在 Linux 平台实现的划词翻译工具，当然在考虑自己实现一个如此功能的工具前，本人也是在网上搜索了一些在 Linux 平台实现的类似的开源工具，例如 pdfTranslator，popup-dict，但它们的安装和配置都显得比较麻烦，而且使用起来也并不方便。 本人实现这个工具的初衷本是方便自己看一些英文文献和书籍的，极为方便，考虑到分享出去可以让更多人受惠，因此这里详细介绍">
+  <meta name="description" content="欢迎分享，转载务必注明来源！    这里将要介绍的是一种在 Linux 平台实现的划词翻译工具，当然在考虑自己实现一个如此功能的工具前，本人也是在网上搜索了一些在 Linux 平台实现的类似的开源工具，例如 pdfTranslator，popup-dict，但它们的安装和配置都显得比较麻烦，而且使用起来也并不方便。 本人实现这个工具的初衷本是方便自己看一些英文文献和书籍的，极为方便，考虑到分享">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一种在Linux平台下的划词翻译工具原理及实现">
 <meta property="og:url" content="https://yuanlehome.github.io/20200602/index.html">
 <meta property="og:site_name" content="LYL&#39;s Blog">
-<meta property="og:description" content="这里将要介绍的是一种在 Linux 平台实现的划词翻译工具，当然在考虑自己实现一个如此功能的工具前，本人也是在网上搜索了一些在 Linux 平台实现的类似的开源工具，例如 pdfTranslator，popup-dict，但它们的安装和配置都显得比较麻烦，而且使用起来也并不方便。 本人实现这个工具的初衷本是方便自己看一些英文文献和书籍的，极为方便，考虑到分享出去可以让更多人受惠，因此这里详细介绍">
+<meta property="og:description" content="欢迎分享，转载务必注明来源！    这里将要介绍的是一种在 Linux 平台实现的划词翻译工具，当然在考虑自己实现一个如此功能的工具前，本人也是在网上搜索了一些在 Linux 平台实现的类似的开源工具，例如 pdfTranslator，popup-dict，但它们的安装和配置都显得比较麻烦，而且使用起来也并不方便。 本人实现这个工具的初衷本是方便自己看一些英文文献和书籍的，极为方便，考虑到分享">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://yuanlehome.github.io/20200602/iKnVA63lpy.gif">
 <meta property="article:published_time" content="2020-06-12T13:35:42.000Z">
-<meta property="article:modified_time" content="2020-06-12T13:50:18.128Z">
+<meta property="article:modified_time" content="2020-06-12T14:05:42.108Z">
 <meta property="article:author" content="Liu Y.L.">
 <meta property="article:tag" content="Linux工具">
 <meta name="twitter:card" content="summary">
@@ -216,7 +216,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-06-12 21:35:42 / 修改时间：21:50:18" itemprop="dateCreated datePublished" datetime="2020-06-12T21:35:42+08:00">2020-06-12</time>
+              <time title="创建时间：2020-06-12 21:35:42 / 修改时间：22:05:42" itemprop="dateCreated datePublished" datetime="2020-06-12T21:35:42+08:00">2020-06-12</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -241,7 +241,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.9k</span>
+              <span>4.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -261,6 +261,11 @@
 
       
         <hr>
+<hr>
+<center>欢迎分享，转载务必注明来源！</center>
+
+<hr>
+<hr>
 <p>这里将要介绍的是一种在 <em>Linux</em> 平台实现的划词翻译工具，当然在考虑自己实现一个如此功能的工具前，本人也是在网上搜索了一些在 <em>Linux</em> 平台实现的类似的开源工具，例如 <a href="https://github.com/axipo/pdfTranslator" target="_blank" rel="noopener">pdfTranslator</a>，<a href="https://github.com/bianjp/popup-dict" target="_blank" rel="noopener">popup-dict</a>，但它们的安装和配置都显得比较麻烦，而且使用起来也并不方便。</p>
 <p>本人实现这个工具的初衷本是方便自己看一些英文文献和书籍的，极为方便，考虑到分享出去可以让更多人受惠，因此这里详细介绍一下它的实现步骤。</p>
 <a id="more"></a>
@@ -284,7 +289,7 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> xclip file_name <span class="comment"># 文件内容保存到X window剪切板</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> xclip -selection c file_name <span class="comment">#文件内容保存到外部剪切板</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> xclip -o <span class="comment"># X window剪切板内容输出到终端显示</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> xclip -selection c -o <span class="comment"># 外部剪切板内容输出到终端显示</span></span></span><br></pre></td></tr></table></figure>
 
 <p>值得强调的是，这里所说的 <em>X window</em> 剪切板，简单的说就是你用鼠标选择的文本会实时的存放在这个剪切板，使用鼠标中键可以粘贴。而外部剪切板是保存你用 <em>ctrl+c</em> 复制的文本，<em>ctrl+v</em> 可以粘贴。这两个地方是不一样的。</p>
-<ol>
+<ol start="2">
 <li><em>translate-shell</em></li>
 </ol>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo apt install translate-shell</span></span><br></pre></td></tr></table></figure>
@@ -315,8 +320,6 @@
 <p>然后就是调用 <em>gcc</em> 编译器生成可执行文件 <em>ct</em>：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gcc ct.c -o ct</span></span><br></pre></td></tr></table></figure>
 
-
-
 <p><strong>4. 编写 <em>shell</em> 脚本翻译剪切板内容</strong></p>
 <p>在 <em>Translator</em> 里建立 <em>goTranslate.sh</em> 文件，内容如下：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line">str_old=$(cat ~/Translator/lastContent.txt)</span><br><span class="line">str_new=$(xclip -o 2&gt;/dev/null | xargs)</span><br><span class="line">if [[ "$str_new" != "$str_old" &amp;&amp; $str_new ]]; then</span><br><span class="line">	echo -e "\n"</span><br><span class="line">	echo "$str_new" | xargs | trans :zh-CN -b</span><br><span class="line">fi</span><br><span class="line">echo "$str_new" | xargs &gt; ~/Translator/lastContent.txt</span><br></pre></td></tr></table></figure>
@@ -324,7 +327,7 @@
 <p>原理非常简单，读者自行了解。这里我们还要在 <em>Translator</em> 里建立一个 <em>lastContent.txt</em> 文件作为缓存，目的是本次调用脚本时能够获取上一次调用时翻译的文本内容，如果和本次调用的翻译文本一样，则本次就不进行翻译。</p>
 <p><em>*5. 设置 *ct</em> 别名 **</p>
 <p>这里已经可以通过下面的命令运行程序了：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo sudo ~/Translator/ct</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo ~/Translator/ct</span></span><br></pre></td></tr></table></figure>
 
 <p>但是由于每次运行都要输出这么长的命令，因此我们在 <em>~/.bashrc</em> 文件中加入下面一条命令。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alias ct='sudo ~/Translator/ct'</span><br></pre></td></tr></table></figure>
@@ -332,8 +335,17 @@
 <p>这样，以后每次看英文文献时就可以在命令行下输入：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ct</span></span><br></pre></td></tr></table></figure>
 
-<p><em>haha, good job!</em> </p>
-<h5 id="三-结束语"><a href="#三-结束语" class="headerlink" title="三. 结束语"></a>三. 结束语</h5><p>这里有一些小技巧。可以更方便的使用这个工具。比如，把终端设为置顶并缩小到合适的尺寸，这样在阅读文献划词翻译时终端屏幕不会遮挡我们的视线。值得说明的是，由于本人完全是为了方便自己的使用，而且在搞出这么个工具时仅仅接触 <em>Linux</em> 系统才不到两周，所以里面的实现对于有经验的朋友来说略显的有些笨拙了，请理解哈。个人觉得这个工具使用起来还是很方便的，你觉得呢？</p>
+
+
+<h5 id="三-结束语"><a href="#三-结束语" class="headerlink" title="三. 结束语"></a>三. 结束语</h5><p>这里有一些小技巧。可以更方便的使用这个工具。比如，把终端设为置顶并缩小到合适的尺寸，这样在阅读文献划词翻译时终端屏幕不会遮挡我们的视线。</p>
+<p>值得说明的是，由于本人完全是为了方便自己的使用，而且在搞出这么个工具时仅仅接触 <em>Linux</em> 系统才不到两周，所以里面的实现对于有经验的朋友来说略显的有些笨拙了，请理解哈。</p>
+<p>个人觉得这个工具使用起来还是很方便的，你觉得呢？</p>
+<p>参考文章：</p>
+<ol>
+<li><a href="https://blog.csdn.net/liang12360640/article/details/50350648" target="_blank" rel="noopener">https://blog.csdn.net/liang12360640/article/details/50350648</a></li>
+<li><a href="https://www.cnblogs.com/yangwindsor/articles/3454955.html" target="_blank" rel="noopener">https://www.cnblogs.com/yangwindsor/articles/3454955.html</a></li>
+<li><a href="https://blog.csdn.net/liang12360640/article/details/50s350648" target="_blank" rel="noopener">https://blog.csdn.net/liang12360640/article/details/50s350648</a></li>
+</ol>
 
     </div>
 
