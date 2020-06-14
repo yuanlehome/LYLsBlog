@@ -20,22 +20,22 @@
     var CONFIG = {"hostname":"yuanlehome.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="欢迎分享，转载务必注明来源！ ---   这里将要介绍的是一种在 Linux 平台实现的划词翻译工具，当然在考虑自己实现一个如此功能的工具前，本人也是在网上搜索了一些在 Linux 平台实现的类似的开源工具，例如 pdfTranslator，popup-dict，但它们的安装和配置都显得比较麻烦，而且使用起来也并不方便。 本人实现这个工具的初衷本是方便自己看一些英文文献和书籍的，极为方便，考虑">
+  <meta name="description" content="欢迎分享，转载务必注明来源！ (https:&#x2F;&#x2F;yuanlehome.github.io&#x2F;20200612&#x2F;)   这里将要介绍的是一种在 Linux 平台实现的划词翻译工具，当然在考虑自己实现一个如此功能的工具前，本人也是在网上搜索了一些在 Linux 平台实现的类似的开源工具，例如 pdfTranslator，popup-dict，但它们的安装和配置都显得比较麻烦，而且使用起来也并不方便。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="一种在Linux平台下的划词翻译工具原理及实现">
-<meta property="og:url" content="https://yuanlehome.github.io/20200602/index.html">
+<meta property="og:title" content="教你实现一个简易的Linux平台下的划词翻译工具">
+<meta property="og:url" content="https://yuanlehome.github.io/20200612/index.html">
 <meta property="og:site_name" content="LYL&#39;s Blog">
-<meta property="og:description" content="欢迎分享，转载务必注明来源！ ---   这里将要介绍的是一种在 Linux 平台实现的划词翻译工具，当然在考虑自己实现一个如此功能的工具前，本人也是在网上搜索了一些在 Linux 平台实现的类似的开源工具，例如 pdfTranslator，popup-dict，但它们的安装和配置都显得比较麻烦，而且使用起来也并不方便。 本人实现这个工具的初衷本是方便自己看一些英文文献和书籍的，极为方便，考虑">
+<meta property="og:description" content="欢迎分享，转载务必注明来源！ (https:&#x2F;&#x2F;yuanlehome.github.io&#x2F;20200612&#x2F;)   这里将要介绍的是一种在 Linux 平台实现的划词翻译工具，当然在考虑自己实现一个如此功能的工具前，本人也是在网上搜索了一些在 Linux 平台实现的类似的开源工具，例如 pdfTranslator，popup-dict，但它们的安装和配置都显得比较麻烦，而且使用起来也并不方便。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://yuanlehome.github.io/20200602/iKnVA63lpy.gif">
+<meta property="og:image" content="https://yuanlehome.github.io/20200612/iKnVA63lpy.gif">
 <meta property="article:published_time" content="2020-06-12T13:35:42.000Z">
-<meta property="article:modified_time" content="2020-06-12T15:52:54.088Z">
+<meta property="article:modified_time" content="2020-06-14T05:19:49.364Z">
 <meta property="article:author" content="Liu Y.L.">
-<meta property="article:tag" content="Linux工具">
+<meta property="article:tag" content="划词翻译">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://yuanlehome.github.io/20200602/iKnVA63lpy.gif">
+<meta name="twitter:image" content="https://yuanlehome.github.io/20200612/iKnVA63lpy.gif">
 
-<link rel="canonical" href="https://yuanlehome.github.io/20200602/">
+<link rel="canonical" href="https://yuanlehome.github.io/20200612/">
 
 
 <script id="page-configurations">
@@ -48,7 +48,7 @@
   };
 </script>
 
-  <title>一种在Linux平台下的划词翻译工具原理及实现 | LYL's Blog</title>
+  <title>教你实现一个简易的Linux平台下的划词翻译工具 | LYL's Blog</title>
   
 
 
@@ -192,7 +192,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/20200602/">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/20200612/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -205,7 +205,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          一种在Linux平台下的划词翻译工具原理及实现
+          教你实现一个简易的Linux平台下的划词翻译工具
         </h1>
 
         <div class="post-meta">
@@ -214,17 +214,23 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-06-12 21:35:42 / 修改时间：23:52:54" itemprop="dateCreated datePublished" datetime="2020-06-12T21:35:42+08:00">2020-06-12</time>
+              <time title="创建时间：2020-06-12 21:35:42" itemprop="dateCreated datePublished" datetime="2020-06-12T21:35:42+08:00">2020-06-12</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-14 13:19:49" itemprop="dateModified" datetime="2020-06-14T13:19:49+08:00">2020-06-14</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" itemprop="url" rel="index"><span itemprop="name">技术分享</span></a>
                 </span>
             </span>
 
@@ -241,7 +247,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4.1k</span>
+              <span>4.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -262,9 +268,9 @@
       
         <hr>
 <hr>
-<center>欢迎分享，转载务必注明来源！</center>
----
-
+<p>欢迎分享，转载务必注明来源！</p>
+<p>(<a href="https://yuanlehome.github.io/20200612/">https://yuanlehome.github.io/20200612/</a>)</p>
+<hr>
 <hr>
 <p>这里将要介绍的是一种在 <em>Linux</em> 平台实现的划词翻译工具，当然在考虑自己实现一个如此功能的工具前，本人也是在网上搜索了一些在 <em>Linux</em> 平台实现的类似的开源工具，例如 <a href="https://github.com/axipo/pdfTranslator" target="_blank" rel="noopener">pdfTranslator</a>，<a href="https://github.com/bianjp/popup-dict" target="_blank" rel="noopener">popup-dict</a>，但它们的安装和配置都显得比较麻烦，而且使用起来也并不方便。</p>
 <p>本人实现这个工具的初衷本是方便自己看一些英文文献和书籍的，极为方便，考虑到分享出去可以让更多人受惠，因此这里详细介绍一下它的实现步骤。</p>
@@ -314,7 +320,7 @@
 <p>这里稍微介绍一下 <em>type</em>，指事件类型，常见的事件类型有：<br><em>EV_KEY</em>，按键事件，如键盘的按键（按下哪个键），鼠标的左键右键（是否击下）等；<br><em>EV_REL</em>，相对坐标，主要是指鼠标的移动事件（相对位移）；<br><em>EV_ABS</em>， 绝对坐标，主要指触摸屏的移动事件 。</p>
 <p><strong>3. 编写 <em>C</em> 程序</strong></p>
 <p>下面就可以编写程序来检测鼠标的动态了。首先在你的用户~目录下建立文件夹 <em>Translator*。在 *Translator</em> 里建立一个 <em>ct.c</em> 源文件，代码如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/input.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> keys_fd;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">input_event</span> <span class="title">t</span>;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 注意这里打开的文件根据你自己的设备情况作相应的改变</span></span><br><span class="line">    keys_fd = <span class="built_in">open</span>(<span class="string">"/dev/input/event2"</span>, O_RDONLY);</span><br><span class="line">    <span class="keyword">if</span>(keys_fd &lt;= <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"open /dev/input/event2 error!\n"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">read</span>(keys_fd, &amp;t, <span class="keyword">sizeof</span>(t));</span><br><span class="line">        <span class="keyword">if</span>(t.type == EV_KEY) <span class="comment">// 有键按下</span></span><br><span class="line">            <span class="keyword">if</span>(t.code == BIN_LEFT) <span class="comment">// 鼠标左键</span></span><br><span class="line">				<span class="keyword">if</span>(t.value == MSC_SERIAL) <span class="comment">// 松开</span></span><br><span class="line">                    <span class="comment">// 调用外部shell脚本</span></span><br><span class="line">					system(<span class="string">"~/Translator/goTranslate.sh"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">close</span>(keys_fd);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/input.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> keys_fd;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">input_event</span> <span class="title">t</span>;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 注意这里打开的文件根据你自己的设备情况作相应的改变</span></span><br><span class="line">    keys_fd = <span class="built_in">open</span>(<span class="string">"/dev/input/event2"</span>, O_RDONLY);</span><br><span class="line">    <span class="keyword">if</span>(keys_fd &lt;= <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"open /dev/input/event2 error!\n"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">read</span>(keys_fd, &amp;t, <span class="keyword">sizeof</span>(t));</span><br><span class="line">        <span class="keyword">if</span>(t.type == EV_KEY) <span class="comment">// 有键按下</span></span><br><span class="line">            <span class="keyword">if</span>(t.code == BTN_LEFT) <span class="comment">// 鼠标左键</span></span><br><span class="line">				<span class="keyword">if</span>(t.value == MSC_SERIAL) <span class="comment">// 松开</span></span><br><span class="line">                    <span class="comment">// 调用外部shell脚本</span></span><br><span class="line">					system(<span class="string">"~/Translator/goTranslate.sh"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">close</span>(keys_fd);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>然后就是调用 <em>gcc</em> 编译器生成可执行文件 <em>ct</em>：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gcc ct.c -o ct</span></span><br></pre></td></tr></table></figure>
@@ -354,7 +360,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Linux%E5%B7%A5%E5%85%B7/" rel="tag"># Linux工具</a>
+              <a href="/tags/%E5%88%92%E8%AF%8D%E7%BF%BB%E8%AF%91/" rel="tag"># 划词翻译</a>
           </div>
 
         
@@ -366,7 +372,10 @@
     <a href="/20200404/" rel="prev" title="数据结构与算法学习笔记之概论">
       <i class="fa fa-chevron-left"></i> 数据结构与算法学习笔记之概论
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/20200614/" rel="next" title="教你用python实现一个在windows平台的定时更换壁纸的工具">
+      教你用python实现一个在windows平台的定时更换壁纸的工具 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -446,19 +455,19 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">3</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
