@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#7d574c">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#7d574c">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yuanlehome.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="第6章：继承与面向对象设计条款32：确定你的public继承塑模出is-a关系 “public继承”意味is-a。适用于base class身上的每一件事情一定也适用于derived class身上，因为每一个derived class对象也都是一个base class对象">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Effective C++ 第六章">
+<meta property="og:url" content="https://yuanlehome.github.io/20200410/index.html">
+<meta property="og:site_name" content="LYL&#39;s Blog">
+<meta property="og:description" content="第6章：继承与面向对象设计条款32：确定你的public继承塑模出is-a关系 “public继承”意味is-a。适用于base class身上的每一件事情一定也适用于derived class身上，因为每一个derived class对象也都是一个base class对象">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yuanlehome.github.io/20200410/strategy.png">
+<meta property="og:image" content="https://yuanlehome.github.io/20200410/%E5%A4%9A%E9%87%8D%E7%BB%A7%E6%89%BF.png">
+<meta property="og:image" content="https://yuanlehome.github.io/20200410/%E5%A4%9A%E9%87%8D%E7%BB%A7%E6%89%BFvirtual%E7%BB%A7%E6%89%BF.png">
+<meta property="og:image" content="https://yuanlehome.github.io/20200410/%E5%A4%9A%E9%87%8D%E7%BB%A7%E6%89%BF%E5%BA%94%E7%94%A8%E4%BE%8B%E5%AD%90.png">
+<meta property="article:published_time" content="2020-04-10T13:35:42.000Z">
+<meta property="article:modified_time" content="2021-03-12T13:05:19.078Z">
+<meta property="article:author" content="Liu Y.L.">
+<meta property="article:tag" content="Effective C++">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yuanlehome.github.io/20200410/strategy.png">
+
+<link rel="canonical" href="https://yuanlehome.github.io/20200410/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Effective C++ 第六章 | LYL's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">LYL's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/20200410/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Effective C++ 第六章
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-10 21:35:42" itemprop="dateCreated datePublished" datetime="2020-04-10T21:35:42+08:00">2020-04-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-03-12 21:05:19" itemprop="dateModified" datetime="2021-03-12T21:05:19+08:00">2021-03-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%EF%BC%8CEffective-C/" itemprop="url" rel="index"><span itemprop="name">读书笔记，Effective C++</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>14k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>13 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="第6章：继承与面向对象设计"><a href="#第6章：继承与面向对象设计" class="headerlink" title="第6章：继承与面向对象设计"></a>第<code>6</code>章：继承与面向对象设计</h4><h5 id="条款32：确定你的public继承塑模出is-a关系"><a href="#条款32：确定你的public继承塑模出is-a关系" class="headerlink" title="条款32：确定你的public继承塑模出is-a关系"></a>条款<code>32</code>：确定你的<code>public</code>继承塑模出<code>is-a</code>关系</h5><ul>
+<li>“<code>public</code>继承”意味<code>is-a</code>。适用于<code>base class</code>身上的每一件事情一定也适用于<code>derived class</code>身上，因为每一个<code>derived class</code>对象也都是一个<code>base class</code>对象</li>
+</ul>
+<a id="more"></a>
+
+<h5 id="条款33：避免遮掩继承而来的名称"><a href="#条款33：避免遮掩继承而来的名称" class="headerlink" title="条款33：避免遮掩继承而来的名称"></a>条款<code>33</code>：避免遮掩继承而来的名称</h5><ul>
+<li><p><code>derived class</code>的作用域被嵌套在<code>base class</code>作用域内</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Base</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">int</span> x;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf1</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf1</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">mf2</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">mf2</span><span class="params">(<span class="keyword">double</span>)</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Derived</span> :</span> <span class="keyword">public</span> Base</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf1</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">mf2</span><span class="params">()</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Derived d;</span><br><span class="line"><span class="keyword">int</span> x;</span><br><span class="line">...</span><br><span class="line">d.mf1(); <span class="comment">// 没问题, 调用 Derived::mf1</span></span><br><span class="line">d.mf1(x); <span class="comment">// 错误! 因为 Derived::mf1 遮掩了 Base::mf1</span></span><br><span class="line">d.mf2(); <span class="comment">// 没问题, 调用 Derived::mf2</span></span><br><span class="line">d.mf2(x); <span class="comment">// 错误! 因为 Derived::mf2 遮掩了 Base::mf2</span></span><br></pre></td></tr></table></figure>
+
+<p>  这段代码中<code>base class</code>内所有名为<code>mf1</code>和<code>mf2</code>的函数都被<code>derived class</code>内的<code>mf1</code>和<code>mf2</code>函数遮掩掉了。从名称查找观点来看，<code>Base::mf1</code>和<code>Base::mf2</code>不再被<code>Derived</code>继承！</p>
+<p>  实际上如果你正在使用<code>public</code>继承而又不继承那些重载函数，就是违反<code>base</code>和<code>derived class</code>之间的<code>is-a</code>关系，而条款<code>32</code>说过<code>is-a</code>是<code>public</code>继承的基石。因此你几乎总会想要推翻<code>C++</code>对“继承而来的名称”的缺省遮掩行为。</p>
+<ul>
+<li><p>使用<code>using</code>声明式</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Base</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">int</span> x;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf1</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf1</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">mf2</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">mf2</span><span class="params">(<span class="keyword">double</span>)</span></span>;</span><br><span class="line">	...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Derived</span> :</span> <span class="keyword">public</span> Base</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">using</span> Base::mf1; <span class="comment">// 让 Base class 内名为 mf1 和 mf2 的所有东西</span></span><br><span class="line">	<span class="keyword">using</span> Base::mf2; <span class="comment">// 在 Derived 作用域内都可见, 并且 public</span></span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf1</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">mf2</span><span class="params">()</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Derived d;</span><br><span class="line"><span class="keyword">int</span> x;</span><br><span class="line">...</span><br><span class="line">d.mf1(); <span class="comment">// 没问题, 调用 Derived::mf1</span></span><br><span class="line">d.mf1(x); <span class="comment">// 现在没问题了, 调用 Based::mf1</span></span><br><span class="line">d.mf2(); <span class="comment">// 没问题, 调用 Derived::mf2</span></span><br><span class="line">d.mf2(x); <span class="comment">// 现在没问题了, 调用 Based::mf2</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用<code>inline</code>转交函数（<code>forwarding function</code>）</p>
+<p>  然而在<code>private</code>继承之下（见条款<code>39</code>），有时候你并不想继承<code>base class</code>的所有函数。假设<code>Derived</code>以<code>private</code>形式继承<code>Base</code>，而<code>Derived</code>唯一想继承的<code>mf1</code>是那个无参数版本。<code>using</code>声明式在这里派不上用场，因为<code>using</code>声明式会令继承而来的某给定名称之所有同名函数在<code>derived class</code>中都可见。</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Base</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf1</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf1</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line">	... <span class="comment">// 与前同</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Derived</span> :</span> <span class="keyword">private</span> Base</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf1</span><span class="params">()</span> <span class="comment">// 转交函数</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        Base::mf1(); <span class="comment">// 暗自成为 inline (见条款 30)</span></span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Derived d;</span><br><span class="line"><span class="keyword">int</span> x;</span><br><span class="line"></span><br><span class="line">d.mf1(); <span class="comment">// 很好, 调用的是 Derived::mf1</span></span><br><span class="line">d.mf1(x); <span class="comment">// 错误! Base::mf1 被遮掩</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="条款34：区分接口继承和实现继承"><a href="#条款34：区分接口继承和实现继承" class="headerlink" title="条款34：区分接口继承和实现继承"></a>条款<code>34</code>：区分接口继承和实现继承</h5><p>身为<code>class</code>设计者，有时候你会希望<code>derived class</code>只继承成员函数的接口，也就是声明；有时候你又会希望<code>derived class</code>同时继承函数的接口和实现，但又希望能够覆写（<code>override</code>）它们所继承的实现；又有时候你希望<code>derived class</code>同时继承函数的接口和实现，并且不允许覆写任何东西。</p>
+<p><code>base</code>类强烈影响以<code>public</code>形式继承它的<code>derived class</code>，因为：</p>
+<ul>
+<li><p>成员函数的接口总是会被继承</p>
+</li>
+<li><p>声明一个<code>pure virtual</code>函数的目的是为了让<code>derived</code>类只继承函数接口</p>
+<p>  含有<code>pure virtual</code>函数的类属于抽象基类，不能被实例化。继承了它们的类必须重新声明此函数接口并给予实现。抽象基类可以给<code>pure virtual</code>函数提供定义，但调用它的唯一途径是“调用时指定其<code>class</code>的名称”。</p>
+</li>
+<li><p>声明<code>impure</code>函数的目的是让<code>derived class</code>继承该函数的接口和缺省实现</p>
+<p>  但是，允许<code>impure virtual</code>函数同时指定函数声明和函数缺省行为，却有可能造成危险。欲探讨原因，让我们考虑<code>XYZ</code>航空公司设计的飞机继承体系。该公司只有<code>A</code>型和<code>B</code>型两种飞机，两者都以相同方式飞行。因此<code>XYZ</code>设计出这样的继承体系：</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Airport</span> &#123;</span>...&#125;; <span class="comment">// 用以表现机场</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Airplane</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fly</span><span class="params">(<span class="keyword">const</span> Airport&amp; destination)</span></span>;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Airplane::fly</span><span class="params">(<span class="keyword">const</span> Airport&amp; destination)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ... <span class="comment">// 缺省代码, 将飞机飞至指定的目的地</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ModelA</span>:</span> <span class="keyword">public</span> Airplane &#123;...&#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ModelB</span>:</span> <span class="keyword">public</span> Airplane &#123;...&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>  为了表示所有飞机都一定能飞，并阐明“不同型飞机原则上需要不同的<code>fly</code>实现”，<code>Airplane::fly</code>被声明为<code>virtual</code>。然而为了避免在<code>ModelA</code>和<code>ModelB</code>中撰写相同代码，缺省飞行行为由<code>Airplane::fly</code>提供，它同时被<code>ModelA</code>和<code>ModelB</code>继承。</p>
+<p>  现在，<code>XYZ</code>航空公司决定购买一种新式<code>C</code>型飞机。<code>C</code>型和<code>A</code>型以及<code>B</code>型的飞行方式不同。<code>XYZ</code>公司的程序员在继承体系中针对<code>C</code>型飞机添加了一个<code>class</code>，但由于他们急着让新飞机上线服务，竟忘了重新定义其<code>fly</code>函数：</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ModelC</span> :</span> <span class="keyword">public</span> Airplane</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">// 未声明fly函数</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">Airport <span class="title">PDX</span><span class="params">(... )</span></span>; <span class="comment">// PDX 是我家附近的机场</span></span><br><span class="line">Airplane* pa= <span class="keyword">new</span> ModelC;</span><br><span class="line">...</span><br><span class="line"><span class="comment">// 这将酿成大灾难</span></span><br><span class="line">pa-&gt;fly(PDX); <span class="comment">// 调用 Airplane::fly</span></span><br></pre></td></tr></table></figure>
+
+<p>  一种解救办法为切断“<code>virtual</code>函数接口”和其“缺省实现”之间的连接。</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Airplane</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="comment">// 现在是 pure virtual 函数</span></span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fly</span><span class="params">(<span class="keyword">const</span> Airport&amp; destination)</span> </span>= <span class="number">0</span>;</span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">defaultFly</span> <span class="params">(<span class="keyword">const</span> Airport&amp; destination)</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Airplane::defaultFly</span><span class="params">(<span class="keyword">const</span> Airport&amp; destination)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	... <span class="comment">// 缺省行为, 将飞机飞至指定的目的地。</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ModelA</span> :</span> <span class="keyword">public</span> Airplane </span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fly</span><span class="params">(<span class="keyword">const</span> Airport&amp; destination)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        defaultFly(destination);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ModelB</span> :</span> <span class="keyword">public</span> Airplane</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fly</span><span class="params">(<span class="keyword">const</span> Airport&amp; destination)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        defaultFly (destination);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 现在 ModelC class 不可能意外继承不正确的 fly 实现代码了</span></span><br><span class="line"><span class="comment">// 因为 Airplane 中的 pure virtual 函数追使 ModelC 必须提供自己的 f1y 版本</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ModelC</span>:</span> <span class="keyword">public</span> Airplane</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fly</span><span class="params">(<span class="keyword">const</span> Airport&amp; destination)</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ModelC::fly</span><span class="params">(<span class="keyword">const</span> Airport&amp; destination)</span></span></span><br><span class="line"><span class="function"></span>&#123;    </span><br><span class="line">	... <span class="comment">// 将 C 型飞机飞至指定的目的地</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>  另一种解救方法是，利用“<code>pure virtual</code>函数必须在<code>derived class</code>中重新声明，但它们也可以拥有自己的实现”这一事实。</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Airplane</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="comment">// 现在是 pure virtual 函数</span></span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fly</span><span class="params">(<span class="keyword">const</span> Airport&amp; destination)</span> </span>= <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 给予 pure virtual 函数实现</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Airplane::fly</span><span class="params">(<span class="keyword">const</span> Airport&amp; destination)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ... <span class="comment">// 缺省行为, 将飞机飞至指定的目的地</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ModelA</span> :</span> <span class="keyword">public</span> Airplane</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fly</span><span class="params">(<span class="keyword">const</span> Airport&amp; destination)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        Airplane::fly(destination); <span class="comment">// 通过指定其类名调用它</span></span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ModelB</span> :</span> <span class="keyword">public</span> Airplane</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function">virtuai <span class="keyword">void</span> <span class="title">fly</span><span class="params">(<span class="keyword">const</span> Airport&amp; destination)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        Airplane::fly(destination); <span class="comment">// 通过指定其类名调用它</span></span><br><span class="line">    &#125;</span><br><span class="line">	...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ModelC</span> :</span> <span class="keyword">public</span> Airplane</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fly</span><span class="params">(<span class="keyword">const</span> Airport&amp; destination)</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ModelC::fly</span><span class="params">(<span class="keyword">const</span> Airport&amp; destination)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	... <span class="comment">// 将 C 型飞机飞至指定的目的地</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>声明<code>non-virtual</code>函数的目的是为了<code>derived class</code>继承函数的接口及其强制性实现</p>
+<p>  <code>non-virtual</code>函数为其所属<code>class</code>建立的意义是不变性凌驾其特异性，所以它不该在<code>derived class</code>中被重新定义。</p>
+</li>
+</ul>
+<h5 id="条款35：考虑virtual函数以外的其他选择"><a href="#条款35：考虑virtual函数以外的其他选择" class="headerlink" title="条款35：考虑virtual函数以外的其他选择"></a>条款<code>35</code>：考虑<code>virtual</code>函数以外的其他选择</h5><p>假设你正在写一个视频游戏软件，你的游戏属于暴力砍杀类型，剧中人物存在被伤害而降低健康状态的情况。因此你决定提供一个成员函数 <code>healthvalue</code>，它会返回一个整数，表示人物的健康程度。由于不同的人物可能以不同的方式计算他们的健康指数，将<code>healthvalue</code>声明为<code>virtual</code>似乎是再明白不过的做法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GameCharacter</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">int</span> <span class="title">healthvalue</span><span class="params">()</span> <span class="keyword">const</span></span>; <span class="comment">// 返回人物的健康指数,</span></span><br><span class="line">									<span class="comment">// derived classes 可重新定义它</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>现在考虑一些其它解法：</p>
+<ul>
+<li><p>借助<code>non-virtual interface</code>(<code>NVI</code>)手法实现<code>Template Method</code>模式</p>
+<p>  保留<code>healthvalue</code>为<code>public</code>成员函数，但让它成为<code>non-virtual</code>，并调用一个<code>private virtual</code>函数进行实际工作：</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GameCharacter</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">healthvalue</span><span class="params">()</span> <span class="keyword">const</span> <span class="comment">// derived class 不重新定义它</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">		... <span class="comment">// 做一些事前工作</span></span><br><span class="line">		<span class="keyword">int</span> retval = doHealthvalue(); <span class="comment">// 做真正的工作</span></span><br><span class="line">		... <span class="comment">// 做一些事后工作</span></span><br><span class="line">		<span class="keyword">return</span> retval;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// NVI 手法下没必要让 virtual 函数一定是 private</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">int</span> <span class="title">doHealthValue</span><span class="params">()</span> <span class="keyword">const</span> <span class="comment">// derived class 可重新定义它</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">    	... <span class="comment">// 缺省算法, 计算健康指数。</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>  这一基本设计，“令客户通过<code>public non-virtual</code>成员函数间接调用<code>private virtual</code>函数”，称为<code>non-virtual interface</code>(<code>NVI</code>)手法。它是所谓<code>Template Method</code>设计模式的一个独特表现形式。我把这个<code>non-virtual</code>函数（<code>healthvalue</code>）称为<code>virtual</code>函数的外覆器（<code>wrapper</code>) 。</p>
+<p>  <code>NVI</code>手法的一个优点隐藏在上述代码注释“做一些事前工作”和“做一些事后工作”之中。“事前工作”可以包括锁定互斥器、制造运转日志记录项、验证 <code>class</code>约束条件、验证函数先决条件等。“事后工作”可以包括互斥器解除锁定、验证函数的事后条件、再次验证<code>class</code>约束条件等。如果你让客户直接调用<code>virtual</code>函数，就没有任何好办法可以做这些事。</p>
+</li>
+<li><p>借助<code>Function Pointer</code>实现<code>Strategy</code>模式</p>
+<p>  另一个设计主张“人物健康指数的计算与人物类型无关”，这样的计算完全不需要“人物”这个成分。例如我们可能会要求每个人物的构造函数接受一个函数指针，指向一个健康计算函数，而我们可以调用该函数进行实际计算：</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GameCharacter</span>;</span> <span class="comment">// 前向声明</span></span><br><span class="line"><span class="comment">// 以下函数是计算健康指数的缺省算法</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">defaultHealthCalc</span><span class="params">(<span class="keyword">const</span> GameCharacter&amp; gc)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GameCharacter</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">typedef</span> <span class="title">int</span> <span class="params">(*HealthCalcFunc)</span><span class="params">(<span class="keyword">const</span> GameCharacter&amp;)</span></span>;</span><br><span class="line">    </span><br><span class="line">	<span class="function"><span class="keyword">explicit</span> <span class="title">GameCharacter</span> <span class="params">(HealthCalcFunc hcf = defaultFealthCalc)</span></span></span><br><span class="line"><span class="function">				: <span class="title">healthFunc</span><span class="params">(hcf)</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">healthvalue</span><span class="params">()</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> healthFunc (*<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	HealthCalcFunc healthFunc;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>  这种设计策略和前面介绍的方法相比提供了一些有趣的弹性：</p>
+<ul>
+<li><p>同一人物类型的不同实体可以有不同的健康计算函数</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">EvilBadGuy</span> :</span> <span class="keyword">public</span> GameCharacter</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">explicit</span> <span class="title">EvilBadGuy</span><span class="params">(HealthCalcFunc hcf = defaultHealthCalc)</span></span></span><br><span class="line"><span class="function">				: <span class="title">GameCharacter</span><span class="params">(hcf)</span> </span>&#123;...&#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">loseHealthQuickly</span><span class="params">(<span class="keyword">const</span> GameCharacter&amp;)</span></span>; <span class="comment">// 健康指数计算函数 1</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">loseHealthSlowly</span><span class="params">(<span class="keyword">const</span> GameCharacter&amp;)</span></span>; <span class="comment">// 健康指数计算函数 2</span></span><br><span class="line"><span class="function">EvilBadGuy <span class="title">ebg1</span><span class="params">(loseHealthQuickly)</span></span>; <span class="comment">// 相同类型的人物搭配</span></span><br><span class="line"><span class="function">EvilBadGuy <span class="title">ebg2</span><span class="params">(loseHealthSlowly)</span></span>; <span class="comment">// 不同的健康计算方式</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>某已知人物之健康指数计算函数可在运行期变更</p>
+<p>  例如<code>GameCharacter</code>可提供一个成员函数<code>setHealthcalculator</code>，用来替换当前的健康指数计算函数。</p>
+<p>然而这种策略意味着，计算函数并不能访问“被计算健康指数的”那个对象的内部（<code>non-public</code>）成分。如果需要访问<code>non-public</code>成分进行精确计算，这就有问题了。</p>
+<p>唯一能够解决的办法就是：弱化<code>class</code>的封装。例如，将健康计算函数声明为<code>friend</code>。或是为其实现的某一部分提供<code>public</code>访问函数。这需要你来权衡利弊进行抉择。</p>
+</li>
+</ul>
+</li>
+<li><p>借助<code>std::function</code>实现<code>Strategy</code>模式</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GameCharacter</span>;</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">defaultHealthCalc</span><span class="params">(<span class="keyword">const</span> GameCharacter&amp; gc)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GameCharacter</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// 不同之处</span></span><br><span class="line">	<span class="keyword">typedef</span> <span class="built_in">std</span>::function&lt;<span class="keyword">int</span> (<span class="keyword">const</span> GameCharacter&amp;)&gt; HealthCalcFunc;</span><br><span class="line">    </span><br><span class="line">	<span class="function"><span class="keyword">explicit</span> <span class="title">GameCharacter</span> <span class="params">(HealthCalcFunc hcf = defaultFealthCalc)</span></span></span><br><span class="line"><span class="function">				: <span class="title">healthFunc</span><span class="params">(hcf)</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">healthvalue</span><span class="params">()</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> healthFunc (*<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	HealthCalcFunc healthFunc;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>  那个签名代表的函数是“接受一个<code>reference</code>指向<code>const GameCharacter</code>，并返回<code>int</code>”。这个<code>std::function</code>类型（也就是我们所定义的<code>HealthCalcFunc</code>类型）产生的对象可以持有（保存）任何与此签名式<strong>兼容的</strong>可调用物。所谓兼容，意思是这个可调用物的参数可被<strong>隐式转换</strong>为<code>const GameCharacter&amp;</code>，而其返回类型可被<strong>隐式转换</strong>为<code>int</code>。</p>
+<p>  这就提供了很大的灵活性：</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">short <span class="title">calcHealth</span><span class="params">(<span class="keyword">const</span> GameCharacter&amp;)</span></span>;	<span class="comment">// 健康计算函数</span></span><br><span class="line">                                        <span class="comment">// 注意其返回类型为 non-int</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">HealthCalculator</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="comment">// 为计算健康而设计的函数对象</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">operator</span><span class="params">()</span><span class="params">(<span class="keyword">const</span> GameCharacter&amp;)</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function">    </span>&#123;...&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GameLevel</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">float</span> <span class="title">health</span><span class="params">(<span class="keyword">const</span> GameCharacter&amp;)</span> <span class="keyword">const</span></span>;	<span class="comment">// 成员函数, 用以计算健康</span></span><br><span class="line">    											<span class="comment">// 注意其 non-int 返回类型</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 人物类型 1</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">EvilBadGuy</span>:</span> <span class="keyword">public</span> GameCharacter</span><br><span class="line">&#123;</span><br><span class="line">	... <span class="comment">// 同前</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 人物类型 2</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">EyeCandyCharacter</span>:</span> <span class="keyword">public</span> GameCharacter</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">// 假设其构造函数与 EvilBadGuy 同</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 人物 1, 使用某个函数计算健康指数</span></span><br><span class="line"><span class="function">EvilBadGuy <span class="title">ebg1</span><span class="params">(calcHealth)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 人物 2, 使用某个函数对象计算健康指数</span></span><br><span class="line"><span class="function">EyeCandyCharacter <span class="title">ecc1</span><span class="params">(HealthCalculator())</span></span>;</span><br><span class="line"></span><br><span class="line">GameLevel currentLevel;</span><br><span class="line">...</span><br><span class="line"><span class="comment">// 人物 3, 使用某个成员函数计算健康指数</span></span><br><span class="line"><span class="function">EvilBadGuy <span class="title">ebg2</span><span class="params">(<span class="built_in">std</span>::bind(&amp;GameLevel::health, &amp;currentLevel, _1))</span></span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>传统的<code>Strategy</code>模式</p>
+<p>  <img src="strategy.png" alt=""></p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GameCharacter</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HealthCalcFunc</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">virtual</span> ~HealthCalcFunc() &#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">int</span> <span class="title">calc</span><span class="params">(<span class="keyword">const</span> GameCharacter&amp; gc)</span> <span class="keyword">const</span> </span>= <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SlowHealthLoser</span> :</span> HealthCalcFunc</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">int</span> <span class="title">calc</span><span class="params">(<span class="keyword">const</span> GameCharacter&amp; gc)</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FastHealthLoser</span> :</span> HealthCalcFunc</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">int</span> <span class="title">calc</span><span class="params">(<span class="keyword">const</span> GameCharacter&amp; gc)</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GameCharacter</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">explicit</span> <span class="title">GameCharacter</span><span class="params">(HealthCalcFunc* phcf)</span> : <span class="title">pHealthCalc</span><span class="params">(phcf)</span> </span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">healthValue</span><span class="params">()</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> pHealthCalc-&gt;calc(*<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	HealthCalcFunc* pHealthCalc;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h5 id="条款36：绝不重新定义继承而来的non-virtual函数"><a href="#条款36：绝不重新定义继承而来的non-virtual函数" class="headerlink" title="条款36：绝不重新定义继承而来的non-virtual函数"></a>条款<code>36</code>：绝不重新定义继承而来的<code>non-virtual</code>函数</h5><ul>
+<li>如题</li>
+</ul>
+<h5 id="条款37：绝不重新定义继承而来的缺省参数值"><a href="#条款37：绝不重新定义继承而来的缺省参数值" class="headerlink" title="条款37：绝不重新定义继承而来的缺省参数值"></a>条款<code>37</code>：绝不重新定义继承而来的缺省参数值</h5><p>本条款的讨论局限于“继承一个带有缺省参数值的<code>virtual</code>函数”：<code>virtual</code>函数是动态绑定（后期绑定，延迟绑定），而缺省参数值却是静态绑定（前期绑定，早绑定）。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 一个用以描述几何形状的class</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Shape</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">enum</span> ShapeColor&#123;Red, Green, Blue&#125;;</span><br><span class="line">    <span class="comment">// 所有形状都必须提供一个函数, 用来绘出自己</span></span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">draw</span><span class="params">(ShapeColor color = Red)</span> <span class="keyword">const</span> </span>= <span class="number">0</span>;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rectangle</span> :</span> <span class="keyword">public</span> Shape </span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="comment">// 注意, 赋予不同的缺省参数值, 这真糟糕!</span></span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">draw</span><span class="params">(ShapeColor color = Green)</span> <span class="keyword">const</span></span>;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Circle</span> :</span> <span class="keyword">public</span> shape</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">draw</span><span class="params">(ShapeColor color)</span> <span class="keyword">const</span></span>;</span><br><span class="line">	<span class="comment">// 请注意，以上这么写则当客户以 对象 调用此函数一定要指定参数值</span></span><br><span class="line">    <span class="comment">// 因为静态绑定下这个函数并不从其 base 继承缺省参数值</span></span><br><span class="line">    <span class="comment">// 但若以指针或 reference 调用此函数, 可以不指定参数值</span></span><br><span class="line">    <span class="comment">// 因为动态绑定下这个函数会从其 base 继承缺省参数值</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>对象的静态类型就是它在程序中所声明的类型，对象的动态类型则是指“目前所指对象的类型”</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">shape* ps; <span class="comment">// 静态类型为 shape*, 无动态类型</span></span><br><span class="line">Shape* pc = <span class="keyword">new</span> Circle; <span class="comment">// 静态类型为 Shape*, 动态类型是 Circle*</span></span><br><span class="line">Shape* pr = <span class="keyword">new</span> Rectangle; <span class="comment">// 静态类型为 shape*, 动态类型是 Rectangle*</span></span><br></pre></td></tr></table></figure>
+
+<p>  动态类型可在程序执行过程中改变（通常是经由赋值动作）：</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ps = pc; <span class="comment">// ps 的动态类型如今是 circle*</span></span><br><span class="line">ps = pr; <span class="comment">// ps 的动态类型如今是 Rectangle*</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p><code>virtual</code>函数系动态绑定而来，意思是调用一个<code>virtual</code>函数时，究竟调用哪一份函数实现代码，取决于发出调用的那个对象的动态类型。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pr-&gt;draw(); <span class="comment">// 调用的是 Rectangle::draw(shape::Red)!</span></span><br><span class="line">			<span class="comment">// 注意缺省参数是 Red 而不是 Green</span></span><br></pre></td></tr></table></figure>
+
+<p>此例之中，<code>pr</code>的动态类型是<code>Rectangle*</code>，所以调用的是<code>Rectangle</code>的<code>virtual</code>函数。<code>Rectangle::draw</code>函数的缺省参数值应该是<code>Green</code>，但由于<code>pr</code>的静态类型是<code>shape*</code>，所以此一调用的缺省参数值来自<code>Shape class</code>而非<code>Rectangle class</code>！这不符合预期。</p>
+<p>解救方法是利用条款<code>35</code>中介绍的<code>NVI</code>手法替代<code>virtual</code>函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Shape</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">enum</span> shapeColor&#123;Red, Green, Blue&#125;;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">draw</span><span class="params">(ShapeColor color = Red)</span> <span class="keyword">const</span>	<span class="comment">// 如今它是 non-virtual</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">		doDraw(color); <span class="comment">// 调用一个 virtual</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">doDraw</span><span class="params">(shapeColor color)</span> <span class="keyword">const</span> </span>= <span class="number">0</span>; <span class="comment">// 真正的工作在此处完成</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rectangle</span> :</span> <span class="keyword">public</span> Shape</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    ...</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">doDraw</span> <span class="params">(ShapeColor color)</span> <span class="keyword">const</span></span>; <span class="comment">// 注意, 不须指定缺省参数值</span></span><br><span class="line">	...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这个设计很清楚地使得<code>draw</code>函数的<code>color</code>缺省参数值总是<code>Red</code>。</p>
+<h5 id="条款38：通过复合塑模出has-a或is-implemented-in-terms-of"><a href="#条款38：通过复合塑模出has-a或is-implemented-in-terms-of" class="headerlink" title="条款38：通过复合塑模出has-a或is-implemented-in-terms-of"></a>条款<code>38</code>：通过复合塑模出<code>has-a</code>或<code>is-implemented-in-terms-of</code></h5><p>当某种类型的对象内含其它对象时便形成了复合关系。</p>
+<ul>
+<li><p>应用域</p>
+<p>  程序中的对象其实相当于你所塑造出来的世界中的某些事物。比如人，汽车，高楼大厦等。这样的对象属于应用域部分。</p>
+</li>
+<li><p>实现域</p>
+<p>  其它对象如缓冲区，互斥器，搜索树等纯粹是实现细节上的工具。这些对象相当于软件中的实现域。</p>
+</li>
+</ul>
+<p>当复合发生于应用域对象之间表现出<code>has-a</code>关系，当它发生于实现域内则表现出<code>is-implemented-in-terms-of</code>（根据某物实现出）的关系。</p>
+<ul>
+<li><p>复合的意义和<code>public</code>继承完全不同</p>
+<p>  注意区分<code>is-a</code>和<code>is-implemented-in-terms-of</code>这两种对象关系。</p>
+</li>
+</ul>
+<h5 id="条款39：明智而谨慎地使用private继承"><a href="#条款39：明智而谨慎地使用private继承" class="headerlink" title="条款39：明智而谨慎地使用private继承"></a>条款<code>39</code>：明智而谨慎地使用<code>private</code>继承</h5><p>一个<code>derived</code>类继承<code>base</code>类有<code>public</code>、<code>protected</code>或<code>private</code>三种继承方式。</p>
+<ul>
+<li><p>公有继承（<code>public</code>）（普遍使用）</p>
+<p>  <code>base</code>类的<code>public</code>成员也是<code>derived</code>类的<code>public</code>成员，<code>base</code>类的<code>protected</code>成员也是<code>derived</code>类的<code>protected</code>成员</p>
+</li>
+<li><p>保护继承（<code>protected</code>）（基本不使用）</p>
+<p>  <code>base</code>类的<code>public</code>和<code>protected</code>成员将成为<code>derived</code>类的<code>protected</code>成员。</p>
+</li>
+<li><p>私有继承（<code>private</code>）（少的情况使用）</p>
+<p>  <code>base</code>类的<code>public</code>和<code>protected</code>成员将成为<code>derived</code>类的<code>private</code>成员。</p>
+</li>
+</ul>
+<p>无论哪一种继承方式，<code>base</code>类的<code>private</code>成员都不能直接被<code>derived</code>类访问，但是可以通过调用<code>base</code>类的<code>public</code>和<code>protected</code>成员间接来访问（如果<code>base</code>类提供了访问接口的话）。</p>
+<ul>
+<li><p><code>private</code>继承意味着<code>is-implemented-in-terms-of</code></p>
+<p>  <code>private</code>继承只限于软件实现层面，这就是为什么<code>private</code>继承后，<code>base class</code>的所有成分（除了<code>private</code>）在你的<code>class</code>内都是<code>private</code>，因为它们都只是实现细节而已。</p>
+</li>
+<li><p>尽可能使用复合，<strong>必要时</strong>才使用<code>private</code>继承</p>
+<ol>
+<li><p>当<code>derived</code>类想要访问<code>base class</code>的<code>protected</code>成员时</p>
+</li>
+<li><p>当<code>derived</code>类为了重新定义<code>base class</code>的<code>virtual</code>函数时</p>
+<p> 现在考虑一个<code>Widget</code>类，它需要用到另一个计时器<code>Timer</code>类来实现一些业务。</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">	<span class="class"><span class="keyword">class</span> <span class="title">Timer</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">Timer</span><span class="params">(<span class="keyword">int</span> tickFrequecy)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">onTick</span><span class="params">()</span> <span class="keyword">const</span></span>; <span class="comment">// 定时器每滴答一次, 此函数就调用一次</span></span><br><span class="line">&#125;；</span><br></pre></td></tr></table></figure>
+
+<p> 为了让<code>Widget</code>重新定义<code>Timer</code>内的<code>virtual</code>函数，<code>Widget</code>必须继承自<code>Timer</code>。因为<code>Widget</code>不是个<code>Timer</code>，因此<code>public</code>继承不合适。必须以<code>private</code>方式继承：</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Widget</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	...</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">onTick</span><span class="params">()</span> <span class="keyword">const</span></span>; <span class="comment">// </span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p> 通过<code>private</code>继承，<code>Timer</code>的<code>public onTick</code>函数在<code>Widget</code>内变成<code>private</code>，而我们重新声明（定义）时仍然把它留在那儿。如果把<code>onTick</code>放进<code>public</code>内会误导客户以为他们可以调用它，那就违反了条款<code>18</code>。</p>
+<p> 另一种设计方案是采用复合 + <code>public</code>继承：</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Widget</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    ...</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// 在 Widget 内声明一个嵌套式 private class</span></span><br><span class="line">	<span class="class"><span class="keyword">class</span> <span class="title">WidgetTimer</span> :</span> <span class="keyword">public</span> Timer</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="comment">// 以 public 方式继承并重新定义 virtual 函数</span></span><br><span class="line">		<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">onTick</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line">        ...</span><br><span class="line">	&#125;;</span><br><span class="line">	WidgetTimer timer;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p> 采用第二种较为复杂的方式的两点理由：</p>
+<ul>
+<li>你或许会想设计<code>Widget</code>使它得以拥有<code>derived class</code>，但同时你可能会想阻止<code>derived class</code>重新定义<code>onTick</code>。如果<code>Widget</code>继承自<code>Timer</code>，上面的想法就不可能实现，即使是<code>private</code>继承也不可能。但如果<code>WidgetTimer</code>是<code>Widget</code>内部的一个<code>private</code>成员并继承自<code>Timer</code>，<code>Widget</code>的<code>derived class</code>将无法取用<code>WidgetTimer</code>，因此无法继承它或重新定义它的<code>virtual</code>函数。</li>
+<li>你或许会想要将<code>Widget</code>的编译依存性降至最低（条款<code>31</code>）。如果<code>Widget</code>继承<code>Timer</code>，当<code>Widget</code>被编译时<code>Timer</code>的定义必须可见，所以定义<code>Widget</code>的那个文件恐怕必须<code>#include Timer.h</code>。但如果<code>WidgetTimer</code>移出<code>Widget</code>所在文件之外而<code>Widget</code>内含指针指向一个<code>WidgetTimer</code>，<code>Widget</code>可以只带着一个简单的<code>WidgetTimer</code>前向声明式，不再需要<code>#include</code>任何与<code>Timer</code>有关的东西。很容易就实现了解耦。</li>
+</ul>
+</li>
+<li><p><code>EBO</code>（<code>empty base optimization</code>）</p>
+<p> <code>empty class</code>指的是没有<code>non-static</code>成员变量，没有<code>virtual</code>函数，也没有<code>virtual base class</code>。于是这种<code>class</code>不占用理论上不占用任何内存空间。然而在实现技术上，<code>C++</code>要求<strong>独立（非附属）对象</strong>都必须有非零大小。</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Empty</span> &#123;</span> &#125;; <span class="comment">// 没有任何需要存储的数据</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 理论上 sizeof(HoldAnInt) = 4 字节(就一个 int)</span></span><br><span class="line"><span class="comment">// 实际上 sizeof(HoldAnInt) = 8 字节</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HoldAnInt</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int</span> x; <span class="comment">// 4 字节</span></span><br><span class="line">    Empty e; <span class="comment">// 理论上应该不占据内存</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>C++</code>编译器默认为<code>empty class</code><strong>独立对象</strong>安插一个<code>char</code>（<code>1</code>字节）</p>
+</li>
+<li><p>由于内存对齐<code>HoldAnInt</code>的实际大小为<code>4 + 1(内存对齐至 4) = 8</code></p>
+<p>但这个约束不适用于<code>derived class</code>对象的<code>base class</code>成分（非独立）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 理论和实际上 sizeof(HoldAnInt) = 4 字节(就一个 int)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HoldAnInt</span> :</span> <span class="keyword">public</span> Empty</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int</span> x; <span class="comment">// 4 字节</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>现实中的<code>empty class</code>并非真是<code>empty</code>。往往内含<code>typedef</code>，<code>enum</code>，<code>static</code>成员变量，或<code>non-virtual</code>函数。<code>STL</code>就有许多技术用途的<code>empty class</code>，其中内含有用的成员（通常是<code>typedef</code>），包括<code>base class unary_function</code>和<code>binary_function</code>，这些是“用户自定义之函数对象”通常会继承的<code>class</code>。由于<code>EBO</code>，这样的继承很少增加<code>derived class</code>的大小。</p>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<h5 id="条款40：明智而谨慎地使用多重继承"><a href="#条款40：明智而谨慎地使用多重继承" class="headerlink" title="条款40：明智而谨慎地使用多重继承"></a>条款<code>40</code>：明智而谨慎地使用多重继承</h5><ul>
+<li><p>多重继承较单一继承复杂，可能导致歧义性</p>
+<p>  当继承的多个<code>base</code>具有同名成员函数时，<code>derived</code>类调用时会出现歧义。</p>
+</li>
+<li><p>有时多重继承不得不需要<code>virtual</code>继承，而这会带来额外的体积、运行速度、初始化复杂度等成本</p>
+<p>  比如这样的钻石继承体系：</p>
+<p>  <img src="%E5%A4%9A%E9%87%8D%E7%BB%A7%E6%89%BF.png" alt=""></p>
+<p>  这个继承体系中某个<code>base class</code>和某个<code>derived class</code>之间有一条以上的相通路线，假设<code>File class</code>有个成员变量<code>fileName</code>，那么<code>IOFile</code>从每一个<code>base class</code>各继承一份，所以其对象内会有两份<code>fileName</code>成员变量。然而<code>IOFile</code>对象只该有一个文件名称，所以名称<code>fileName</code>不该重复。</p>
+<p>  解决办法就是采用<code>virtual</code>继承：</p>
+<p>  <img src="%E5%A4%9A%E9%87%8D%E7%BB%A7%E6%89%BFvirtual%E7%BB%A7%E6%89%BF.png" alt=""></p>
+<p>  <code>virtual</code>继承带来的后果是：</p>
+<ul>
+<li><p>使用<code>virtual</code>继承的那些<code>class</code>所产生的对象往往比使用<code>non-virtual</code>继承的<code>class</code>体积大</p>
+</li>
+<li><p>访问<code>virtual base class</code>的成员变量时，也比访问<code>non-virtual base class</code>的成员变量速度慢</p>
+</li>
+<li><p>另外，支配“<code>virtual base class</code>初始化”的规则比起<code>non-virtual base class</code>的情况远为复杂且不直观。<code>virtual base class</code>的初始化责任是由继承体系中的最低层（<code>most derived</code>）<code>class</code>负责的，这意味着：</p>
+<ol>
+<li><code>class</code>若派生自<code>virtual base</code>而需要初始化，必须知道其<code>virtual base class</code>——不论那些<code>base class</code>距离多远。</li>
+<li>当一个新的<code>derived class</code>加入继承体系中，它必须承担其<code>virtual base class</code>的初始化责任。</li>
+</ol>
+<p>关于<code>virtual</code>继承的忠告：</p>
+</li>
+</ul>
+<ol>
+<li>非必要不使用<code>virtual base</code>。平常请使用<code>non-virtual</code>继承。</li>
+<li>如果必须使用<code>virtual base class</code>，尽可能避免在其中放置数据。这么一来你就不需担心这些<code>class</code>身上的初始化（和赋值）所带来的诡异事情了。</li>
+</ol>
+</li>
+</ul>
+<p>最后看一个多重继承的应用例子——<code>public</code>继承某个<code>Interface class</code>和<code>private</code>继承某个协助实现的<code>class</code>。</p>
+<p><img src="%E5%A4%9A%E9%87%8D%E7%BB%A7%E6%89%BF%E5%BA%94%E7%94%A8%E4%BE%8B%E5%AD%90.png" alt=""></p>
+<p>（参考书籍<code>P195-P198</code>）</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Effective-C/" rel="tag"># Effective C++</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/20200404/" rel="prev" title="数据结构与算法之概论">
+      <i class="fa fa-chevron-left"></i> 数据结构与算法之概论
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/20200418/" rel="next" title="Effective C++ 第七章">
+      Effective C++ 第七章 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC80OTQ0NS8yNTkzNw=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#第6章：继承与面向对象设计"><span class="nav-number">1.</span> <span class="nav-text">第6章：继承与面向对象设计</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#条款32：确定你的public继承塑模出is-a关系"><span class="nav-number">1.1.</span> <span class="nav-text">条款32：确定你的public继承塑模出is-a关系</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#条款33：避免遮掩继承而来的名称"><span class="nav-number">1.2.</span> <span class="nav-text">条款33：避免遮掩继承而来的名称</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#条款34：区分接口继承和实现继承"><span class="nav-number">1.3.</span> <span class="nav-text">条款34：区分接口继承和实现继承</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#条款35：考虑virtual函数以外的其他选择"><span class="nav-number">1.4.</span> <span class="nav-text">条款35：考虑virtual函数以外的其他选择</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#条款36：绝不重新定义继承而来的non-virtual函数"><span class="nav-number">1.5.</span> <span class="nav-text">条款36：绝不重新定义继承而来的non-virtual函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#条款37：绝不重新定义继承而来的缺省参数值"><span class="nav-number">1.6.</span> <span class="nav-text">条款37：绝不重新定义继承而来的缺省参数值</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#条款38：通过复合塑模出has-a或is-implemented-in-terms-of"><span class="nav-number">1.7.</span> <span class="nav-text">条款38：通过复合塑模出has-a或is-implemented-in-terms-of</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#条款39：明智而谨慎地使用private继承"><span class="nav-number">1.8.</span> <span class="nav-text">条款39：明智而谨慎地使用private继承</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#条款40：明智而谨慎地使用多重继承"><span class="nav-number">1.9.</span> <span class="nav-text">条款40：明智而谨慎地使用多重继承</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Liu Y.L."
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Liu Y.L.</p>
+  <div class="site-description" itemprop="description">寒江孤影-江湖故人-相逢何必曾相识</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yuanlehome" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuanlehome" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yuanlehome@163.com" title="E-Mail → mailto:yuanlehome@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Liu Y.L.</span>
+</div>
+
+<span>我已在此等候你 <span id="showDays"></span></span>
+<script>
+  var seconds = 1000;
+  var minutes = seconds * 60;
+  var hours = minutes * 60;
+  var days = hours * 24;
+  var years = days * 365;
+  var birthDay = Date.UTC(2020,04,04,00,00,00); // 这里设置建站时间
+  setInterval(function() {
+    var today = new Date();
+    var todayYear = today.getFullYear();
+    var todayMonth = today.getMonth()+1;
+    var todayDate = today.getDate();
+    var todayHour = today.getHours();
+    var todayMinute = today.getMinutes();
+    var todaySecond = today.getSeconds();
+    var now = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+    var diff = now - birthDay;
+    var diffYears = Math.floor(diff/years);
+    var diffDays = Math.floor((diff/days)-diffYears*365);
+    var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+    var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+    var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+      document.getElementById('showDays').innerHTML=""+diffYears+" 年 "+diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+  }, 1000);
+</script>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>

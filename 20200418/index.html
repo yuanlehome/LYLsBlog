@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#7d574c">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#7d574c">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yuanlehome.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="第7章：模板与泛型编程条款41：了解隐式接口和编译期多态 哪一个重载函数被调用——发生在编译期  哪一个virtual函数被绑定——发生在运行期  class和template都支持接口和多态   对class而言，接口是显式的，以成员函数的签名为中心，多态则通过virtual函数发生在运行期。对template而言，接口是隐式的，以有效表达式为中心，多态则通过template具现化和函数重载解析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Effective C++ 第七章">
+<meta property="og:url" content="https://yuanlehome.github.io/20200418/index.html">
+<meta property="og:site_name" content="LYL&#39;s Blog">
+<meta property="og:description" content="第7章：模板与泛型编程条款41：了解隐式接口和编译期多态 哪一个重载函数被调用——发生在编译期  哪一个virtual函数被绑定——发生在运行期  class和template都支持接口和多态   对class而言，接口是显式的，以成员函数的签名为中心，多态则通过virtual函数发生在运行期。对template而言，接口是隐式的，以有效表达式为中心，多态则通过template具现化和函数重载解析">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-04-18T13:35:42.000Z">
+<meta property="article:modified_time" content="2021-03-12T13:00:05.707Z">
+<meta property="article:author" content="Liu Y.L.">
+<meta property="article:tag" content="Effective C++">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://yuanlehome.github.io/20200418/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Effective C++ 第七章 | LYL's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">LYL's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/20200418/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Effective C++ 第七章
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-18 21:35:42" itemprop="dateCreated datePublished" datetime="2020-04-18T21:35:42+08:00">2020-04-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-03-12 21:00:05" itemprop="dateModified" datetime="2021-03-12T21:00:05+08:00">2021-03-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%EF%BC%8CEffective-C/" itemprop="url" rel="index"><span itemprop="name">读书笔记，Effective C++</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>14k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>13 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="第7章：模板与泛型编程"><a href="#第7章：模板与泛型编程" class="headerlink" title="第7章：模板与泛型编程"></a>第<code>7</code>章：模板与泛型编程</h4><h5 id="条款41：了解隐式接口和编译期多态"><a href="#条款41：了解隐式接口和编译期多态" class="headerlink" title="条款41：了解隐式接口和编译期多态"></a>条款<code>41</code>：了解隐式接口和编译期多态</h5><ul>
+<li><p>哪一个重载函数被调用——发生在编译期</p>
+</li>
+<li><p>哪一个<code>virtual</code>函数被绑定——发生在运行期</p>
+</li>
+<li><p><code>class</code>和<code>template</code>都支持接口和多态</p>
+<p>  对<code>class</code>而言，接口是显式的，以成员函数的签名为中心，多态则通过<code>virtual</code>函数发生在运行期。对<code>template</code>而言，接口是隐式的，以有效表达式为中心，多态则通过<code>template</code>具现化和函数重载解析发生于编译期。</p>
+</li>
+</ul>
+<a id="more"></a>
+
+<h5 id="条款42：了解typename的双重意义"><a href="#条款42：了解typename的双重意义" class="headerlink" title="条款42：了解typename的双重意义"></a>条款<code>42</code>：了解<code>typename</code>的双重意义</h5><ul>
+<li><p>当我们声明模板类型参数，<code>class</code>和<code>typename</code>的意义完全相同</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>typename</code>用来标识嵌套从属类型名称</p>
+<p>  <code>template</code>内出现的名称如果相依于某个<code>template</code>参数，称这个名称为从属名称，如果丛属名称在<code>class</code>内呈嵌套状，称为嵌套从属名称。如果嵌套从属名称还指涉某种类型名称为嵌套从属类型名称</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// std::iterator_traits&lt;IterT&gt;::value_type 就是嵌套从属类型名称</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> IterT&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">workWithIterator</span><span class="params">(IterT iter)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 必须使用 typename 关键字标识</span></span><br><span class="line">    <span class="keyword">typename</span> <span class="built_in">std</span>::iterator_traits&lt;IterT&gt;::<span class="function">value_type <span class="title">temp</span><span class="params">(*iter)</span></span>;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用 typedef 少打几个字</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> IterT&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">workWithIterator</span><span class="params">(IterT iter)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 必须使用 typename 关键字标识</span></span><br><span class="line">    <span class="keyword">typedef</span> <span class="keyword">typename</span> <span class="built_in">std</span>::iterator_traits&lt;IterT&gt;::value_type value_type;</span><br><span class="line">    <span class="function">value_type <span class="title">temp</span><span class="params">(*iter)</span></span>;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>不允许在<code>base class list</code>或<code>member initialization list</code>内使用<code>typename</code>作为<code>base class</code>的标识符</p>
+</li>
+</ul>
+<h5 id="条款43：学习处理模板化基类内的名称"><a href="#条款43：学习处理模板化基类内的名称" class="headerlink" title="条款43：学习处理模板化基类内的名称"></a>条款<code>43</code>：学习处理模板化基类内的名称</h5><p>假设我们需要撰写一个<code>MsgSender</code>类，它能够传送信息到若干不同的<code>Company</code>去。信息要不进行加密后的密文，要不就是未经加工的文字。如果编译期间我们有足够信息来决定哪一个信息传至哪一家公司，就可以采用基于<code>template</code>的解法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CompanyA</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    ...</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">sendCleartext</span><span class="params">(<span class="keyword">const</span> <span class="built_in">string</span>&amp; msg)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">sendEncrypted</span><span class="params">(<span class="keyword">const</span> <span class="built_in">string</span>&amp; msg)</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CompanyB</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    ...</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">sendCleartext</span><span class="params">(<span class="keyword">const</span> <span class="built_in">string</span>&amp; msg)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">sendEncrypted</span><span class="params">(<span class="keyword">const</span> <span class="built_in">string</span>&amp; msg)</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">... <span class="comment">// 针对其他公司设计的 class</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MsgInfo</span> &#123;</span>...&#125;; <span class="comment">// 这个 class 以备将来产生信息</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Company&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MsgSender</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	... <span class="comment">//构造函数、析构函数等等</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">sendClear</span><span class="params">(<span class="keyword">const</span> MsgInfo&amp; info)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">		<span class="built_in">string</span> msg;</span><br><span class="line">		... <span class="comment">// 在这儿, 根据 info 产生信息</span></span><br><span class="line">        Company c;</span><br><span class="line">		c.sendCleartext(msg);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">sendSecret</span><span class="params">(<span class="keyword">const</span> MsgInfo&amp; info)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="built_in">string</span> msg;</span><br><span class="line">		... <span class="comment">// 在这儿, 根据 info 产生信息</span></span><br><span class="line">        Company c;</span><br><span class="line">		c.sendEncrypted(msg);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>现在假设我们想要在每次送出信息时<code>log</code>某些信息。<code>derived class</code>可轻易提供解决方法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Company&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LoggingMsgSender</span> :</span> <span class="keyword">public</span> MsgSender&lt;Company&gt;</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	... <span class="comment">// 构造函数、析构函数等等</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">sendClearMsg</span><span class="params">(<span class="keyword">const</span> MsgInfo&amp; info)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">		... <span class="comment">// 将“传送前”的信息写至 log</span></span><br><span class="line">		sendClear(info); <span class="comment">// 调用 base class 函数, 这段码无法通过编译!</span></span><br><span class="line">		... <span class="comment">// 将“传送后”的信息写至 log</span></span><br><span class="line">    &#125;</span><br><span class="line">	...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>编译器会抱怨<code>sendClear</code>函数不存在，明明在那里，为什么？</p>
+<p>问题在于，当编译器看见<code>class template LoggingMsgSender</code>定义式时，并不知道它继承什么样的<code>class</code>。当然它继承的是<code>MsgSender&lt;Company&gt;</code>，但其中的<code>Company</code>是个<code>template</code>参数，不当<code>LoggingMsgSender</code>被具现化之前无法确切知道它是什么。而如果不知道<code>Company</code>是什么，就无法知道<code>class MsgSender&lt;Company&gt;</code>看起来像什么——更明确地说是没办法知道它是否有个<code>sendClear</code>函数。</p>
+<p>具体点说，假设现在有个<code>CompanyZ</code>坚持只使用加密通讯：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 不提供 sendCleartext 函数</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CompanyZ</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    ...</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">sendEncrypted</span><span class="params">(<span class="keyword">const</span> <span class="built_in">string</span>&amp; msg)</span></span>;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>一般性的<code>MsgSender template</code>对<code>CompanyZ</code>并不合适，因为那个<code>template</code>提供了一个<code>sendClearMsg</code>函数，而这对<code>CompanyZ</code>对象并不合理。欲矫正这个问题，我们可以针对<code>CompanyZ</code>产生一个<code>MsgSender</code>特化版：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 全特化版本只提供 sendSecret 函数</span></span><br><span class="line"><span class="keyword">template</span>&lt;&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MsgSender</span>&lt;CompanyZ&gt;</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	... <span class="comment">//构造函数、析构函数等等</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">sendSecret</span><span class="params">(<span class="keyword">const</span> MsgInfo&amp; info)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="built_in">string</span> msg;</span><br><span class="line">		... <span class="comment">// 在这儿, 根据 info 产生信息</span></span><br><span class="line">        Company c;</span><br><span class="line">		c.sendEncrypted(msg);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这就解释了前面编译器拒绝那个调用的原因：它知道<code>base class template</code>有可能被特化，而那个特化版本可能不提供和一般性<code>template</code>相同的接口。因此它往往拒绝在<code>templatized base class</code>（本例的<code>MsgSender&lt;Company&gt;</code>）内寻找继承而来的名称（本例的<code>SendClear</code>)。</p>
+<ul>
+<li>当我们从<code>Object Oriented C++</code>跨进<code>Template C++</code>（见条款<code>1</code>) ，继承就不像以前那样畅行无阻了</li>
+</ul>
+<p>有三个解决令<code>C++</code>编译器“不进入<code>templatized base class</code>观察”的行为失效的办法：</p>
+<ol>
+<li><p>使用<code>this</code>指针</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Company&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LoggingMsgSender</span> :</span> <span class="keyword">public</span> MsgSender&lt;Company&gt;</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	... <span class="comment">// 构造函数、析构函数等等</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">sendClearMsg</span><span class="params">(<span class="keyword">const</span> MsgInfo&amp; info)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">		... <span class="comment">// 将“传送前”的信息写至 log</span></span><br><span class="line">		<span class="keyword">this</span>-&gt;sendClear(info); <span class="comment">// 调用 base class 函数</span></span><br><span class="line">		... <span class="comment">// 将“传送后”的信息写至 log</span></span><br><span class="line">    &#125;</span><br><span class="line">	...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用<code>using</code>声明</p>
+<p> 虽然<code>using</code>声明式在在条款<code>33</code>或在这里都可有效运作，但两处解决的问题其实不相同。前者是<code>base class</code>名称被<code>derived class</code>名称遮掩，而后者是编译器不进入<code>base class</code>作用域内查找，于是我们通过<code>using</code>告诉它，请它那么做。</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Company&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LoggingMsgSender</span> :</span> <span class="keyword">public</span> MsgSender&lt;Company&gt;</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">using</span> MsgSender&lt;Company&gt;::sendClear;</span><br><span class="line">	... <span class="comment">// 构造函数、析构函数等等</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">sendClearMsg</span><span class="params">(<span class="keyword">const</span> MsgInfo&amp; info)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">		... <span class="comment">// 将“传送前”的信息写至 log</span></span><br><span class="line">		sendClear(info); <span class="comment">// 调用 base class 函数</span></span><br><span class="line">		... <span class="comment">// 将“传送后”的信息写至 log</span></span><br><span class="line">    &#125;</span><br><span class="line">	...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用作用域运算符<code>::</code>明确指定</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Company&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LoggingMsgSender</span> :</span> <span class="keyword">public</span> MsgSender&lt;Company&gt;</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	... <span class="comment">// 构造函数、析构函数等等</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">sendClearMsg</span><span class="params">(<span class="keyword">const</span> MsgInfo&amp; info)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">		... <span class="comment">// 将“传送前”的信息写至 log</span></span><br><span class="line">		MsgSender&lt;Company&gt;::sendClear(info); <span class="comment">// 调用 base class 函数</span></span><br><span class="line">		... <span class="comment">// 将“传送后”的信息写至 log</span></span><br><span class="line">    &#125;</span><br><span class="line">	...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>即使如此，如果稍后这样做：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LoggingMsgSender&lt;Companyz&gt;zMsgSender;</span><br><span class="line">MsgInfo msgData;</span><br><span class="line">...</span><br><span class="line">zMsgSender.sendClearMsg(msgData); <span class="comment">// 仍然无法通过编译</span></span><br></pre></td></tr></table></figure>
+
+<p>其中对<code>sendClearMsg</code>的调用动作将无法通过编译，因为在那个点上，编译器知道<code>base class</code>是个<code>template</code>特化版本<code>MsgSender&lt;CompanyZ&gt;</code>，而且它知道那个<code>class</code>不提供<code>sendClear</code>函数，而<code>sendClear</code>却是<code>sendClearMsg</code>尝试调用的函数。 </p>
+<h5 id="条款44：将与基类无关的代码抽离template"><a href="#条款44：将与基类无关的代码抽离template" class="headerlink" title="条款44：将与基类无关的代码抽离template"></a>条款<code>44</code>：将与基类无关的代码抽离<code>template</code></h5><p>当你编写某个函数，其中某些部分的实现码和另一个函数的实现码实质相同，你会抽出两个函数的共同部分，把它们放进第三个函数中，然后令原先两个函数调用这个新函数。如果你正在编写某个<code>class</code>，而你明白其中某些部分和另一个<code>class</code>的某些部分相同，你也不会重复这共同的部分。你会把共同部分搬移到新<code>class</code>去，然后使用继承或复合（见条款<code>32</code>，<code>38</code>，<code>39</code>) ，令原先的<code>class</code>取用这共同特性。而原<code>class</code>的互异部分仍然留在原位置不动。</p>
+<p>编写<code>template</code>时，也是做相同的分析，以相同的方式避免重复。然而在<code>template</code>代码中，重复是隐晦的：毕竟只存在一份<code>template</code>源码，所以你必须训练自己去感受当<code>template</code>被具现化多次时可能发生的重复。</p>
+<p>举个例子，假设你想为固定尺寸的正方矩阵编写一个<code>template</code>。该矩阵的性质之一是支持逆矩阵运算。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// template 支持 n x n 矩阵, 元素类型为 T</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">size_t</span> n&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">squareMatrix</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    ...</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">invert</span><span class="params">( )</span></span>; <span class="comment">// 求逆矩阵</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">SquareMatrix&lt;<span class="keyword">double</span>, <span class="number">5</span>&gt; sml;</span><br><span class="line">...</span><br><span class="line">sm1.invert(); <span class="comment">// 调用 SquareMatrix&lt;double, 5&gt;::invert</span></span><br><span class="line">sSquareMatrix&lt;<span class="keyword">double</span>, <span class="number">10</span>&gt; sm2;</span><br><span class="line">...</span><br><span class="line">sm2.invert(); <span class="comment">// 调用 SquareMatrix&lt;double, 10&gt;::invert</span></span><br></pre></td></tr></table></figure>
+
+<p>这会具现化两份<code>invert</code>。这些函数并非完完全全相同，因为其中一个操作的是<code>5x5</code>矩阵而另一个操作的是<code>10x10</code>矩阵，但除了常量<code>5</code>和<code>10</code>，两个函数的其他部分完全相同。这是<code>template</code>引出代码膨胀的一个典型例子。</p>
+<p>第一次修改：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 与尺寸无关的 base class</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SquareMatrixBase</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">invert</span><span class="params">(<span class="keyword">size_t</span> matrixSize)</span> <span class="comment">// 以给定的尺寸求逆矩阵</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">size_t</span> n&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SquareMatrix</span> :</span> <span class="keyword">private</span> SquareMatrixBase&lt;T&gt;</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// 声明为 private 是为了不让客户看见</span></span><br><span class="line">	<span class="keyword">using</span> SquareMatrixBase&lt;T&gt;::invert; <span class="comment">// 避免遮掩 base 版的 invert, 见条款 33</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    ...</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">invert</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>-&gt;invert(n);	<span class="comment">// inline 调用 base class 版的 invert</span></span><br><span class="line">        					<span class="comment">// 为什么这儿出现 this-&gt; 见条款 43</span></span><br><span class="line">        					<span class="comment">// LYL 认为前面已经使用了 using, this-&gt; 应该也不需要了</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这里的<code>base class</code>只是为了帮助<code>derived class</code>实现，不是为了表现<code>SquareMatrix</code>和<code>SquareMatrixBase</code>之间的<code>is-a</code>关系（关于<code>private</code>继承，见条款<code>39</code>)。</p>
+<p>目前为止一切都好，但还有一些棘手的题目没有解决。<code>SquareMatrixBase::invert</code>如何知道该操作什么数据？虽然它从参数中知道矩阵尺寸，但它如何知道哪个特定矩阵的数据在哪儿？想必只有<code>derived class</code>知道。<code>derived class</code>如何联络其<code>base class</code>做逆运算动作？一个可能的做法是为<code>SquareMatrixBase::invert</code>添加另一个参数，可以是个指针，指向一块用来放置矩阵数据的内存地址。</p>
+<p>第二次修改：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SquareMatrixBase</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">	<span class="comment">// 存储矩阵大小和一个指针, 指向矩阵数值</span></span><br><span class="line">	squareMatrixBase(<span class="keyword">size_t</span> n, T* pMem) : size(n), pData(pMem) &#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">invert</span><span class="params">()</span> <span class="comment">// 不用指定尺寸了</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">	...</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">size_t</span> size; <span class="comment">// 矩阵的大小</span></span><br><span class="line">	T* pData; <span class="comment">// 指针, 指向矩阵内容</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">size_t</span> n&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SquareMatrix</span> :</span> <span class="keyword">private</span> SquareMatrixBase&lt;T&gt;</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">using</span> SquareMatrixBase&lt;T&gt;::invert;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	SquareMatrix() : SquareMatrixBase&lt;T&gt;(n, data) &#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">invert</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>-&gt;invert(n);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	T data[n * n];	<span class="comment">// 这里直接将数据矩阵存储在 SquareMatrix 对象内部</span></span><br><span class="line">					<span class="comment">// 也可以使用动态内存分配的方案</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这个条款只讨论由<code>non-type template parameter</code>（非类型模板参数）带来的膨胀，其实<code>type parameter</code>（类型参数）也会导致膨胀。例如在许多平台上<code>int</code>和 <code>long</code>有相同的二进制表述，所以像<code>vector&lt;int&gt;</code>和<code>vector&lt;long&gt;</code>的成员函数有可能完全相同。某些链接器（<code>linker</code>）会合并完全相同的函数实现码，但有些不会，后者意味某些<code>template</code>被具现化为<code>int</code>和<code>long</code>两个版本，并因此造成代码膨胀。类似情况，所有指针类型都有相同的二进制表述，因此凡<code>template</code>持有指针者（例如<code>list&lt;int*&gt;</code>，<code>list&lt;const int*&gt;</code>，<code>list&lt;SquareMatrix&lt;long, 3&gt;*&gt;</code>等等）往往应该对每一个成员函数使用唯一一份底层实现。这很具代表性地意味，如果你实现某些成员函数而它们操作强型指针（<code>strongly typed pointer</code>，即<code>T*</code>），你应该令它们调用另一个操作无类型指针（<code>untyped pointer</code>，即<code>void*</code>）的函数，由后者完成实际工作。某些<code>C++</code>标准程序库实现版本的确为<code>vector</code>，<code>deque</code>和<code>list</code>等<code>template</code>做了这件事。</p>
+<h5 id="条款45：成员函数模板接受所有兼容类型"><a href="#条款45：成员函数模板接受所有兼容类型" class="headerlink" title="条款45：成员函数模板接受所有兼容类型"></a>条款<code>45</code>：成员函数模板接受所有兼容类型</h5><p>内置指针是支持隐式转换的，比如<code>derived class</code>的指针可以隐式转换为<code>base class</code>指针，指向<code>non-const</code>对象的指针可以转换为指向<code>const</code>对象等等。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Top</span> &#123;</span>...&#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Middle</span> :</span> <span class="keyword">public</span> Top &#123;...&#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Bottom</span> :</span> <span class="keyword">public</span> Middle &#123;...&#125;;</span><br><span class="line">Top* pt1 = <span class="keyword">new</span> Middle; <span class="comment">// 将 Middle* 转换为 Top*</span></span><br><span class="line">Top* pt2 = <span class="keyword">new</span> Bottom; <span class="comment">// 将 Bottom* 转换为 Top*</span></span><br><span class="line"><span class="keyword">const</span> Top* = pt1; <span class="comment">// Top* 转换为 const Top*</span></span><br></pre></td></tr></table></figure>
+
+<p>但是我们自己实现的智能指针模板类，想做到这样就稍稍有点麻烦了。我们希望下面的代码能够通过编译：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">temmplate&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SmartPtr</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">explicit</span> <span class="title">SmartPtr</span><span class="params">(T* realPtr)</span></span>; <span class="comment">// 智能指针通常以内置指针完成初始化</span></span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将 SmartPtr&lt;Middle&gt;转 换为 SmartPtr&lt;Top&gt;</span></span><br><span class="line">SmartPtr&lt;Top&gt; pt1 = SmartPtr&lt;Middle&gt;(<span class="keyword">new</span> Middle);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将 SmartPtr&lt;Bottom&gt; 转换为 SmartPtr&lt;Top&gt;</span></span><br><span class="line">SmartPtr&lt;Top&gt; pt2 = SmartPtr&lt;Bottom&gt;(<span class="keyword">new</span> Bottom);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将 SmartPtr&lt;Top&gt; 转换为 SmartPtr&lt;const Top&gt;</span></span><br><span class="line">SmartPtr&lt;<span class="keyword">const</span> Top&gt; pct2 = ptl;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意，这些赋值表达式需要调用的都是<code>copy</code>构造函数。</strong>这里的代码不能通过编译，因为如果以带有<code>base-derived</code>关系的<code>B</code>，<code>D</code>两类型分别具现化某个<code>template</code>，产生出来的两个具现体并不带有<code>base-derived</code>关系，所以编译器视<code>SmartPtr&lt;Middle&gt;</code>和<code>SmartPtr&lt;Top&gt;</code>为完全不同的<code>class</code>，为了获得我们希望获得的<code>SmartPtr class</code>之间的转换能力，我们必须将它们明确地编写出来。</p>
+<p>我们应该为它写一个<strong>构造模板</strong>。这样的模板是所谓<code>member function template</code>，其作用是为<code>class</code>生成函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SmartPtr</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="comment">// member template, 为了生成 copy 构造函数</span></span><br><span class="line">	<span class="keyword">template</span>&lt;<span class="keyword">typename</span> U&gt;</span><br><span class="line">	SmartPtr(<span class="keyword">const</span> SmartPtr&lt;U&gt;&amp; other);</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>我们称之为泛化（<code>generalized</code>）<code>copy</code>构造函数。它并未被声明为<code>explicit</code>，那是因为内置指针类型之间的转换（例如从<code>derived class</code>指针转为<code>base class指针</code>）是隐式转换，所以让智能指针按照这种形式也属合理。</p>
+<p>但是，这个为<code>SmartPtr</code>而写的“泛化<code>copy</code>构造函数”提供的东西比我们需要的更多。我们只希望根据一个<code>SmartPtr&lt;Bottom&gt;</code>创建一个<code>SmartPtr&lt;Top&gt;</code>，却不希望根据一个<code>SmartPtr&lt;Top&gt;</code>创建一个<code>SmartPtr&lt;Bottomr&gt;</code>，因为那对<code>public</code>继承而言（见条款32）是矛盾的。我们也不希望根据一个<code>SmartPtr&lt;double&gt;</code>创建一个<code>SmartPtr&lt;int&gt;</code>，我们必须从某方面对这一<code>member template</code>所创建的成员函数群进行挑拣。</p>
+<p>假设<code>SmartPtr</code>遵循<code>std::shared_ptr</code>也提供一个<code>get</code>成员函数，返回智能指针对象所持有的那个原始指针的副本，那么我们可以在“构造模板”实现代码中约束转换行为，使它符合我们的期望：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SmartPtr</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// 以 other 的 heldPtr 初始化 this 的 heldPtr</span></span><br><span class="line">	<span class="keyword">template</span>&lt;<span class="keyword">typename</span> U&gt;</span><br><span class="line">	SmartPtr(<span class="keyword">const</span> SmartPtr&lt;U&gt;&amp; other) : heldPtr(other.get()) &#123;...&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function">T* <span class="title">get</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123; <span class="keyword">return</span> heldPtr; &#125;</span><br><span class="line">	...</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	T* heldPtr; <span class="comment">// 这个 SmartPtr 持有的内置指针</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这个行为只有当“存在某个隐式转换可将一个<code>U*</code>指针转为一个<code>T*</code>指针”时才能通过编译，而这正是我们想要的。</p>
+<p><code>member function template</code>（成员函数模板）的效用不限于构造函数，<strong>它常扮演的另一个角色是支持赋值操作。</strong>例如<code>std::shared_ptr</code>同时支持所有“来自兼容之内置指针、<code>std::shared_ptr</code>、<code>std::weak_ptr</code>”的构造行为以及赋值操作（<code>std::weak_ptr</code>除外）。赋值操作符和<code>copy</code>构造函数实现类似，故省略。</p>
+<ul>
+<li>如果你声明<code>member template</code>用于“泛化<code>copy</code>构造”或“泛化<code>assignment</code>操作”你还是需要声明正常的<code>copy</code>构造函数和<code>copy assignment</code>操作符</li>
+</ul>
+<p>条款<code>5</code>说过，编译器可能为我们产生四个成员函数，其中两个是<code>copy</code>构造函数和<code>copy assignment</code>操作符。现在，<code>SmartPtr</code>声明了一个泛化<code>copy</code>构造函数，而显然一旦类型<code>T</code>和<code>U</code>相同，泛化<code>copy</code>构造函数会被具现化为“正常的”<code>copy</code>构造函数。那么究竟编译器会暗自为<code>SmartPtr</code>生成一个<code>copy</code>构造函数呢？或当某个<code>SmartPtr</code>对象根据另一个同型的<code>SmartPtr</code>对象展开构造行为时，编译器会将“泛化copy构造函数模板”具现化呢？</p>
+<p><code>member template</code>并不改变语言规则：“如果程序需要一个<code>copy</code>构造函数，你却没有声明它，编译器会为你暗自生成一个”。在<code>class</code>内声明泛化<code>copy</code>构造函数（是个<code>member template</code>）并不会阻止编译器生成它们自己的<code>copy</code>构造函数（一个<code>non-template</code>），所以如果你想要控制<code>copy</code>构造的方方面面，你必须同时声明泛化<code>copy</code>构造函数和“正常的”<code>copy</code>构造函数。相同规则也适用于赋值操作。</p>
+<h5 id="条款46：需要类型转换时请为模板定义非成员函数"><a href="#条款46：需要类型转换时请为模板定义非成员函数" class="headerlink" title="条款46：需要类型转换时请为模板定义非成员函数"></a>条款<code>46</code>：需要类型转换时请为模板定义非成员函数</h5><p>条款<code>24</code>讨论过为什么惟有<code>non-member</code>函数才有能力“在所有实参身上实施隐式类型转换”，该条款并以<code>Rational class</code>的<code>operator*</code>函数为例。本条款将<code>Rational</code>和<code>operator*</code>模板化：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rational</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// 条款 20 告诉你为什么参数以 passed by reference 方式传递</span></span><br><span class="line">	Rational(<span class="keyword">const</span> T&amp; numerator = <span class="number">0</span>, <span class="keyword">const</span> T&amp; denominator = <span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">	<span class="comment">// 条款 28 告诉你为啥返回值以 passed by value 方式传递</span></span><br><span class="line">	<span class="comment">// 条款 3 告诉你为啥它们是 const</span></span><br><span class="line">	<span class="function"><span class="keyword">const</span> T <span class="title">numerator</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">const</span> T <span class="title">denominator</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">const</span> Rational&lt;T&gt; <span class="keyword">operator</span>*(<span class="keyword">const</span> Rational&lt;T&gt;&amp; lhs,</span><br><span class="line">                            <span class="keyword">const</span> Rational&lt;T&gt;&amp; rhs)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> Rational(lhs.numerator() * rhs.numerator(),</span><br><span class="line">                    lhs.denominator() * rhs.denominator());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>就像条款<code>24</code>一样，我们也希望支持混合式算术运算，然而以下代码却不能通过编译：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Rational&lt;int&gt; oneHalf(1, 2);</span><br><span class="line">Rational&lt;int&gt; result &#x3D; oneHalf * 2; &#x2F;&#x2F; 错误!无法通过编译</span><br></pre></td></tr></table></figure>
+
+<p>在这里，编译器不知道我们想要调用哪个函数！它们试图找到什么函数被名为<code>operator*</code>的<code>template</code>具现化出来。它们知道它们应该可以具现化某个“名为<code>operator*</code>并接受两个<code>Rational&lt;T&gt;</code>参数”的函数，但为完成这一具现化行动，必须先算出<code>T</code>是什么。</p>
+<p>为了推导<code>T</code>，它们看了看<code>operator*</code>调用动作中的实参类型。分别是<code>Rational&lt;int&gt;</code>（<code>oneHalf</code>的类型）和<code>int</code>（<code>2</code>的类型）。</p>
+<p>以<code>oneHalf</code>进行推导，过程并不困难。第二参数的推导则没有这么顺利。<code>operator*</code>的第二参数被声明为<code>Rational&lt;T&gt;</code>，但传递给<code>operator*</code>的类型是<code>int</code>（<code>2</code>）。编译器如何根据这个<code>2</code>推算出<code>T</code>？你或许会期盼编译器使用<code>Rational&lt;int&gt;</code>的<code>non-explicit</code>构造函数将转换为<code>Rational&lt;int&gt;</code>，进而将<code>T</code>推导为<code>int</code>，然而<strong><code>template</code>实参推导过程中并不考虑采纳“通过构造函数而发生的”隐式类型转换。</strong></p>
+<p><code>template class</code>内的<code>friend</code>声明式可以指涉某个特定函数。这意味<code>class Rational&lt;T&gt;</code>可以声明<code>operator*</code>是它的一个<code>friend</code>函数。<code>class template</code>并不倚赖<code>template</code>实参推导，所以编译器总是能够在<code>class Rational&lt;T&gt;</code>具现化时得知<code>T</code>。因此：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rational</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    ...</span><br><span class="line">	<span class="keyword">friend</span></span><br><span class="line">	<span class="keyword">const</span> Rational&lt;T&gt; <span class="keyword">operator</span>*(<span class="keyword">const</span> Rational&lt;T&gt;&amp; lhs,</span><br><span class="line">								<span class="keyword">const</span> Rational&lt;T&gt;&amp; rhs);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">const</span> Rational&lt;T&gt; <span class="keyword">operator</span>*(<span class="keyword">const</span> Rational&lt;T&gt;&amp; lhs, <span class="keyword">const</span> Rational&lt;T&gt;&amp; rhs)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> Rational(lhs.numerator() * rhs.numerator(),</span><br><span class="line">                    lhs.denominator() * rhs.denominator());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在当对象<code>oneHalf</code>被声明为一个<code>Rational&lt;int&gt;</code>，<code>class Rational&lt;int&gt;</code>于是被具现化出来，而作为过程的一部分，<code>friend</code>函数<code>operator*</code>（接受<code>Rational&lt;int&gt;</code>参数）也就被自动声明出来。后者身为一个函数而非<code>function template</code>，因此编译器可在调用它时使用隐式转换函数（例如调用<code>Rational</code>的<code>non-explicit</code>构造函数）。                                                        </p>
+<p>但是，虽然这段代码通过编译，却无法连接。</p>
+<p>因为这个友元函数只被声明于<code>Rational</code>内，并没有被定义出来。我们意图令此<code>class</code>外部的<code>operator* template</code>提供定义式，是行不通的。既然我们没有提供定义式，连接器当然找不到它！</p>
+<p>最简单的方法就是，将函数本体放进<code>class</code>内：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rational</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    ...</span><br><span class="line">	<span class="keyword">friend</span></span><br><span class="line">	<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line">    <span class="keyword">const</span> Rational&lt;T&gt; <span class="keyword">operator</span>*(<span class="keyword">const</span> Rational&lt;T&gt;&amp; lhs, <span class="keyword">const</span> Rational&lt;T&gt;&amp; rhs)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> Rational(lhs.numerator() * rhs.numerator(),</span><br><span class="line">                        lhs.denominator() * rhs.denominator());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>为了让类型转换可能发生于所有实参身上，我们需要一个<code>non-member</code>函数（条款<code>24</code>）；为了令这个函数被自动具现化，我们需要将它声明在<code>class</code>内部；而在class内部声明<code>non-member</code>函数的唯一办法就是：令它成为一个<code>friend</code>。因此我们就这样做了。</p>
+<ul>
+<li><p>当此<code>friend</code>函数过于复杂时，令其调用类外的辅助函数</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt; <span class="class"><span class="keyword">class</span> <span class="title">Rational</span>;</span> <span class="comment">// 前向声明</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">const</span> Rational&lt;T&gt; <span class="title">doMultiply</span><span class="params">(<span class="keyword">const</span> Rational&lt;T&gt;&amp; lhs, <span class="keyword">const</span> Rational&lt;T&gt;&amp;rhs)</span></span>;</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">return</span> Rational&lt;T&gt;(lhs.numerator() * rhs.numerator(),</span><br><span class="line">                       lhs.denominator() * rhs.denominator());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rational</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">friend</span></span><br><span class="line">	<span class="keyword">const</span> Rational&lt;T&gt;<span class="keyword">operator</span>* (<span class="keyword">const</span> Rational&lt;T&gt;&amp; lhs,</span><br><span class="line">                                <span class="keyword">const</span> Rational&lt;T&gt;&amp; rhs)</span><br><span class="line">	&#123;</span><br><span class="line">        <span class="keyword">return</span> doMultiply(lhs, rhs);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>  作为一个<code>template</code>，<code>doMultiply</code>当然不支持混合式乘法，但它其实也不需要。它只被<code>operator*</code>调用，而<code>operator*</code>支持混合式操作。</p>
+</li>
+</ul>
+<h5 id="条款47：traits-classes表现类型信息"><a href="#条款47：traits-classes表现类型信息" class="headerlink" title="条款47：traits classes表现类型信息"></a>条款<code>47</code>：<code>traits classes</code>表现类型信息</h5><p><code>STL</code>迭代器分类：</p>
+<ol>
+<li><p><code>input</code>迭代器</p>
+<p> 只能向前移动，一次一步，用户只能读取它所指的东西，而且只能读取一次，读完立即自动向前一步。程序库中的输入流迭代器<code>istream_iterator</code>就属于这一类。</p>
+</li>
+<li><p><code>output</code>迭代器</p>
+<p> 只能向前移动，一次一步，用户只能涂写它所指的东西，而且只能涂写一次，写完立即自动向前一步。程序库中的输出流迭代器<code>ostream_iterator</code>就属于这一类。</p>
+</li>
+<li><p><code>forward</code>迭代器</p>
+<p> 可以做上述两种迭代器做的事情，而且支持多次读写，读写完由用户自行决定是否前进。单向链表<code>slist</code>提供的迭代器就属于这一类。</p>
+</li>
+<li><p><code>bidirectional</code>迭代器</p>
+<p> 除了能做<code>forward</code>迭代器做的事情，还可以向后移动。双向链表<code>list</code>以及<code>set</code>，<code>mutilset</code>，<code>map</code>，<code>mutilmap</code>提供的迭代器属于这一类。</p>
+</li>
+<li><p><code>random access</code>迭代器</p>
+<p> 功能类似于内置指针，可以进行算数操作。<code>vector</code>，<code>deque</code>和<code>string</code>提供的迭代器属于这一类。</p>
+</li>
+<li><p><em>迭代器适配器</em></p>
+<ul>
+<li><em><code>reverse</code>迭代器</em></li>
+<li><em><code>insert</code>迭代器</em><ul>
+<li><em><code>back inserter</code></em></li>
+<li><em><code>front inserter</code></em></li>
+<li><em><code>general inserter</code></em></li>
+</ul>
+</li>
+<li><em><code>stream</code>迭代器</em></li>
+<li><em><code>move</code>迭代器</em></li>
+</ul>
+</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">input_iterator_tag</span> &#123;</span>&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">output_iterator_tag</span> &#123;</span>&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">forward_iterator_tag</span> :</span> <span class="keyword">public</span> input_iterator_tag &#123;&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">bidirectional</span> <span class="title">iterator_tag</span> :</span> <span class="keyword">public</span> forward_iterator_tag &#123;&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">random_access_iterator_tag</span> :</span> <span class="keyword">public</span> bidirectional_iterator_tag &#123;&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这些<code>struct</code>之间的继承关系是有效的<code>is-a</code>关系：所有<code>forward</code>迭代器都是<code>input</code>迭代器，依此类推。</p>
+<p>关于<code>iterator_trait</code>的实现技术（参考书籍<code>P227-P232</code>）</p>
+<h5 id="条款48：认识template元编程"><a href="#条款48：认识template元编程" class="headerlink" title="条款48：认识template元编程"></a>条款<code>48</code>：认识<code>template</code>元编程</h5><ul>
+<li>如题，以后买本书再专门去学吧！</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Effective-C/" rel="tag"># Effective C++</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/20200410/" rel="prev" title="Effective C++ 第六章">
+      <i class="fa fa-chevron-left"></i> Effective C++ 第六章
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/20200612/" rel="next" title="教你实现一个简易的Linux平台下的划词翻译工具">
+      教你实现一个简易的Linux平台下的划词翻译工具 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC80OTQ0NS8yNTkzNw=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#第7章：模板与泛型编程"><span class="nav-number">1.</span> <span class="nav-text">第7章：模板与泛型编程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#条款41：了解隐式接口和编译期多态"><span class="nav-number">1.1.</span> <span class="nav-text">条款41：了解隐式接口和编译期多态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#条款42：了解typename的双重意义"><span class="nav-number">1.2.</span> <span class="nav-text">条款42：了解typename的双重意义</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#条款43：学习处理模板化基类内的名称"><span class="nav-number">1.3.</span> <span class="nav-text">条款43：学习处理模板化基类内的名称</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#条款44：将与基类无关的代码抽离template"><span class="nav-number">1.4.</span> <span class="nav-text">条款44：将与基类无关的代码抽离template</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#条款45：成员函数模板接受所有兼容类型"><span class="nav-number">1.5.</span> <span class="nav-text">条款45：成员函数模板接受所有兼容类型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#条款46：需要类型转换时请为模板定义非成员函数"><span class="nav-number">1.6.</span> <span class="nav-text">条款46：需要类型转换时请为模板定义非成员函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#条款47：traits-classes表现类型信息"><span class="nav-number">1.7.</span> <span class="nav-text">条款47：traits classes表现类型信息</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#条款48：认识template元编程"><span class="nav-number">1.8.</span> <span class="nav-text">条款48：认识template元编程</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Liu Y.L."
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Liu Y.L.</p>
+  <div class="site-description" itemprop="description">寒江孤影-江湖故人-相逢何必曾相识</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yuanlehome" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuanlehome" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yuanlehome@163.com" title="E-Mail → mailto:yuanlehome@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Liu Y.L.</span>
+</div>
+
+<span>我已在此等候你 <span id="showDays"></span></span>
+<script>
+  var seconds = 1000;
+  var minutes = seconds * 60;
+  var hours = minutes * 60;
+  var days = hours * 24;
+  var years = days * 365;
+  var birthDay = Date.UTC(2020,04,04,00,00,00); // 这里设置建站时间
+  setInterval(function() {
+    var today = new Date();
+    var todayYear = today.getFullYear();
+    var todayMonth = today.getMonth()+1;
+    var todayDate = today.getDate();
+    var todayHour = today.getHours();
+    var todayMinute = today.getMinutes();
+    var todaySecond = today.getSeconds();
+    var now = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+    var diff = now - birthDay;
+    var diffYears = Math.floor(diff/years);
+    var diffDays = Math.floor((diff/days)-diffYears*365);
+    var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+    var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+    var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+      document.getElementById('showDays').innerHTML=""+diffYears+" 年 "+diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+  }, 1000);
+</script>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
