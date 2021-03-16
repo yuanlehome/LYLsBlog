@@ -20,20 +20,23 @@
     var CONFIG = {"hostname":"yuanlehome.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="第3章：资源管理条款13：以对象管理资源 RAII(Resource Acquisition Is Initialization)   使用new获取资源后于同一条语句内以它初始化某个资源管理对象。利用当管理对象离开作用域被销毁时自动调用其析构函数的机制确保资源被释放。不直接用new和delete，多用智能指针。  智能指针在其析构函数中做delete动作而非delete[]动作   因此，不要在">
+  <meta name="description" content="有没有感觉到自己的电脑桌面一成不变让人厌倦？虽然有一些诸如360桌面之类的软件可以使用，但弹窗、广告又太多！本文就教你用 python 实现一个简洁清爽的桌面壁纸定时更换工具。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Effective C++ 第三章">
-<meta property="og:url" content="https://yuanlehome.github.io/20200315/index.html">
+<meta property="og:title" content="教你用python实现一个在windows平台的定时更换壁纸的工具">
+<meta property="og:url" content="https://yuanlehome.github.io/JFfWe2Uugfh1u70r/index.html">
 <meta property="og:site_name" content="LYL&#39;s Blog">
-<meta property="og:description" content="第3章：资源管理条款13：以对象管理资源 RAII(Resource Acquisition Is Initialization)   使用new获取资源后于同一条语句内以它初始化某个资源管理对象。利用当管理对象离开作用域被销毁时自动调用其析构函数的机制确保资源被释放。不直接用new和delete，多用智能指针。  智能指针在其析构函数中做delete动作而非delete[]动作   因此，不要在">
+<meta property="og:description" content="有没有感觉到自己的电脑桌面一成不变让人厌倦？虽然有一些诸如360桌面之类的软件可以使用，但弹窗、广告又太多！本文就教你用 python 实现一个简洁清爽的桌面壁纸定时更换工具。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-03-15T13:35:42.000Z">
-<meta property="article:modified_time" content="2021-03-12T13:29:29.204Z">
+<meta property="og:image" content="https://yuanlehome.github.io/JFfWe2Uugfh1u70r/2020-06-14.png">
+<meta property="article:published_time" content="2020-06-14T05:00:42.000Z">
+<meta property="article:modified_time" content="2021-03-16T02:21:29.986Z">
 <meta property="article:author" content="Liu Y.L.">
-<meta property="article:tag" content="Effective C++">
+<meta property="article:tag" content="桌面壁纸工具">
+<meta property="article:tag" content="python">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yuanlehome.github.io/JFfWe2Uugfh1u70r/2020-06-14.png">
 
-<link rel="canonical" href="https://yuanlehome.github.io/20200315/">
+<link rel="canonical" href="https://yuanlehome.github.io/JFfWe2Uugfh1u70r/">
 
 
 <script id="page-configurations">
@@ -46,7 +49,7 @@
   };
 </script>
 
-  <title>Effective C++ 第三章 | LYL's Blog</title>
+  <title>教你用python实现一个在windows平台的定时更换壁纸的工具 | LYL's Blog</title>
   
 
 
@@ -195,7 +198,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/20200315/">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/JFfWe2Uugfh1u70r/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -208,7 +211,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Effective C++ 第三章
+          教你用python实现一个在windows平台的定时更换壁纸的工具
         </h1>
 
         <div class="post-meta">
@@ -218,14 +221,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-03-15 21:35:42" itemprop="dateCreated datePublished" datetime="2020-03-15T21:35:42+08:00">2020-03-15</time>
+              <time title="创建时间：2020-06-14 13:00:42" itemprop="dateCreated datePublished" datetime="2020-06-14T13:00:42+08:00">2020-06-14</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-12 21:29:29" itemprop="dateModified" datetime="2021-03-12T21:29:29+08:00">2021-03-12</time>
+                <time title="修改时间：2021-03-16 10:21:29" itemprop="dateModified" datetime="2021-03-16T10:21:29+08:00">2021-03-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -233,11 +236,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/Effective-C/" itemprop="url" rel="index"><span itemprop="name">Effective C++</span></a>
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" itemprop="url" rel="index"><span itemprop="name">技术分享</span></a>
                 </span>
             </span>
 
@@ -254,7 +253,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.3k</span>
+              <span>1.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -273,63 +272,21 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h4 id="第3章：资源管理"><a href="#第3章：资源管理" class="headerlink" title="第3章：资源管理"></a>第<code>3</code>章：资源管理</h4><h5 id="条款13：以对象管理资源"><a href="#条款13：以对象管理资源" class="headerlink" title="条款13：以对象管理资源"></a>条款<code>13</code>：以对象管理资源</h5><ul>
-<li><p><code>RAII</code>(<code>Resource Acquisition Is Initialization</code>)</p>
-<p>  使用<code>new</code>获取资源后于同一条语句内以它初始化某个资源管理对象。利用当管理对象离开作用域被销毁时自动调用其析构函数的机制确保资源被释放。不直接用<code>new</code>和<code>delete</code>，多用智能指针。</p>
-</li>
-<li><p>智能指针在其析构函数中做<code>delete</code>动作而非<code>delete[]</code>动作</p>
-<p>  因此，不要在动态分配来的数组身上使用智能指针（虽然它仍然会通过编译）。</p>
-</li>
-</ul>
+        <p>有没有感觉到自己的电脑桌面一成不变让人厌倦？虽然有一些诸如360桌面之类的软件可以使用，但弹窗、广告又太多！本文就教你用 <em>python</em> 实现一个简洁清爽的桌面壁纸定时更换工具。</p>
 <a id="more"></a>
 
-<h5 id="条款14：在资源管理类中小心copying行为"><a href="#条款14：在资源管理类中小心copying行为" class="headerlink" title="条款14：在资源管理类中小心copying行为"></a>条款<code>14</code>：在资源管理类中小心<code>copying</code>行为</h5><ul>
-<li>当不想<code>RAII</code>类被复制时可以继承<code>Uncopyable</code>类</li>
-</ul>
-<p>将智能指针施于<code>heap-based</code>资源身上是个好主意，但并不是所有资源都是<code>heap-based</code>的，比如互斥器<code>mutex</code>，<code>mutex</code>就不可复制。</p>
-<h5 id="条款15：在资源管理类中提供对原始资源的访问"><a href="#条款15：在资源管理类中提供对原始资源的访问" class="headerlink" title="条款15：在资源管理类中提供对原始资源的访问"></a>条款<code>15</code>：在资源管理类中提供对原始资源的访问</h5><ul>
-<li><p>显示转换（安全）</p>
-<p>  例如，<code>shared_ptr</code>类就提供可一个<code>get</code>成员函数来返回智能指针内部的原始指针。</p>
-</li>
-<li><p><code>operator</code>隐式转换（调用方便）</p>
-  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    ...</span><br><span class="line">	<span class="comment">// operator 可以实现隐式转换函数</span></span><br><span class="line">    <span class="function"><span class="keyword">operator</span> <span class="title">B</span><span class="params">()</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> b;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    B b; <span class="comment">// B 类型对象成员</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 接受 B 类型对象的一个函数</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(B b)</span></span>;</span><br><span class="line"></span><br><span class="line">A a;</span><br><span class="line">func(a); <span class="comment">// a 会被编译器隐式转换为 B 类型对象</span></span><br></pre></td></tr></table></figure>
+<p>本文使用的方法是用 <em>python</em> 实现一个定时更换壁纸的脚本，壁纸来源与自定义的文件夹内，因此你可以搜集一些你喜欢的壁纸图片放于该文件夹下，这样脚本程序便可以使你的电脑桌面轮流展示这些图片了。</p>
+<p>比如我就把我喜欢的壁纸都收集在了 <em>E:/wallpapers/</em> 文件夹下。</p>
+<p><img src="2020-06-14.png" alt=""></p>
+<p>这里推荐几个好的壁纸来源网站 <a href="https://wallhaven.cc/" target="_blank" rel="noopener">https://wallhaven.cc/</a> ，<a href="https://www.artstation.com/wlop" target="_blank" rel="noopener">https://www.artstation.com/wlop</a> 。</p>
+<p>下面直接看代码。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> win32con</span><br><span class="line"><span class="keyword">import</span> win32gui</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getImages</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="comment"># 这里的路径就是你放图片的文件夹路径</span></span><br><span class="line">    images_path = <span class="string">'E:\\wallpapers\\'</span></span><br><span class="line">    files = os.listdir(images_path)</span><br><span class="line">    <span class="keyword">return</span> images_path, files</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">set_wallpaper</span><span class="params">(it)</span>:</span></span><br><span class="line">    path, images = getImages()</span><br><span class="line">    image = path + images[it]</span><br><span class="line">    it = (it + <span class="number">1</span>) % len(images)</span><br><span class="line">    win32gui.SystemParametersInfo(win32con.SPI_SETDESKWALLPAPER, image, <span class="number">1</span>+<span class="number">2</span>)</span><br><span class="line">    <span class="keyword">global</span> timer</span><br><span class="line">    <span class="comment"># 我设置的是每60s更换一次，你可以根据需要自定义设置</span></span><br><span class="line">    timer = threading.Timer(<span class="number">60.0</span>, set_wallpaper, (it,))</span><br><span class="line">    timer.start()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    set_wallpaper(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
 
-</li>
-</ul>
-<h5 id="条款16：使用new和delete时要采用相同的形式"><a href="#条款16：使用new和delete时要采用相同的形式" class="headerlink" title="条款16：使用new和delete时要采用相同的形式"></a>条款<code>16</code>：使用<code>new</code>和<code>delete</code>时要采用相同的形式</h5><ul>
-<li><p>编译器在给数组分配内存时，会包括数组大小的记录</p>
-<p>  这样的好处是，<code>delete[]</code>时知道需要调用多少次析构函数。</p>
-</li>
-<li><p>不要对数组形式进行<code>typedef</code>动作</p>
-</li>
-</ul>
-<h5 id="条款17：以独立语句将new来的对象置入智能指针"><a href="#条款17：以独立语句将new来的对象置入智能指针" class="headerlink" title="条款17：以独立语句将new来的对象置入智能指针"></a>条款<code>17</code>：以独立语句将<code>new</code>来的对象置入智能指针</h5><p>考虑这样两个函数：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">priority</span><span class="params">()</span></span>; <span class="comment">// 调用这个函数不排除会发生异常</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">processWidget</span><span class="params">(<span class="built_in">shared_ptr</span>&lt;Widget&gt; pw, <span class="keyword">int</span> priority)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p>如果这样调用编译不通过，因为<code>shared_ptr</code>接收原始指针的构造函数是<code>explicit</code>的：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">processWidget(<span class="keyword">new</span> Widget, priority());</span><br></pre></td></tr></table></figure>
-
-<p>如果这样调用可能会造成内存泄漏：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">processWidget(<span class="built_in">shared_ptr</span>&lt;Widget&gt;(<span class="keyword">new</span> Widget), priority());</span><br></pre></td></tr></table></figure>
-
-<p>因为编译器在编译这条语句时，实际上会创建三个动作：</p>
-<ul>
-<li>调用<code>priority()</code></li>
-<li>执行<code>new Widget</code></li>
-<li>调用<code>shared_ptr</code>的构造函数</li>
-</ul>
-<p>而<code>C++</code>编译器安排这三个动作的次序是不确定的。</p>
-<p>如果执行次序是这样：</p>
-<ol>
-<li>执行<code>new Widget</code></li>
-<li>调用<code>priority()</code></li>
-<li>调用<code>shared_ptr</code>的构造函数</li>
-</ol>
-<p>一旦中途<code>priority()</code>导致异常，那么<code>new</code>返回的原始指针并未交给智能指针保管，将造成资源泄露。</p>
-<p>正确的做法：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">shared_ptr</span>&lt;Widget&gt; <span class="title">pw</span><span class="params">(<span class="keyword">new</span> Widget)</span></span>;</span><br><span class="line">processWidget(pw, priority());</span><br></pre></td></tr></table></figure>
-
-<p>因为，编译器对“跨越语句的各项操作”没有重新排列执行次序的自由。</p>
+<p>为了方便运行，我们可以使用 <em>pyinstaller</em> 工具将该脚本程序转成 <em>.exe</em> 可执行文件。具体的方法可以看这篇文章 <a href="https://blog.csdn.net/zengxiantao1994/article/details/76578421" target="_blank" rel="noopener">Python程序打包成exe可执行文件</a> 。</p>
+<p>生成可执行文件之后，运行就可以了。不过，为了每次开机程序都可以自动运行，我们需要进行一些设置。首先按 <em>win+R</em> 键打开运行窗口，输入 <em>shell:startup</em> 回车，这样会打开一个启动文件夹，这个文件夹下的软件在开机时都会自动启动，将你的可执行文件或其快捷方式放在这里就可以了。</p>
+<p>这里可以直接下载我已经生成的可执行程序：</p>
+<p><a href="https://pan.baidu.com/s/1ZZhG-H2nYz34TdkT6O1U0Q" target="_blank" rel="noopener">https://pan.baidu.com/s/1ZZhG-H2nYz34TdkT6O1U0Q</a><br>提取码：v9ng </p>
+<p>使用方法就是在E盘下新建一个名为wallpapers的文件夹，然后把自己喜欢的照片放进去就好，即<em>E:/wallpapers/</em> 。</p>
 
     </div>
 
@@ -339,7 +296,8 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Effective-C/" rel="tag"># Effective C++</a>
+              <a href="/tags/%E6%A1%8C%E9%9D%A2%E5%A3%81%E7%BA%B8%E5%B7%A5%E5%85%B7/" rel="tag"># 桌面壁纸工具</a>
+              <a href="/tags/python/" rel="tag"># python</a>
           </div>
 
         
@@ -348,13 +306,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/20200308/" rel="prev" title="Effective C++ 第二章">
-      <i class="fa fa-chevron-left"></i> Effective C++ 第二章
+    <a href="/KT2Sz9hHwziaJtFt/" rel="prev" title="教你实现一个简易的Linux平台下的划词翻译工具">
+      <i class="fa fa-chevron-left"></i> 教你实现一个简易的Linux平台下的划词翻译工具
     </a></div>
-      <div class="post-nav-item">
-    <a href="/20200321/" rel="next" title="Effective C++ 第四章">
-      Effective C++ 第四章 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -418,7 +373,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#第3章：资源管理"><span class="nav-number">1.</span> <span class="nav-text">第3章：资源管理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#条款13：以对象管理资源"><span class="nav-number">1.1.</span> <span class="nav-text">条款13：以对象管理资源</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#条款14：在资源管理类中小心copying行为"><span class="nav-number">1.2.</span> <span class="nav-text">条款14：在资源管理类中小心copying行为</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#条款15：在资源管理类中提供对原始资源的访问"><span class="nav-number">1.3.</span> <span class="nav-text">条款15：在资源管理类中提供对原始资源的访问</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#条款16：使用new和delete时要采用相同的形式"><span class="nav-number">1.4.</span> <span class="nav-text">条款16：使用new和delete时要采用相同的形式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#条款17：以独立语句将new来的对象置入智能指针"><span class="nav-number">1.5.</span> <span class="nav-text">条款17：以独立语句将new来的对象置入智能指针</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
