@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#7d574c">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#7d574c">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yuanlehome.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言Simplifier是编译器的一部分，处于type checking和code generation之间。它用来转换内部的程序表现。有3种转换是任何对象模型都需要的：  与编译器息息相关的转换（Implementation-dependent transformations）  例如，当parser看到这个表达式：  1fct();   它并不知道是否（a）这是一个函数调用操作，或者（b）这是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度探索C++对象模型 第一章">
+<meta property="og:url" content="https://yuanlehome.github.io/jOQUhpad0yAY7aMb/index.html">
+<meta property="og:site_name" content="LYL&#39;s Blog">
+<meta property="og:description" content="前言Simplifier是编译器的一部分，处于type checking和code generation之间。它用来转换内部的程序表现。有3种转换是任何对象模型都需要的：  与编译器息息相关的转换（Implementation-dependent transformations）  例如，当parser看到这个表达式：  1fct();   它并不知道是否（a）这是一个函数调用操作，或者（b）这是">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yuanlehome.github.io/jOQUhpad0yAY7aMb/image-20210219212057818.png">
+<meta property="og:image" content="https://yuanlehome.github.io/jOQUhpad0yAY7aMb/image-20210220202640585.png">
+<meta property="og:image" content="https://yuanlehome.github.io/jOQUhpad0yAY7aMb/image-20210220153355200.png">
+<meta property="article:published_time" content="2020-05-08T13:35:42.000Z">
+<meta property="article:modified_time" content="2020-05-08T13:35:42.000Z">
+<meta property="article:author" content="Liu Y.L.">
+<meta property="article:tag" content="深度探索C++对象模型">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yuanlehome.github.io/jOQUhpad0yAY7aMb/image-20210219212057818.png">
+
+<link rel="canonical" href="https://yuanlehome.github.io/jOQUhpad0yAY7aMb/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>深度探索C++对象模型 第一章 | LYL's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">LYL's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/jOQUhpad0yAY7aMb/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深度探索C++对象模型 第一章
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-08 21:35:42" itemprop="dateCreated datePublished" datetime="2020-05-08T21:35:42+08:00">2020-05-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E6%B7%B1%E5%BA%A6%E6%8E%A2%E7%B4%A2C-%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B/" itemprop="url" rel="index"><span itemprop="name">深度探索C++对象模型</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p><code>Simplifier</code>是编译器的一部分，处于<code>type checking</code>和<code>code generation</code>之间。它用来转换内部的程序表现。有<code>3</code>种转换是任何对象模型都需要的：</p>
+<ol>
+<li><p>与编译器息息相关的转换（<code>Implementation-dependent transformations</code>）</p>
+<p> 例如，当<code>parser</code>看到这个表达式：</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fct();</span><br></pre></td></tr></table></figure>
+
+<p> 它并不知道是否（<code>a</code>）这是一个函数调用操作，或者（<code>b</code>）这是<code>overloaded calloperator</code>在<code>class object fct</code>上的一种应用。默认情况下，这个式子所代表的是一个函数调用，但是当（<code>b</code>）的情况出现，<code>Simplifier</code>就要重写并调换<code>call subtree</code>。</p>
+</li>
+<li><p>语言语意转换（<code>Language semantics transformations</code>）</p>
+<p> 这包括<code>constructor</code>/<code>destructor</code>的合成和扩展、<code>memberwise</code>初始化、对于<code>memberwise copy</code>的支持、在程序代码中安插<code>conversion operators</code>、临时性对象，以及对<code>constructor</code>/<code>destructor</code>的调用。</p>
+</li>
+<li><p>程序代码和对象模型的转换（<code>Code and object model transformations</code>）</p>
+<p> 这包括对<code>virtual functions</code>、<code>virtual base class</code>和<code>inheritance</code>的一般支持、<code>new</code>和<code>delete</code>运算符、<code>class objects</code>所组成的数组、<code>local static class instances</code>、带有非常量表达式（<code>nonconstant cxpression</code>）之<code>global object</code>的静态初始化操作。</p>
+</li>
+</ol>
+<p>什么是<code>C++</code>对象模型？</p>
+<ul>
+<li>语言中直接支持面向对象程序设计的部分</li>
+<li>对于各种支持的底层实现机制</li>
+</ul>
+<a id="more"></a>
+
+<h4 id="第1章：关于对象"><a href="#第1章：关于对象" class="headerlink" title="第1章：关于对象"></a>第<code>1</code>章：关于对象</h4><p>在<code>C</code>语言中，“数据”和“处理数据的操作（函数）”是分开来声明的，也就是说，语言本身并没有支持“数据和函数”之间的关联性。</p>
+<p><code>C++</code>在布局以及存取时间上主要的额外负担是由<code>virtual</code>引起，包括：</p>
+<ol>
+<li><code>virtual function</code>机制——用以支持一个有效率的“执行期绑定”</li>
+<li><code>virtual base class</code>——用以实现“多次出现在继承体系中的<code>base class</code>，有一个单一而被共享的实体”</li>
+<li>此外，还有一些多重继承下的额外负担，发生在“一个<code>derived class</code>和其第二或后继之<code>base class</code>的转换”之间。</li>
+</ol>
+<h5 id="1-1-C-对象模型"><a href="#1-1-C-对象模型" class="headerlink" title="1.1 C++对象模型"></a><code>1.1</code> <code>C++</code>对象模型</h5><p>在<code>C++</code>中，有两种<code>class data members</code>：<code>static</code>和<code>nonstatic</code>，以及三种<code>class member functions</code>：<code>static</code>、<code>nonstatic</code>和<code>virtual</code>。</p>
+<p>在<code>C++</code>对象模型中，<code>nonstatic data members</code>被配置于每一个<code>class object</code>之内，<code>static data members</code>则被存放在所有的<code>class object</code>之外。<code>static</code>和<code>nonstatic function members</code>也被放在所有的<code>class object</code>之外。<code>virtual functions</code>则以两个步骤支持之：</p>
+<ol>
+<li>每一个<code>class</code>产生出一堆指向<code>virtual functions</code>的指针，放在表格之中。这个表格被称为 <code>vtbl</code>。</li>
+<li>每一个<code>class object</code>被添加了一个指针，指向相关的<code>virtual table</code>。通常这个指针被称为<code>vptr</code>。<code>vptr</code>的设定（<code>setting</code>）和重置（<code>resetting</code>）由每一个<code>class</code>的<code>constructor</code>、<code>destructor</code>和<code>copy assignment</code>运算符自动完成。</li>
+</ol>
+<p>在虚拟继承的情况下，<code>base class</code>不管在继承串链中被派生（<code>derived</code>）多少次，永远只会存在一个实体（称为<code>subobject</code>）。</p>
+<p><code>C++</code>最初采用的继承模型并不运用任何间接性: <code>base class subobject</code>的<code>data members</code>被直接放置于<code>derived class object</code>中。这提供了对<code>base class members</code>最紧凑而且最有效率的存取。缺点就是: <code>base class members</code>的任何改变，包括增加﹑移除或改变类型等等，都使得所有用到“此<code>base class</code>或其<code>derived class</code>之<code>objects</code>”者重新编译。</p>
+<p><code>virtual base class</code>的原始模型是在<code>class object</code>中为每一个有关联的<code>virtual base class</code>加上一个指针。</p>
+<p>对象模型如何影响程序？</p>
+<p>不同的对象模型，会导致“现有的程序代码必须修改”以及“必须加人新的程序代码”两个结果。例如下面这个函数，其中<code>class X</code>定义了一个<code>copy constructor</code>，一个<code>virtual destructor</code>，和一个<code>virtual function foo</code>：</p>
+<img src="image-20210219212057818.png" alt="image-20210219212057818" style="zoom: 67%;" />
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">X <span class="title">foobar</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	X xx;</span><br><span class="line">	X* px = <span class="keyword">new</span> X;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// foo 是一个虚函数</span></span><br><span class="line">    xx.foo();</span><br><span class="line">	px-&gt;foo();</span><br><span class="line">    </span><br><span class="line">	<span class="keyword">delete</span> px;</span><br><span class="line">    <span class="keyword">return</span> xx; <span class="comment">// 这里会用到 copy constructor</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个函数有可能在内部被转化为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foobar</span><span class="params">(X&amp; _result)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">// 构造 _result</span></span><br><span class="line">	<span class="comment">// _result 用来取代 local xx...</span></span><br><span class="line">	_result.X::X();</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 扩展 ×* px= new x;</span></span><br><span class="line">	px = _new(<span class="keyword">sizeof</span>(X));</span><br><span class="line">	<span class="keyword">if</span>(px != <span class="number">0</span>)</span><br><span class="line">		px-&gt;X::X();</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 扩展 xx.foo() 但不使用 virtual 机制</span></span><br><span class="line">	<span class="comment">// 以 _result 取代 xx</span></span><br><span class="line">	foo(&amp;_result);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 使用 virtual 机制扩展 px-&gt;foo()</span></span><br><span class="line">	(*px-&gt;vtbl[<span class="number">2</span>])(px);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 扩展 delete px;</span></span><br><span class="line">	<span class="keyword">if</span>(px != <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">		(*px-&gt;vtbl[<span class="number">1</span>])(px); <span class="comment">// destructor</span></span><br><span class="line">        _delete(px);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//不需使用 named return statement</span></span><br><span class="line">	<span class="comment">//不需要摧毁 local object xx</span></span><br><span class="line">	<span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="1-2-关键词所带来的差异"><a href="#1-2-关键词所带来的差异" class="headerlink" title="1.2 关键词所带来的差异"></a><code>1.2</code> 关键词所带来的差异</h5><ul>
+<li>掌握<code>struct</code>和<code>class</code>关键字的差异</li>
+</ul>
+<p><code>struct</code>关键词的使用实现了<code>C</code>的数据萃取概念，而<code>class</code>关键词实现的是<code>C++</code>的<code>ADT</code>（<code>Abstract Data Type</code>）概念。</p>
+<p><code>C</code>程序员的巧计（<code>C++</code>中不可用）。例如把单一元素的数组放在一个<code>struct</code>的尾端，于是每个<code>struct objects</code>可以拥有可变大小的数组：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">mumble</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="comment">// stuff</span></span><br><span class="line">	<span class="keyword">char</span> pc[<span class="number">1</span>];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从档案或标准输入装置中取得一个字符串 str</span></span><br><span class="line"><span class="comment">// 然后为 struct 本身和该字符串配置足够的内存</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">mumble</span> *<span class="title">pmumble</span> = (<span class="title">struct</span> <span class="title">mumble</span>*)</span></span><br><span class="line"><span class="class">						<span class="title">malloc</span>(<span class="title">sizeof</span>(<span class="title">struct</span> <span class="title">mumble</span>) + <span class="title">strlen</span>(<span class="title">str</span>) + 1);</span></span><br><span class="line"><span class="built_in">strcpy</span>(&amp;(pmumble-&gt;pc), str);</span><br></pre></td></tr></table></figure>
+
+<p><code>C++</code>中凡处于同一个<code>access section</code>的数据，必定保证以其声明次序出现在内存布局当中。然而被放置在多个<code>access sections</code>中的各笔数据，排列次序就不一定了。组合（<code>composition</code>)，而非继承，才是把<code>C</code>和<code>C++</code>结合在一起的唯一可行方法（<code>conversion</code>运算符提供了一个十分便利的萃取方法）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">C_point</span> &#123;</span> ... &#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Point</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">operator</span> <span class="title">C_point</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> c_point_; &#125;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    C_point c_point_;</span><br></pre></td></tr></table></figure>
+
+<p><code>C struct</code>在<code>C++</code>中的一个合理用途，是当你要传递“一个复杂的<code>class object</code>的全部或部分”到某个<code>C</code>函数中去时，<code>struct</code>声明可以将数据封装起来，并保证拥有与<code>C</code>兼容的空间布局。然而这项保证只在组合的情况下才存在。</p>
+<h5 id="1-3-对象的差异"><a href="#1-3-对象的差异" class="headerlink" title="1.3 对象的差异"></a><code>1.3</code> 对象的差异</h5><p><code>C++</code>支持<code>3</code>种程序设计模型：</p>
+<ol>
+<li>程序模型（面向过程）</li>
+<li>抽象数据类型模型（基于对象模型）（封装）</li>
+<li>面向对象模型（继承、多态）</li>
+</ol>
+<p>在<code>C++</code>，多态只存在于一个个的<code>public class</code>体系中。<code>nonpublic</code>的派生行为以及类型为<code>void*</code>的指针可以说是多态，但它们并没有被语言明白地支持，也就是说它们必须由程序员通过明白的<strong>转型操作</strong>来管理。<code>C++</code>以下列方法支持多态：</p>
+<ol>
+<li><p>经由一组隐含的转化操作。例如把一个<code>derived class</code>指针转化为一个指向其<code>public base type</code>的指针</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Shape *ps = <span class="keyword">new</span> Circle();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>经由<code>virtual function</code>机制</p>
+</li>
+<li><p>经由<code>dynamic_cast</code>和<code>typeid</code>运算符</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(Circle* pc = <span class="keyword">dynamic_cast</span>&lt;Circle*&gt;(ps))</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p><code>virtual function</code>机制不只使得“当类型有所增加、修改、或删减时，我们的程序代码不需改变”。而且也使一个新的<code>subtype</code>的供应者不需要重新写出“对继承体系中的所有类型都共通”的行为和操作。</p>
+<p>需要多少内存才能够表现一个<code>class object</code>？</p>
+<ul>
+<li><code>nonstatic data members</code>的总和大小</li>
+<li>加上任何<code>alignment</code>（内存对齐）</li>
+<li>加上为了支持<code>virtual</code>（<code>function</code>，<code>base class</code>）而由内部产生的额外负担</li>
+</ul>
+<p>转型（<code>cast</code>）其实是一种编译器指令。<strong>大部分情况下</strong>它并不改变一个指针所含的真正地址，它只影响“被指出之内存的大小和其内容”的解释方式。</p>
+<p>一个<code>Base</code>指针<code>pb</code>和一个<code>Derived</code>指针<code>pd</code>有什么不同？</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Derived d;</span><br><span class="line">Base* pb = &amp;d;</span><br><span class="line">Derived* pd = &amp;d;</span><br></pre></td></tr></table></figure>
+
+<p>它们每个都指向<code>Base object</code>的第一个<code>byte</code>。其间的差别是，<code>pd</code>所涵盖的地址包含整个<code>Derived object</code>，而<code>pb</code>所涵盖的地址只包含<code>Derived object</code>中的<code>Base subobject</code>。</p>
+<p>除了<code>Base subobject</code>中出现的<code>members</code>，你不能使用<code>pb</code>来直接处理<code>Derived</code>的任何<code>members</code>。例外是通过<code>virtual</code>机制或转型操作。</p>
+<p>当一个<code>base class object</code>被直接初始化为（或是被指定为）一个<code>derived class object</code>时，<code>derived object</code>就会被切割，以塞人较小的<code>base type</code>内存中，<code>derived type</code>将没有留下任何蛛丝马迹。</p>
+<p>下面这一组定义，其可能的内存布局为：</p>
+<img src="image-20210220202640585.png" alt="image-20210220202640585" style="zoom:67%;" />
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ZooAnimal za;</span><br><span class="line">ZooAnimal *pza;</span><br><span class="line">Bear b;</span><br><span class="line">Panda* pp = <span class="keyword">new</span> Panda;</span><br><span class="line">pza = &amp;b;</span><br></pre></td></tr></table></figure>
+
+<img src="image-20210220153355200.png" alt="image-20210220153355200" style="zoom: 67%;" />
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E6%8E%A2%E7%B4%A2C-%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B/" rel="tag"># 深度探索C++对象模型</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/MBICE5WlMJtd4Rku/" rel="prev" title="Effective C++ 第七章">
+      <i class="fa fa-chevron-left"></i> Effective C++ 第七章
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/FXn6nXyz1FEw9e8Y/" rel="next" title="深度探索C++对象模型 第二章">
+      深度探索C++对象模型 第二章 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC80OTQ0NS8yNTkzNw=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#第1章：关于对象"><span class="nav-number">2.</span> <span class="nav-text">第1章：关于对象</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-C-对象模型"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 C++对象模型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-关键词所带来的差异"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 关键词所带来的差异</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-3-对象的差异"><span class="nav-number">2.3.</span> <span class="nav-text">1.3 对象的差异</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Liu Y.L."
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Liu Y.L.</p>
+  <div class="site-description" itemprop="description">寒江孤影-江湖故人-相逢何必曾相识</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yuanlehome" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuanlehome" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yuanlehome@163.com" title="E-Mail → mailto:yuanlehome@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Liu Y.L.</span>
+</div>
+
+<span>我已在此等候你 <span id="showDays"></span></span>
+<script>
+  var seconds = 1000;
+  var minutes = seconds * 60;
+  var hours = minutes * 60;
+  var days = hours * 24;
+  var years = days * 365;
+  var birthDay = Date.UTC(2020,04,04,00,00,00); // 这里设置建站时间
+  setInterval(function() {
+    var today = new Date();
+    var todayYear = today.getFullYear();
+    var todayMonth = today.getMonth()+1;
+    var todayDate = today.getDate();
+    var todayHour = today.getHours();
+    var todayMinute = today.getMinutes();
+    var todaySecond = today.getSeconds();
+    var now = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+    var diff = now - birthDay;
+    var diffYears = Math.floor(diff/years);
+    var diffDays = Math.floor((diff/days)-diffYears*365);
+    var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+    var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+    var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+      document.getElementById('showDays').innerHTML=""+diffYears+" 年 "+diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+  }, 1000);
+</script>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>

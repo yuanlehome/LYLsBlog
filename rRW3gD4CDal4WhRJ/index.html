@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#7d574c">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#7d574c">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yuanlehome.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="第4章：Function语意学4.1 静态成员函数function的调用方式 nonmember function、static member function、nonstatic member function的调用效率完全一样，因为，在内部都被编译器处理成相同的形式。而virtual member function的调用需要通过vptr所指向的virtual table，因此，效率有所降低。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度探索C++对象模型 第四章">
+<meta property="og:url" content="https://yuanlehome.github.io/rRW3gD4CDal4WhRJ/index.html">
+<meta property="og:site_name" content="LYL&#39;s Blog">
+<meta property="og:description" content="第4章：Function语意学4.1 静态成员函数function的调用方式 nonmember function、static member function、nonstatic member function的调用效率完全一样，因为，在内部都被编译器处理成相同的形式。而virtual member function的调用需要通过vptr所指向的virtual table，因此，效率有所降低。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yuanlehome.github.io/rRW3gD4CDal4WhRJ/image-20210312160159297.png">
+<meta property="og:image" content="https://yuanlehome.github.io/rRW3gD4CDal4WhRJ/image-20210312160324194.png">
+<meta property="og:image" content="https://yuanlehome.github.io/rRW3gD4CDal4WhRJ/image-20210312160340269.png">
+<meta property="og:image" content="https://yuanlehome.github.io/rRW3gD4CDal4WhRJ/image-20210312160431103.png">
+<meta property="og:image" content="https://yuanlehome.github.io/rRW3gD4CDal4WhRJ/image-20210312161401843.png">
+<meta property="article:published_time" content="2020-06-08T13:35:42.000Z">
+<meta property="article:modified_time" content="2020-06-08T13:35:42.000Z">
+<meta property="article:author" content="Liu Y.L.">
+<meta property="article:tag" content="深度探索C++对象模型">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yuanlehome.github.io/rRW3gD4CDal4WhRJ/image-20210312160159297.png">
+
+<link rel="canonical" href="https://yuanlehome.github.io/rRW3gD4CDal4WhRJ/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>深度探索C++对象模型 第四章 | LYL's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">LYL's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/rRW3gD4CDal4WhRJ/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深度探索C++对象模型 第四章
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-08 21:35:42" itemprop="dateCreated datePublished" datetime="2020-06-08T21:35:42+08:00">2020-06-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E6%B7%B1%E5%BA%A6%E6%8E%A2%E7%B4%A2C-%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B/" itemprop="url" rel="index"><span itemprop="name">深度探索C++对象模型</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="第4章：Function语意学"><a href="#第4章：Function语意学" class="headerlink" title="第4章：Function语意学"></a>第<code>4</code>章：<code>Function</code>语意学</h4><h5 id="4-1-静态成员函数"><a href="#4-1-静态成员函数" class="headerlink" title="4.1 静态成员函数"></a><code>4.1</code> 静态成员函数</h5><p><code>function</code>的调用方式</p>
+<p><code>nonmember function</code>、<code>static member function</code>、<code>nonstatic member function</code>的调用效率完全一样，因为，在内部都被编译器处理成相同的形式。而<code>virtual member function</code>的调用需要通过<code>vptr</code>所指向的<code>virtual table</code>，因此，效率有所降低。</p>
+<p><code>static member function</code>的主要特性就是它没有<code>this</code>指针。以下的次要特性统统根源于其主要特性：</p>
+<a id="more"></a>
+
+<ul>
+<li>它不能够直接存取其<code>class</code>中的<code>nonstatic members</code>；</li>
+<li>它不能够被声明为<code>const</code>、<code>volatile</code>或<code>virtual</code>；</li>
+<li>它不需要经由<code>class object</code>才被调用——虽然大部分时候它是这样被调用的。</li>
+</ul>
+<p>若取一个<code>static member function</code>的地址不会得到指向其<code>class member function</code>类型的指针（不是<code>return_type (class_type::*)(parameter_types)</code>）。而是一个<code>non-member</code>函数指针（类型为<code>return_type (*)(parameter_types)</code>）。</p>
+<h5 id="4-2-虚拟成员函数"><a href="#4-2-虚拟成员函数" class="headerlink" title="4.2 虚拟成员函数"></a><code>4.2</code> 虚拟成员函数</h5><p>在<code>C++</code>中，<strong>多态</strong>表示以一个指向<code>public base class</code>类型的<code>pointer</code>或<code>reference</code>，寻址出一个<code>derived class object</code>的意思。多态机能体现在通过<code>pointer</code>或<code>reference</code>对虚函数的调用身上。因此，识别一个<code>class</code>是否支持多态，唯一适当的方法就是看看它是否有任何<code>virtual function</code>。</p>
+<p>为了支持多态，需要在执行期决议出正确的<code>virtual function</code>实例，这需要如下执行期信息的支持：</p>
+<ol>
+<li>它所引用的对象的地址，也就是当前它自身的值；</li>
+<li>所引用对象的真实类型。这可使我们选择正确的虚函数所在的实体；</li>
+<li><code>virtual function</code>实体位置，也就是函数地址，以便我能够调用它。</li>
+</ol>
+<p>在实现上，在每一个多态的<code>class object</code>身上增加两个<code>member</code>：</p>
+<ol>
+<li>一个字符串或数字，表示<code>class</code>的类型；</li>
+<li>一个指针，指向某表格，表格中带有程序的<code>virtual function</code>的执行期地址。</li>
+</ol>
+<p><code>virtual function</code>的地址是固定不变的，执行期不可能新增或替换，而表格的大小和内容在执行期不会改变，因此其建构和存取皆在编译期就可以完成。</p>
+<p>为了找到<code>virtual function</code>的地址，需要：</p>
+<ol>
+<li>为了找到表格，每一个<code>class object</code>被安插上一个由编译器内部产生的指针，指向该表格；</li>
+<li>为了找到函数地址，每一个<code>virtual function</code>被指派一个表格索引值。</li>
+</ol>
+<p>这些工作都由编译器完成。执行期要做的，只是在特定的<code>virtual table slot</code>（记录着<code>virtual function</code>的地址）中调用<code>virtual function</code>。这些<code>virtual function</code>可以是：</p>
+<ol>
+<li>这个<code>class</code>所定义的函数实体。它<code>override</code>了一个<code>base class virtual function</code>函数实体；</li>
+<li>继承自<code>base class</code>的函数实体。这是在<code>derived class</code>中决定不<code>override</code>的<code>virtual function</code>时的情况；</li>
+<li>一个<code>pure_virtual_called()</code>函数实体。它既可以扮演<code>pure virtual function</code>的空间保卫者角色，也可以当做执行期异常处理函数（有时候会用到）。</li>
+</ol>
+<p><strong><em>单一继承</em></strong></p>
+<p>例如，对于如下的<strong>单一继承体系</strong>：</p>
+<p><img src="image-20210312160159297.png" alt="image-20210312160159297"></p>
+<p><code>virtual destriucior</code>被赋值<code>slot 1</code>，而<code>mult()</code>被赋值<code>slot 2</code>。此例并没有<code>mult()</code>的函数定义，因为它是一个<code>pure virtual function</code>，所以<code>pure _virtual_called()</code>的函数地址会被放在<code>slot 2</code>中。如果该函数意外地被调用，通常的操作是结束掉这个程序。<code>y()</code>被赋值<code>slot 3</code>而<code>z()</code>被赋值<code>slot 4</code>。<code>x()</code>没有<code>slot</code>，因为<code>x()</code>并非<code>virtual function</code>。</p>
+<p><img src="image-20210312160324194.png" alt="image-20210312160324194"></p>
+<p><img src="image-20210312160340269.png" alt="image-20210312160340269"></p>
+<p>此时，一共有三种可能性：</p>
+<ol>
+<li>它可以继承<code>base class</code>所声明的<code>virtual function</code>的函数实体。正确地说，是该函数实体的地址会被拷贝到<code>derived class</code>的<code>virtual table</code>相对应的<code>slot</code>之中；</li>
+<li>它可以使用自己的函数实体。这表示它自己的函数实体地址必须放在对应的<code>slot</code>之中；</li>
+<li>它可以加人一个新的<code>virtual function</code>。这时候<code>virtual table</code>的尺寸会增大一个<code>slot</code>，而新的函数实体地址会被放进该<code>slot</code>之中。</li>
+</ol>
+<p><code>Point2d</code>的<code>virtual table</code>在<code>slot 1</code>中指出<code>destructor</code>，而在<code>slot 2</code>中指出<code>mult()</code>取代<code>pure virtual function</code>。它自己的<code>y()</code>函数实体地址放在<code>slot 3</code>，继承自<code>Point</code>的<code>z()</code>函数实体地址则放在<code>slot 4</code>。</p>
+<p>类似的情况：</p>
+<p><img src="image-20210312160431103.png" alt="image-20210312160431103"></p>
+<p><code>Point3d</code>的<code>virtual table</code>中的<code>slot 1</code>放置<code>Point3d</code>的<code>destructor</code>，<code>slot 2</code>放置<code>Point3d::mult()</code>函数地址。<code>slot 3</code>放置继承自<code>Point2d</code>的<code>y()</code>函数地址，<code>slot 4</code>放置自己的<code>z()</code>函数地址。</p>
+<p>这个继承体系中的三个类的<code>virtual table</code>布局如下所示：</p>
+<p><img src="image-20210312161401843.png" alt="image-20210312161401843"></p>
+<p>现在，如果我们有这样的式子:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ptr-&gt;z();</span><br></pre></td></tr></table></figure>
+
+<p>那么，我如何有足够的知识在编译时期设定<code>virtual function</code>的调用呢？</p>
+<ol>
+<li>一般而言，我并不知道<code>ptr</code>所指对象的真正类型。然而我知道，经由<code>ptr</code>可以存取到该对象的<code>virtual table</code>；</li>
+<li>虽然我不知道哪一个<code>z()</code>函数实体会被调用，但我知道每一个<code>z()</code>函数地址都被放在<code>slot 4</code>。</li>
+</ol>
+<p>这些信息使得编译器可以将该调用转化为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(*ptr-&gt;vptr[<span class="number">4</span>])(ptr);</span><br></pre></td></tr></table></figure>
+
+<p>在一个单一继承体系中，<code>virtual function</code>机制的行为十分良好，不但有效率而且很容易塑造出模型。但是在多重继承和虚拟继承之中，就呵呵了。</p>
+<p><strong><em>多重继承</em></strong>和<strong><em>虚拟继承</em></strong></p>
+<p>懒得总结了，看是看懂了，乱七八糟的！</p>
+<h5 id="4-3-指向Member-Function的指针"><a href="#4-3-指向Member-Function的指针" class="headerlink" title="4.3 指向Member Function的指针"></a><code>4.3</code> 指向<code>Member Function</code>的指针</h5><p>取一个<code>nonstatic member function</code>的地址，如果该函数是<code>nonvirtual</code>，则得到的结果是它在内存中真正的地址。然而这个值也是不完全的，它也需要被绑定于某个<code>class object</code>的地址上，才能够通过它调用该函数（以参数<code>this</code>指出）。</p>
+<p>回顾一下，一个指向<code>member function</code>的指针，其声明语法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> (Point::*pmf)();</span><br></pre></td></tr></table></figure>
+
+<p>然后我们可以这样定义并初始化该指针：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> (Point::*coord)() = &amp;Point::x;</span><br></pre></td></tr></table></figure>
+
+<p>也可以这样指定其值：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">coord = &amp;Point::y;</span><br></pre></td></tr></table></figure>
+
+<p>想调用它，可以这么做：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(origin.*coord)();</span><br><span class="line"><span class="comment">// 或</span></span><br><span class="line">(ptr-&gt;*coord)();</span><br></pre></td></tr></table></figure>
+
+<p>这些操作会被编译器转化为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(coord)(&amp;origin);</span><br><span class="line"><span class="comment">// 和</span></span><br><span class="line">(coord)(ptr);</span><br></pre></td></tr></table></figure>
+
+<p>获得该函数在内存中的地址。然而面对一个<code>virtual function</code>，其地址在编译时期是未知的，所能知道的仅是<code>virtual function</code>在其相关之<code>virtual table</code>中的索引值，也就是说，对一个<code>virtual member function</code>取其地址，所能获得的只是一个索引值。</p>
+<p>那么问题来了，假设我们有以下的<code>Point</code>声明：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Point</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="keyword">virtual</span> ~Point();</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">float</span> <span class="title">z</span><span class="params">()</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>取<code>z()</code>函数的地址得到的索引值是<code>2</code>，而不是函数地址。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> (Point::*pmf)() = &amp;Point::z;</span><br><span class="line">Point *ptr = <span class="keyword">new</span> Point3d;</span><br></pre></td></tr></table></figure>
+
+<p>那么如果通过<code>pmf</code>来间接调用<code>z()</code>函数的话：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(ptr-&gt;*pmf)();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 转化为</span></span><br><span class="line"></span><br><span class="line">(*ptr-&gt;vptr[(<span class="keyword">int</span>)pmf]<span class="number">5</span>(ptr);</span><br></pre></td></tr></table></figure>
+
+<p>那么如何知道<code>pmf</code>指向的是<code>virtual function</code>还是<code>nonvirtual function</code>，毕竟<code>pmf</code>如果对<code>nonvirtual function</code>取地址的话得到的是在内存中的地址。也就是说，<code>pmf</code>的内部定义需要允许该函数能够寻址出<code>nonvirtual</code>和<code>virtual</code>两个<code>member function</code>。</p>
+<p>同时为了让执行<code>member function</code>的指针也能支持多重继承和虚拟继承，实现方法为使用一个结构体：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 用以支持在多重继承之下指向 member function 的指针</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">mptr</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="keyword">int</span> delta;</span><br><span class="line">    <span class="keyword">int</span> index; <span class="comment">// virtual 函数 在 virtual table 的索引, 当 index 不指向 virtual table 时值为 -1</span></span><br><span class="line">    <span class="keyword">union</span></span><br><span class="line">    &#123;</span><br><span class="line">		ptrtofunc faddr; <span class="comment">// nonvirtual 函数的地址</span></span><br><span class="line">        <span class="keyword">int</span> voffset;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在这样的模型下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(ptr-&gt;*pmf)();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 转化为</span></span><br><span class="line"></span><br><span class="line">(pmf.inidex &lt; <span class="number">0</span>) ? (*pmf.faddr)(ptr) : (*ptr-&gt;vptr[pmf.index](ptr));</span><br></pre></td></tr></table></figure>
+
+<h5 id="4-4-inline函数"><a href="#4-4-inline函数" class="headerlink" title="4.4 inline函数"></a><code>4.4</code> <code>inline</code>函数</h5>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E6%8E%A2%E7%B4%A2C-%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B/" rel="tag"># 深度探索C++对象模型</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/ShyaVw4WHERlLCqZ/" rel="prev" title="深度探索C++对象模型 第三章">
+      <i class="fa fa-chevron-left"></i> 深度探索C++对象模型 第三章
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/KT2Sz9hHwziaJtFt/" rel="next" title="教你实现一个简易的Linux平台下的划词翻译工具">
+      教你实现一个简易的Linux平台下的划词翻译工具 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC80OTQ0NS8yNTkzNw=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#第4章：Function语意学"><span class="nav-number">1.</span> <span class="nav-text">第4章：Function语意学</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#4-1-静态成员函数"><span class="nav-number">1.1.</span> <span class="nav-text">4.1 静态成员函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-2-虚拟成员函数"><span class="nav-number">1.2.</span> <span class="nav-text">4.2 虚拟成员函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-3-指向Member-Function的指针"><span class="nav-number">1.3.</span> <span class="nav-text">4.3 指向Member Function的指针</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-4-inline函数"><span class="nav-number">1.4.</span> <span class="nav-text">4.4 inline函数</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Liu Y.L."
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Liu Y.L.</p>
+  <div class="site-description" itemprop="description">寒江孤影-江湖故人-相逢何必曾相识</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yuanlehome" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuanlehome" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yuanlehome@163.com" title="E-Mail → mailto:yuanlehome@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Liu Y.L.</span>
+</div>
+
+<span>我已在此等候你 <span id="showDays"></span></span>
+<script>
+  var seconds = 1000;
+  var minutes = seconds * 60;
+  var hours = minutes * 60;
+  var days = hours * 24;
+  var years = days * 365;
+  var birthDay = Date.UTC(2020,04,04,00,00,00); // 这里设置建站时间
+  setInterval(function() {
+    var today = new Date();
+    var todayYear = today.getFullYear();
+    var todayMonth = today.getMonth()+1;
+    var todayDate = today.getDate();
+    var todayHour = today.getHours();
+    var todayMinute = today.getMinutes();
+    var todaySecond = today.getSeconds();
+    var now = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+    var diff = now - birthDay;
+    var diffYears = Math.floor(diff/years);
+    var diffDays = Math.floor((diff/days)-diffYears*365);
+    var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+    var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+    var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+      document.getElementById('showDays').innerHTML=""+diffYears+" 年 "+diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+  }, 1000);
+</script>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>

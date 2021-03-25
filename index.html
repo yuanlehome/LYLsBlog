@@ -191,6 +191,386 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/gMOP9F0b8zMZULMj/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/gMOP9F0b8zMZULMj/" class="post-title-link" itemprop="url">认识C++内存管理的工具 （三）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-18 21:35:42" itemprop="dateCreated datePublished" datetime="2020-07-18T21:35:42+08:00">2020-07-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">C++内存管理</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="13-重载类本身的operator-new-delete"><a href="#13-重载类本身的operator-new-delete" class="headerlink" title="13. 重载类本身的operator new/delete"></a><code>13</code>. 重载类本身的<code>operator new/delete</code></h4><p><img src="image-20210316211007882.png" alt="image-20210316211007882"></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">A</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    A()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"A() : this:"</span> &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    ~A()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"~A(): this: "</span> &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 这个函数写不写 static 都会被编译器做成 static</span></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span>* <span class="keyword">operator</span> <span class="title">new</span><span class="params">(<span class="keyword">size_t</span> len)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">malloc</span>(len);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="keyword">operator</span> <span class="title">delete</span><span class="params">(<span class="keyword">void</span>* ptr, <span class="keyword">size_t</span> len)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">free</span>(ptr);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 调用 A::operator new版本</span></span><br><span class="line">    A* a = <span class="keyword">new</span> A();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 调用全局的 operator new, 如果想调用 A 的版本, 则需显式调用 A::operator new()</span></span><br><span class="line">    <span class="keyword">void</span>* b = <span class="keyword">operator</span> <span class="keyword">new</span>(<span class="keyword">sizeof</span>(A));</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    A* c = ::<span class="keyword">new</span> A();       <span class="comment">//调 用全局的 operator new</span></span><br><span class="line">    <span class="keyword">void</span>* d = ::<span class="keyword">new</span> A();    <span class="comment">// 调用全局的 operator new</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">delete</span> a;   <span class="comment">// 先调用 A 的析构函数, 再调用 A 的 operator delete</span></span><br><span class="line">    <span class="keyword">delete</span> b;   <span class="comment">// 直接调用了全局的 operator delete</span></span><br><span class="line">    ::<span class="keyword">delete</span> c;</span><br><span class="line">    ::<span class="keyword">delete</span> d;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/gMOP9F0b8zMZULMj/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/vgFO35JETZ2jRu74/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/vgFO35JETZ2jRu74/" class="post-title-link" itemprop="url">认识C++内存管理的工具 （二）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-08 21:35:42" itemprop="dateCreated datePublished" datetime="2020-07-08T21:35:42+08:00">2020-07-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">C++内存管理</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="7-构造和析构的直接调用方式"><a href="#7-构造和析构的直接调用方式" class="headerlink" title="7. 构造和析构的直接调用方式"></a><code>7</code>. 构造和析构的直接调用方式</h4><p>通过指针不可以直接调用构造函数，但可以直接调用析构函数。可以通过<code>placement new</code>来直接调用构造函数。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">A</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> a;</span><br><span class="line">    <span class="keyword">int</span> b;</span><br><span class="line">    A(<span class="keyword">int</span> _a, <span class="keyword">int</span> _b) : a(_a), b(_b) &#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    A* tmp_a = <span class="keyword">new</span> A(<span class="number">2</span>, <span class="number">8</span>);</span><br><span class="line">    <span class="comment">// tmp-&gt;A::A(2, 8); // error! cannot call constructor 'A::A' directly</span></span><br><span class="line">    tmp_a-&gt;~A(); <span class="comment">// 可以的</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// 虽然调用了析构函数, 但事实上 tmp_a 的空间并没有释放</span></span><br><span class="line">    <span class="comment">// 因为没有 free 掉, 那块内存还在, 值没有被重写</span></span><br><span class="line">	<span class="comment">// 所以可以访问 通过 tmp_a 访问原对象的值</span></span><br><span class="line">	<span class="comment">// 如果是 delete tmp_a; 就不能访问</span></span><br><span class="line">    <span class="comment">// 因为 delete 调用完析构函数之后, 还调用了 free 函数释放那块内存</span></span><br><span class="line">    </span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; tmp_a-&gt;a &lt;&lt; <span class="built_in">endl</span>; <span class="comment">// 所有这里访问的值看似没有变化</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/vgFO35JETZ2jRu74/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/kZo0999uFp6r1QI2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/kZo0999uFp6r1QI2/" class="post-title-link" itemprop="url">认识C++内存管理的工具 （一）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-28 21:35:42" itemprop="dateCreated datePublished" datetime="2020-06-28T21:35:42+08:00">2020-06-28</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/C-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">C++内存管理</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="1-内存管理函数的层次"><a href="#1-内存管理函数的层次" class="headerlink" title="1. 内存管理函数的层次"></a><code>1</code>. 内存管理函数的层次</h4><img src="20.png"  />
+
+<p>从图中可以看到，<code>C++</code>程序员处于的位置是最上层的<code>Applications</code>，用的最多的是<code>new</code>，<code>new[]</code>，如果用容器，则内存基本不用管理。其次也可以调用<code>malloc</code>。至于最底层的操作系统级别的<code>API</code>，没有可移植性。它们之间的调用关系如上图的箭头所示。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/kZo0999uFp6r1QI2/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/plA8MQtWi85PlNcz/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/plA8MQtWi85PlNcz/" class="post-title-link" itemprop="url">深度探索C++对象模型 第五章和第六章</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-18 21:35:42" itemprop="dateCreated datePublished" datetime="2020-06-18T21:35:42+08:00">2020-06-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E6%B7%B1%E5%BA%A6%E6%8E%A2%E7%B4%A2C-%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B/" itemprop="url" rel="index"><span itemprop="name">深度探索C++对象模型</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="第5章：构造、析构、拷贝语意学"><a href="#第5章：构造、析构、拷贝语意学" class="headerlink" title="第5章：构造、析构、拷贝语意学"></a>第<code>5</code>章：构造、析构、拷贝语意学</h4><ul>
+<li><p>可以定义和调用一个纯虚函数，不过只能被静态的调用（通过类作用域运算符），不能通过虚拟机制调用。 </p>
+</li>
+<li><p>你声明了一个纯虚析构函数，就必须定义它。因为在你提供了声明前提下，每一个derived class destructor会被编译器加以扩展，以静态调用的方式调用其“每一个virtual base class”以及“上一层base class”的destructor。因此，只要缺乏任何一个base class destructor的定义，就会<strong>导致链接失败</strong>。</p>
+<p>  读到这儿，你可能会有疑问，对于普通的类（没有虚机制参与进来，派生类的析构函数中也会逐一调用基类的析构函数）我们也没有提供它析构函数的，那为什么不会导致链接失败呢？这是因为你没有写析构函数，编译器会默默给你提供一个，以便于在后面的派生类的析构函数中调用它。这里的重点是你没有提供，也就是说你没有声明，如果你声明了，但没有提供定义，同样会导致链接失败。</p>
+</li>
+<li><p>对于基类该不该将虚函数定义为<code>const</code>的，作者不建议。因为derived class中可能会修改自己的数据成员。</p>
+</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/plA8MQtWi85PlNcz/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/JFfWe2Uugfh1u70r/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -382,7 +762,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/MBICE5WlMJtd4Rku/">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/rRW3gD4CDal4WhRJ/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -396,7 +776,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/MBICE5WlMJtd4Rku/" class="post-title-link" itemprop="url">Effective C++ 第七章</a>
+            <a href="/rRW3gD4CDal4WhRJ/" class="post-title-link" itemprop="url">深度探索C++对象模型 第四章</a>
         </h2>
 
         <div class="post-meta">
@@ -406,15 +786,8 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-04-18 21:35:42" itemprop="dateCreated datePublished" datetime="2020-04-18T21:35:42+08:00">2020-04-18</time>
+              <time title="创建时间：2020-06-08 21:35:42" itemprop="dateCreated datePublished" datetime="2020-06-08T21:35:42+08:00">2020-06-08</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-16 10:22:55" itemprop="dateModified" datetime="2021-03-16T10:22:55+08:00">2021-03-16</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -425,7 +798,7 @@
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/Effective-C/" itemprop="url" rel="index"><span itemprop="name">Effective C++</span></a>
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E6%B7%B1%E5%BA%A6%E6%8E%A2%E7%B4%A2C-%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B/" itemprop="url" rel="index"><span itemprop="name">深度探索C++对象模型</span></a>
                 </span>
             </span>
 
@@ -435,14 +808,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>14k</span>
+              <span>3.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>13 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -454,18 +827,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h4 id="第7章：模板与泛型编程"><a href="#第7章：模板与泛型编程" class="headerlink" title="第7章：模板与泛型编程"></a>第<code>7</code>章：模板与泛型编程</h4><h5 id="条款41：了解隐式接口和编译期多态"><a href="#条款41：了解隐式接口和编译期多态" class="headerlink" title="条款41：了解隐式接口和编译期多态"></a>条款<code>41</code>：了解隐式接口和编译期多态</h5><ul>
-<li><p>哪一个重载函数被调用——发生在编译期</p>
-</li>
-<li><p>哪一个<code>virtual</code>函数被绑定——发生在运行期</p>
-</li>
-<li><p><code>class</code>和<code>template</code>都支持接口和多态</p>
-<p>  对<code>class</code>而言，接口是显式的，以成员函数的签名为中心，多态则通过<code>virtual</code>函数发生在运行期。对<code>template</code>而言，接口是隐式的，以有效表达式为中心，多态则通过<code>template</code>具现化和函数重载解析发生于编译期。</p>
-</li>
-</ul>
+          <h4 id="第4章：Function语意学"><a href="#第4章：Function语意学" class="headerlink" title="第4章：Function语意学"></a>第<code>4</code>章：<code>Function</code>语意学</h4><h5 id="4-1-静态成员函数"><a href="#4-1-静态成员函数" class="headerlink" title="4.1 静态成员函数"></a><code>4.1</code> 静态成员函数</h5><p><code>function</code>的调用方式</p>
+<p><code>nonmember function</code>、<code>static member function</code>、<code>nonstatic member function</code>的调用效率完全一样，因为，在内部都被编译器处理成相同的形式。而<code>virtual member function</code>的调用需要通过<code>vptr</code>所指向的<code>virtual table</code>，因此，效率有所降低。</p>
+<p><code>static member function</code>的主要特性就是它没有<code>this</code>指针。以下的次要特性统统根源于其主要特性：</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/MBICE5WlMJtd4Rku/#more" rel="contents">
+              <a class="btn" href="/rRW3gD4CDal4WhRJ/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -489,7 +856,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/5pPP61A5gGyfCrjb/">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/ShyaVw4WHERlLCqZ/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -503,7 +870,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/5pPP61A5gGyfCrjb/" class="post-title-link" itemprop="url">Effective C++ 第六章</a>
+            <a href="/ShyaVw4WHERlLCqZ/" class="post-title-link" itemprop="url">深度探索C++对象模型 第三章</a>
         </h2>
 
         <div class="post-meta">
@@ -513,15 +880,8 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-04-10 21:35:42" itemprop="dateCreated datePublished" datetime="2020-04-10T21:35:42+08:00">2020-04-10</time>
+              <time title="创建时间：2020-05-28 21:35:42" itemprop="dateCreated datePublished" datetime="2020-05-28T21:35:42+08:00">2020-05-28</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-16 10:23:04" itemprop="dateModified" datetime="2021-03-16T10:23:04+08:00">2021-03-16</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -532,7 +892,7 @@
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/Effective-C/" itemprop="url" rel="index"><span itemprop="name">Effective C++</span></a>
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E6%B7%B1%E5%BA%A6%E6%8E%A2%E7%B4%A2C-%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B/" itemprop="url" rel="index"><span itemprop="name">深度探索C++对象模型</span></a>
                 </span>
             </span>
 
@@ -542,14 +902,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>14k</span>
+              <span>3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>13 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -561,12 +921,24 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h4 id="第6章：继承与面向对象设计"><a href="#第6章：继承与面向对象设计" class="headerlink" title="第6章：继承与面向对象设计"></a>第<code>6</code>章：继承与面向对象设计</h4><h5 id="条款32：确定你的public继承塑模出is-a关系"><a href="#条款32：确定你的public继承塑模出is-a关系" class="headerlink" title="条款32：确定你的public继承塑模出is-a关系"></a>条款<code>32</code>：确定你的<code>public</code>继承塑模出<code>is-a</code>关系</h5><ul>
-<li>“<code>public</code>继承”意味<code>is-a</code>。适用于<code>base class</code>身上的每一件事情一定也适用于<code>derived class</code>身上，因为每一个<code>derived class</code>对象也都是一个<code>base class</code>对象</li>
-</ul>
+          <h4 id="第3章：Data语意学"><a href="#第3章：Data语意学" class="headerlink" title="第3章：Data语意学"></a>第<code>3</code>章：<code>Data</code>语意学</h4><p><code>The size of class</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">X</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="comment">// char c; // 此时, sizeof(X) == 1, sizeof(Y) == 8, sizeof(Z) == 8, sizeof(A) == 16</span></span><br><span class="line">    <span class="keyword">char</span> c; <span class="comment">// 此时, sizeof(X) == 1, sizeof(Y) == 16, sizeof(Z) == 16, sizeof(A) == 24</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Y</span> :</span> <span class="keyword">public</span> <span class="keyword">virtual</span> X &#123; &#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Z</span> :</span> <span class="keyword">public</span> <span class="keyword">virtual</span> X &#123; &#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> :</span> <span class="keyword">public</span> Y, <span class="keyword">public</span> Z &#123; &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>一个类的大小主要受三个因素的影响：</p>
+<ol>
+<li><p>语言支持的特性所造成的负担</p>
+<p> 比如，含虚函数的类会额外多一个<code>vptr</code>指针，含<code>virtual base class</code>会再多一个额外的指针（它或者指向<code>virtual base class subobject</code>，或者指向一个相关表格；表格中存放的若不是<code>virtual base class subobject</code>地址，就是其偏移量）。</p>
+</li>
+<li><p>编译器对于特殊情况所提供的优化处理</p>
+<p> 现代编译器的对于空基类的优化处理：一个<code>empty virtual base class</code>被视为<code>derived class object</code>最开头的一部分，也就是说它并没有花费任何的额外空间。因为既然有了<code>members</code>，就不需要原本为了<code>empty class</code>而安插的一个<code>char</code>。</p>
+</li>
+<li><p><code>alignment</code>（内存对齐）</p>
+<p> 就是将数值调整到某数的整数倍。在<code>64</code>位计算机上，通常<code>alignment</code>为<code>8 bytes</code>，以使<code>bus</code>的“运输量”达到最高效率。</p>
+</li>
+</ol>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/5pPP61A5gGyfCrjb/#more" rel="contents">
+              <a class="btn" href="/ShyaVw4WHERlLCqZ/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -590,7 +962,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/eSK55yN7G7dNea2c/">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/FXn6nXyz1FEw9e8Y/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -604,7 +976,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/eSK55yN7G7dNea2c/" class="post-title-link" itemprop="url">数据结构与算法之概论</a>
+            <a href="/FXn6nXyz1FEw9e8Y/" class="post-title-link" itemprop="url">深度探索C++对象模型 第二章</a>
         </h2>
 
         <div class="post-meta">
@@ -614,112 +986,8 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-04-04 13:54:42" itemprop="dateCreated datePublished" datetime="2020-04-04T13:54:42+08:00">2020-04-04</time>
+              <time title="创建时间：2020-05-18 21:35:42" itemprop="dateCreated datePublished" datetime="2020-05-18T21:35:42+08:00">2020-05-18</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-16 10:21:12" itemprop="dateModified" datetime="2021-03-16T10:21:12+08:00">2021-03-16</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">数据结构与算法</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.8k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><p>相互之间存在一种或多种特定关系的数据元素的集合。研究数据结构，关心的是数据对象的描述以及相关操作函数的实现。</p>
-<h4 id="数据"><a href="#数据" class="headerlink" title="数据"></a>数据</h4><p>是描述客观事物的符号，是计算机中可以操作的对象，是能被计算机识别，并输入给计算机处理的符号集合。如整型、浮点型等数值类型，以及声音、图像等非数值类型。</p>
-<h4 id="数据元素"><a href="#数据元素" class="headerlink" title="数据元素"></a>数据元素</h4><p>是组成数据的、具有一定意义的基本单位，在计算机中通常作为整体处理。也被称作记录。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/eSK55yN7G7dNea2c/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/hNsvEFKo8ZJPUeMf/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Liu Y.L.">
-      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="LYL's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/hNsvEFKo8ZJPUeMf/" class="post-title-link" itemprop="url">Effective C++ 第五章</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-04-01 21:35:42" itemprop="dateCreated datePublished" datetime="2020-04-01T21:35:42+08:00">2020-04-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-16 10:22:08" itemprop="dateModified" datetime="2021-03-16T10:22:08+08:00">2021-03-16</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -730,7 +998,7 @@
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/Effective-C/" itemprop="url" rel="index"><span itemprop="name">Effective C++</span></a>
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E6%B7%B1%E5%BA%A6%E6%8E%A2%E7%B4%A2C-%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B/" itemprop="url" rel="index"><span itemprop="name">深度探索C++对象模型</span></a>
                 </span>
             </span>
 
@@ -740,14 +1008,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>7k</span>
+              <span>7.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
+              <span>7 分钟</span>
             </span>
 
         </div>
@@ -759,33 +1027,17 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h4 id="第5章：实现"><a href="#第5章：实现" class="headerlink" title="第5章：实现"></a>第<code>5</code>章：实现</h4><h5 id="条款26：尽可能延后变量定义式的出现时间"><a href="#条款26：尽可能延后变量定义式的出现时间" class="headerlink" title="条款26：尽可能延后变量定义式的出现时间"></a>条款<code>26</code>：尽可能延后变量定义式的出现时间</h5><ul>
-<li>应该延长变量的定义，直到非得使用它时</li>
-<li>应该延后这份定义，直到能够给它初值实参</li>
-</ul>
-<p>对于循环存在的情况：</p>
+          <h4 id="第2章：构造函数语意学"><a href="#第2章：构造函数语意学" class="headerlink" title="第2章：构造函数语意学"></a>第<code>2</code>章：构造函数语意学</h4><p>在这一章中，主要介绍编译器对于“对象构造过程”的干涉，以及对于“程序形式”和“程序效率”的冲击。</p>
+<h5 id="2-1-Default-Constructor的构造操作"><a href="#2-1-Default-Constructor的构造操作" class="headerlink" title="2.1 Default Constructor的构造操作"></a><code>2.1</code> <code>Default Constructor</code>的构造操作</h5><p>对于未声明构造函数的类，只有在以下四种情况下编译器才会为它们合成默认构造函数：</p>
 <ul>
-<li><p>做法<code>A</code>：定义于循环外</p>
-  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Widget w;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">&#123;</span><br><span class="line">    w = 取决于 i 的某个值；</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>做法<code>B</code>：定义于循环内</p>
-  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="function">Widget <span class="title">w</span><span class="params">(取决于 i 的某个值)</span></span>;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>  这两种写法的成本如下：</p>
-<ul>
-<li><p>做法<code>A</code>：<code>1</code>个构造函数 + <code>1</code>个析构函数 + <code>n</code>个赋值操作</p>
-</li>
-<li><p>做法<code>B</code>：<code>n</code>个构造函数 + <code>n</code>个析构函数</p>
-</li>
-<li><p>做法<code>A</code>会造成名称<code>w</code>的作用域比做法<code>B</code>更大</p>
-<p>除非（1）你知道赋值成本比构造 + 析构成本低，（2）你正在处理代码中效率高度敏感的部分，否则你应该使用做法<code>B</code>。</p>
-</li>
-</ul>
-</li>
+<li>类有一个类对象（<code>Member Class Object</code>）成员，且该成员含有默认构造函数（<code>Default Constructor</code>）</li>
+<li>继承自带有默认构造函数（<code>Default Constructor</code>）的基类（<code>Base class</code>）</li>
+<li>带有虚函数（<code>Virtual function</code>）的类</li>
+<li>继承自虚基类（<code>Virtual base class</code>）的类</li>
 </ul>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/hNsvEFKo8ZJPUeMf/#more" rel="contents">
+              <a class="btn" href="/FXn6nXyz1FEw9e8Y/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -809,7 +1061,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/S0Qfg61EKNlwLo15/">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/jOQUhpad0yAY7aMb/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -823,7 +1075,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/S0Qfg61EKNlwLo15/" class="post-title-link" itemprop="url">Effective C++ 第四章</a>
+            <a href="/jOQUhpad0yAY7aMb/" class="post-title-link" itemprop="url">深度探索C++对象模型 第一章</a>
         </h2>
 
         <div class="post-meta">
@@ -833,15 +1085,8 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-03-21 21:35:42" itemprop="dateCreated datePublished" datetime="2020-03-21T21:35:42+08:00">2020-03-21</time>
+              <time title="创建时间：2020-05-08 21:35:42" itemprop="dateCreated datePublished" datetime="2020-05-08T21:35:42+08:00">2020-05-08</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-16 10:22:19" itemprop="dateModified" datetime="2021-03-16T10:22:19+08:00">2021-03-16</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -852,7 +1097,7 @@
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/Effective-C/" itemprop="url" rel="index"><span itemprop="name">Effective C++</span></a>
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E6%B7%B1%E5%BA%A6%E6%8E%A2%E7%B4%A2C-%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B/" itemprop="url" rel="index"><span itemprop="name">深度探索C++对象模型</span></a>
                 </span>
             </span>
 
@@ -862,7 +1107,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4.2k</span>
+              <span>4.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -881,336 +1126,29 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h4 id="第4章：设计与声明"><a href="#第4章：设计与声明" class="headerlink" title="第4章：设计与声明"></a>第<code>4</code>章：设计与声明</h4><h5 id="条款18：让接口容易被正确使用，不容易被误用"><a href="#条款18：让接口容易被正确使用，不容易被误用" class="headerlink" title="条款18：让接口容易被正确使用，不容易被误用"></a>条款<code>18</code>：让接口容易被正确使用，不容易被误用</h5><ul>
-<li>如果客户企图使用某个接口却没有获得所预期的行为，这个代码不应该通过编译；如果代码通过了编译，则它的行为就应该是客户想要的</li>
-<li>欲达“让接口容易被正确使用，不容易被误用”的目的，必须考虑客户调用接口时可能做出什么样的错误</li>
-<li>“促进正确使用”的办法包括接口的一致性，以及与内置类型兼容</li>
-<li>“阻止误用”的办法包括建立新类型、限制在类型上的操作，束缚对象值以及消除客户的资源管理责任</li>
+          <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p><code>Simplifier</code>是编译器的一部分，处于<code>type checking</code>和<code>code generation</code>之间。它用来转换内部的程序表现。有<code>3</code>种转换是任何对象模型都需要的：</p>
+<ol>
+<li><p>与编译器息息相关的转换（<code>Implementation-dependent transformations</code>）</p>
+<p> 例如，当<code>parser</code>看到这个表达式：</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fct();</span><br></pre></td></tr></table></figure>
+
+<p> 它并不知道是否（<code>a</code>）这是一个函数调用操作，或者（<code>b</code>）这是<code>overloaded calloperator</code>在<code>class object fct</code>上的一种应用。默认情况下，这个式子所代表的是一个函数调用，但是当（<code>b</code>）的情况出现，<code>Simplifier</code>就要重写并调换<code>call subtree</code>。</p>
+</li>
+<li><p>语言语意转换（<code>Language semantics transformations</code>）</p>
+<p> 这包括<code>constructor</code>/<code>destructor</code>的合成和扩展、<code>memberwise</code>初始化、对于<code>memberwise copy</code>的支持、在程序代码中安插<code>conversion operators</code>、临时性对象，以及对<code>constructor</code>/<code>destructor</code>的调用。</p>
+</li>
+<li><p>程序代码和对象模型的转换（<code>Code and object model transformations</code>）</p>
+<p> 这包括对<code>virtual functions</code>、<code>virtual base class</code>和<code>inheritance</code>的一般支持、<code>new</code>和<code>delete</code>运算符、<code>class objects</code>所组成的数组、<code>local static class instances</code>、带有非常量表达式（<code>nonconstant cxpression</code>）之<code>global object</code>的静态初始化操作。</p>
+</li>
+</ol>
+<p>什么是<code>C++</code>对象模型？</p>
+<ul>
+<li>语言中直接支持面向对象程序设计的部分</li>
+<li>对于各种支持的底层实现机制</li>
 </ul>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/S0Qfg61EKNlwLo15/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/ojSMOM86r5rbvAqL/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Liu Y.L.">
-      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="LYL's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/ojSMOM86r5rbvAqL/" class="post-title-link" itemprop="url">Effective C++ 第三章</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-03-15 21:35:42" itemprop="dateCreated datePublished" datetime="2020-03-15T21:35:42+08:00">2020-03-15</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-16 10:22:31" itemprop="dateModified" datetime="2021-03-16T10:22:31+08:00">2021-03-16</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/Effective-C/" itemprop="url" rel="index"><span itemprop="name">Effective C++</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h4 id="第3章：资源管理"><a href="#第3章：资源管理" class="headerlink" title="第3章：资源管理"></a>第<code>3</code>章：资源管理</h4><h5 id="条款13：以对象管理资源"><a href="#条款13：以对象管理资源" class="headerlink" title="条款13：以对象管理资源"></a>条款<code>13</code>：以对象管理资源</h5><ul>
-<li><p><code>RAII</code>(<code>Resource Acquisition Is Initialization</code>)</p>
-<p>  使用<code>new</code>获取资源后于同一条语句内以它初始化某个资源管理对象。利用当管理对象离开作用域被销毁时自动调用其析构函数的机制确保资源被释放。不直接用<code>new</code>和<code>delete</code>，多用智能指针。</p>
-</li>
-<li><p>智能指针在其析构函数中做<code>delete</code>动作而非<code>delete[]</code>动作</p>
-<p>  因此，不要在动态分配来的数组身上使用智能指针（虽然它仍然会通过编译）。</p>
-</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/ojSMOM86r5rbvAqL/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/MeCvwFxjI4asjddf/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Liu Y.L.">
-      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="LYL's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/MeCvwFxjI4asjddf/" class="post-title-link" itemprop="url">Effective C++ 第二章</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-03-08 21:35:42" itemprop="dateCreated datePublished" datetime="2020-03-08T21:35:42+08:00">2020-03-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-16 10:23:12" itemprop="dateModified" datetime="2021-03-16T10:23:12+08:00">2021-03-16</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/Effective-C/" itemprop="url" rel="index"><span itemprop="name">Effective C++</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h4 id="第2章：构造、析构、赋值运算"><a href="#第2章：构造、析构、赋值运算" class="headerlink" title="第2章：构造、析构、赋值运算"></a>第<code>2</code>章：构造、析构、赋值运算</h4><h5 id="条款05：了解C-默默编写并调用哪些函数"><a href="#条款05：了解C-默默编写并调用哪些函数" class="headerlink" title="条款05：了解C++默默编写并调用哪些函数"></a>条款<code>05</code>：了解<code>C++</code>默默编写并调用哪些函数</h5><ul>
-<li><p>编译器会暗自为<code>class</code>创建<code>default</code>构造函数、<code>copy</code>构造函数、<code>copy assignment</code>操作符以及析构函数</p>
-</li>
-<li><p>对于<code>class</code>内含<code>reference</code>成员或<code>const</code>成员，编译器拒绝为其生成<code>copy</code>构造函数和<code>copy assignment</code>操作符</p>
-<blockquote>
-<p>因为<code>C++</code>不允许<code>reference</code>改指向不同的对象以及更改<code>const</code>成员。 </p>
-</blockquote>
-</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/MeCvwFxjI4asjddf/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/l4snoL8SUW9lGasI/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Liu Y.L.">
-      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="LYL's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/l4snoL8SUW9lGasI/" class="post-title-link" itemprop="url">Effective C++ 第一章</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-03-01 21:35:42" itemprop="dateCreated datePublished" datetime="2020-03-01T21:35:42+08:00">2020-03-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-16 10:21:57" itemprop="dateModified" datetime="2021-03-16T10:21:57+08:00">2021-03-16</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/Effective-C/" itemprop="url" rel="index"><span itemprop="name">Effective C++</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h4 id="第1章：让自己习惯C"><a href="#第1章：让自己习惯C" class="headerlink" title="第1章：让自己习惯C++"></a>第<code>1</code>章：让自己习惯<code>C++</code></h4><h5 id="条款01：视C-为一个语言联邦"><a href="#条款01：视C-为一个语言联邦" class="headerlink" title="条款01：视C++为一个语言联邦"></a>条款<code>01</code>：视<code>C++</code>为一个语言联邦</h5><ul>
-<li>将<code>C++</code>视为由<code>4</code>个次语言组成的联邦：<ul>
-<li><code>C</code>：没有模板、没有异常、没有重载…</li>
-<li><code>Object-Oriented C++</code>：类、封装、继承、多态、虚函数、动态绑定等等；</li>
-<li><code>Template C++</code>：泛型编程部分；</li>
-<li><code>STL</code>：是一个<code>Template</code>程序库，容器、迭代器、算法以及函数对象。</li>
-</ul>
-</li>
-</ul>
-<p>从某个此语言切换到另一个时，高效编程守则可能会发生变化。比如，<code>C-like</code>类型（内置类型）<code>pass by value</code>更好；对于<code>Object-Oriented C++</code>而言，<code>pass by reference to-const</code>更好；再切换到<code>STL</code>，由于迭代器和函数对象都是在<code>C</code>指针之上塑造出来的，<code>pass by value</code>守则再次适用。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/l4snoL8SUW9lGasI/#more" rel="contents">
+              <a class="btn" href="/jOQUhpad0yAY7aMb/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1232,6 +1170,9 @@
 
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
 
 
 
@@ -1298,20 +1239,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">18</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
