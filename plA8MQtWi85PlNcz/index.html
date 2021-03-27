@@ -278,7 +278,7 @@
 <a id="more"></a>
 
 <h5 id="5-1-无继承情况下的对象构造"><a href="#5-1-无继承情况下的对象构造" class="headerlink" title="5.1 无继承情况下的对象构造"></a><code>5.1</code> 无继承情况下的对象构造</h5><p>当编译器遇到这样的定义：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">Point global;<br></code></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Point global;</span><br></pre></td></tr></table></figure>
 
 <p>在<code>C</code>之中，<code>global</code>被视为一个“临时性的定义”，因为它没有明确的初始化操作。一个“临时性的定义”可以在程序中发生多次。那些实例会被链接器折叠起来，只留下单独一个实体，被放在程序<code>data segment</code>中一个“特别保留给未初始化之<code>global objects</code>使用”的空间。由于历史的缘故，这块空间被称为<code>BSS</code>，是<code>Block Started by Symbol</code>的缩写。</p>
 <p>而<code>global</code>在<code>C++</code>中被视为完全定义（它会阻止第二个或更多个定义）。<code>C</code>和<code>C++</code>的一个差异就在于，<code>BSS data segment</code>在<code>C++</code>中相对地不重要。<code>C++</code>的所有全局对象都被当作“初始化过的数据”来对待。</p>
