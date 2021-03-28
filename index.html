@@ -191,6 +191,98 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/20210108/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/20210108/" class="post-title-link" itemprop="url">leetcode专题之链表</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-08 21:35:42" itemprop="dateCreated datePublished" datetime="2021-01-08T21:35:42+08:00">2021-01-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/leetcode/" itemprop="url" rel="index"><span itemprop="name">leetcode</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>17k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>15 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="2-Linked-List"><a href="#2-Linked-List" class="headerlink" title="2. Linked List"></a><code>2</code>. <code>Linked List</code></h4><h5 id="2-1-206-Reverse-Linked-List"><a href="#2-1-206-Reverse-Linked-List" class="headerlink" title="2.1 206. Reverse Linked List"></a><code>2.1</code> <a href="https://leetcode.com/problems/reverse-linked-list/" target="_blank" rel="noopener">206. Reverse Linked List</a></h5><blockquote>
+<p>给定一个单链表的头节点，反转链表，然后返回反转后的链表头节点。</p>
+<img src="rev1ex1.jpg" alt="img" style="zoom:67%;" />
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 迭代解法</span></span><br><span class="line"><span class="function">ListNode* <span class="title">reverseList</span><span class="params">(ListNode* head)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ListNode* p = <span class="literal">nullptr</span>;</span><br><span class="line">    ListNode* q = p;</span><br><span class="line">    <span class="keyword">while</span>(head)</span><br><span class="line">    &#123;</span><br><span class="line">        q = head-&gt;next;</span><br><span class="line">        </span><br><span class="line">        head-&gt;next = p;</span><br><span class="line">        p = head;</span><br><span class="line">        </span><br><span class="line">        head = q;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 递归解法</span></span><br><span class="line"><span class="function">ListNode* <span class="title">reverseList</span><span class="params">(ListNode* head)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!head || !head-&gt;next) <span class="keyword">return</span> head;</span><br><span class="line">    ListNode* q = reverseList(head-&gt;next);</span><br><span class="line">    head-&gt;next-&gt;next = head;</span><br><span class="line">    head-&gt;next = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">return</span> q;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/20210108/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/gMOP9F0b8zMZULMj/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1040,117 +1132,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/jOQUhpad0yAY7aMb/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Liu Y.L.">
-      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="LYL's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/jOQUhpad0yAY7aMb/" class="post-title-link" itemprop="url">深度探索C++对象模型之前言</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-08 21:35:42" itemprop="dateCreated datePublished" datetime="2020-05-08T21:35:42+08:00">2020-05-08</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E6%B7%B1%E5%BA%A6%E6%8E%A2%E7%B4%A2C-%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B/" itemprop="url" rel="index"><span itemprop="name">深度探索C++对象模型</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p><code>Simplifier</code>是编译器的一部分，处于<code>type checking</code>和<code>code generation</code>之间。它用来转换内部的程序表现。有<code>3</code>种转换是任何对象模型都需要的：</p>
-<ol>
-<li><p>与编译器息息相关的转换（<code>Implementation-dependent transformations</code>）</p>
-<p> 例如，当<code>parser</code>看到这个表达式：</p>
- <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fct();</span><br></pre></td></tr></table></figure>
-
-<p> 它并不知道是否（<code>a</code>）这是一个函数调用操作，或者（<code>b</code>）这是<code>overloaded calloperator</code>在<code>class object fct</code>上的一种应用。默认情况下，这个式子所代表的是一个函数调用，但是当（<code>b</code>）的情况出现，<code>Simplifier</code>就要重写并调换<code>call subtree</code>。</p>
-</li>
-<li><p>语言语意转换（<code>Language semantics transformations</code>）</p>
-<p> 这包括<code>constructor</code>/<code>destructor</code>的合成和扩展、<code>memberwise</code>初始化、对于<code>memberwise copy</code>的支持、在程序代码中安插<code>conversion operators</code>、临时性对象，以及对<code>constructor</code>/<code>destructor</code>的调用。</p>
-</li>
-<li><p>程序代码和对象模型的转换（<code>Code and object model transformations</code>）</p>
-<p> 这包括对<code>virtual functions</code>、<code>virtual base class</code>和<code>inheritance</code>的一般支持、<code>new</code>和<code>delete</code>运算符、<code>class objects</code>所组成的数组、<code>local static class instances</code>、带有非常量表达式（<code>nonconstant cxpression</code>）之<code>global object</code>的静态初始化操作。</p>
-</li>
-</ol>
-<p>什么是<code>C++</code>对象模型？</p>
-<ul>
-<li>语言中直接支持面向对象程序设计的部分</li>
-<li>对于各种支持的底层实现机制</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/jOQUhpad0yAY7aMb/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1222,20 +1203,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-count">19</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
