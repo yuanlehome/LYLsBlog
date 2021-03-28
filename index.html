@@ -240,7 +240,7 @@
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>15 分钟</span>
+              <span>16 分钟</span>
             </span>
 
         </div>
@@ -252,11 +252,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h4 id="2-Linked-List"><a href="#2-Linked-List" class="headerlink" title="2. Linked List"></a><code>2</code>. <code>Linked List</code></h4><h5 id="2-1-206-Reverse-Linked-List"><a href="#2-1-206-Reverse-Linked-List" class="headerlink" title="2.1 206. Reverse Linked List"></a><code>2.1</code> <a href="https://leetcode.com/problems/reverse-linked-list/" target="_blank" rel="noopener">206. Reverse Linked List</a></h5><blockquote>
-<p>给定一个单链表的头节点，反转链表，然后返回反转后的链表头节点。</p>
-<img src="rev1ex1.jpg" alt="img" style="zoom:67%;" />
-</blockquote>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 迭代解法</span></span><br><span class="line"><span class="function">ListNode* <span class="title">reverseList</span><span class="params">(ListNode* head)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ListNode* p = <span class="literal">nullptr</span>;</span><br><span class="line">    ListNode* q = p;</span><br><span class="line">    <span class="keyword">while</span>(head)</span><br><span class="line">    &#123;</span><br><span class="line">        q = head-&gt;next;</span><br><span class="line">        </span><br><span class="line">        head-&gt;next = p;</span><br><span class="line">        p = head;</span><br><span class="line">        </span><br><span class="line">        head = q;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 递归解法</span></span><br><span class="line"><span class="function">ListNode* <span class="title">reverseList</span><span class="params">(ListNode* head)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!head || !head-&gt;next) <span class="keyword">return</span> head;</span><br><span class="line">    ListNode* q = reverseList(head-&gt;next);</span><br><span class="line">    head-&gt;next-&gt;next = head;</span><br><span class="line">    head-&gt;next = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">return</span> q;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <p>这篇文章是<code>leetcode</code>刷题系列的第<code>2</code>部分——链表，链表的大部分题目难度都不大。<code>leetcode</code>上链表部分的题目也就<code>40</code>道左右，基本上都做了，这里就把有代表性的题目发出来，共计<code>19</code>道。每道题都给出了注释，有的题目还给出了另一种思路和解法。</p>
+<p>接下来这几个月，计划完成的<code>leetcode</code>刷题系列其组织如下：</p>
+<p><code>1</code>. 数组</p>
+<p><code>2</code>. 链表</p>
+<p><code>3</code>. 字符串</p>
+<p><code>4</code>. 二叉树</p>
+<p><code>5</code>. 队列和栈</p>
+<p><code>6</code>. 动态规划</p>
+<p><code>7</code>. 数据结构设计</p>
+<p>预计涉及题目至少<code>200</code>道！</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/20210108/#more" rel="contents">
