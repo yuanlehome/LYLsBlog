@@ -22,43 +22,44 @@
 
   <meta name="description" content="这篇文章是leetcode刷题系列的第2部分——链表，链表的大部分题目难度都不大。leetcode上链表部分的题目也就40道左右，基本上都做了，这里就把有代表性的题目发出来，共计20道。每道题都给出了注释，有的题目还给出了另一种思路和解法。另外，博主是非常注重代码编写风格的，因此代码可读性较好。 接下来这几个月，计划完成的leetcode刷题系列其组织如下： 1. 数组 2. 链表 3. 字符串">
 <meta property="og:type" content="article">
-<meta property="og:title" content="leetcode专题之链表">
-<meta property="og:url" content="https://yuanlehome.github.io/20210108/index.html">
+<meta property="og:title" content="leetcode专题刷题系列之链表">
+<meta property="og:url" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/index.html">
 <meta property="og:site_name" content="LYL&#39;s Blog">
 <meta property="og:description" content="这篇文章是leetcode刷题系列的第2部分——链表，链表的大部分题目难度都不大。leetcode上链表部分的题目也就40道左右，基本上都做了，这里就把有代表性的题目发出来，共计20道。每道题都给出了注释，有的题目还给出了另一种思路和解法。另外，博主是非常注重代码编写风格的，因此代码可读性较好。 接下来这几个月，计划完成的leetcode刷题系列其组织如下： 1. 数组 2. 链表 3. 字符串">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/rev1ex1.jpg">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/rev2ex2.jpg">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/reverse_ex1.jpg">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/reverse_ex2.jpg">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/formula1.png">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/addtwonumber1.jpg">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/linked1.jpg">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/linked.jpg">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/circularlinkedlist.png">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/3.jpeg">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/2.jpeg">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/center.png">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/remove_ex1.jpg">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/160_statement.png">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/oddeven2-linked-list.jpg">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/pal1linked-list.jpg">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/merge_ex1.jpg">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/multilevellinkedlist.png">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/multilevellinkedlistflattened.png">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/rotate1.jpg">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/roate2.jpg">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/e3.png">
-<meta property="og:image" content="https://yuanlehome.github.io/20210108/e1.png">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/rev1ex1.jpg">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/rev2ex2.jpg">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/reverse_ex1.jpg">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/reverse_ex2.jpg">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/formula1.png">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/addtwonumber1.jpg">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/linked1.jpg">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/linked.jpg">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/circularlinkedlist.png">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/3.jpeg">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/2.jpeg">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/center.png">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/remove_ex1.jpg">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/160_statement.png">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/oddeven2-linked-list.jpg">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/pal1linked-list.jpg">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/merge_ex1.jpg">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/multilevellinkedlist.png">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/multilevellinkedlistflattened.png">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/rotate1.jpg">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/roate2.jpg">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/e3.png">
+<meta property="og:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/e1.png">
 <meta property="article:published_time" content="2021-01-08T13:35:42.000Z">
 <meta property="article:modified_time" content="2021-01-08T13:35:42.000Z">
 <meta property="article:author" content="Liu Y.L.">
 <meta property="article:tag" content="leetcode">
 <meta property="article:tag" content="算法">
+<meta property="article:tag" content="数据结构">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://yuanlehome.github.io/20210108/rev1ex1.jpg">
+<meta name="twitter:image" content="https://yuanlehome.github.io/S07PSuYxoZ6CPova/rev1ex1.jpg">
 
-<link rel="canonical" href="https://yuanlehome.github.io/20210108/">
+<link rel="canonical" href="https://yuanlehome.github.io/S07PSuYxoZ6CPova/">
 
 
 <script id="page-configurations">
@@ -71,7 +72,7 @@
   };
 </script>
 
-  <title>leetcode专题之链表 | LYL's Blog</title>
+  <title>leetcode专题刷题系列之链表 | LYL's Blog</title>
   
 
 
@@ -220,7 +221,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/20210108/">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/S07PSuYxoZ6CPova/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -233,7 +234,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          leetcode专题之链表
+          leetcode专题刷题系列之链表
         </h1>
 
         <div class="post-meta">
@@ -306,7 +307,7 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 迭代解法</span></span><br><span class="line"><span class="function">ListNode* <span class="title">reverseList</span><span class="params">(ListNode* head)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ListNode* p = <span class="literal">nullptr</span>;</span><br><span class="line">    ListNode* q = p;</span><br><span class="line">    <span class="keyword">while</span>(head)</span><br><span class="line">    &#123;</span><br><span class="line">        q = head-&gt;next;</span><br><span class="line">        </span><br><span class="line">        head-&gt;next = p;</span><br><span class="line">        p = head;</span><br><span class="line">        </span><br><span class="line">        head = q;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 递归解法</span></span><br><span class="line"><span class="function">ListNode* <span class="title">reverseList</span><span class="params">(ListNode* head)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!head || !head-&gt;next) <span class="keyword">return</span> head;</span><br><span class="line">    ListNode* q = reverseList(head-&gt;next);</span><br><span class="line">    head-&gt;next-&gt;next = head;</span><br><span class="line">    head-&gt;next = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">return</span> q;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h5 id="92-Reverse-Linked-List-II"><a href="#92-Reverse-Linked-List-II" class="headerlink" title="92. Reverse Linked List II"></a><a href="https://leetcode.com/problems/reverse-linked-list-ii/" target="_blank" rel="noopener">92. Reverse Linked List II</a></h5><blockquote>
-<p>给定一个单链列表的头以及<code>left</code>和<code>right</code>两个整数，其中<code>left &lt;= right</code>，将列表的节点从<code>left</code>位置反转到<code>right</code>位置，然后返回反转的列表。</p>
+<p>给定一个单链表的头以及<code>left</code>和<code>right</code>两个整数，其中<code>left &lt;= right</code>，将链表中从<code>left</code>位置到<code>right</code>位置的节点反转，返回反转后的链表。</p>
 <img src="rev2ex2.jpg" alt="img" style="zoom:67%;" />
 </blockquote>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 纯递归解法 */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 反转整个链表</span></span><br><span class="line"><span class="function">ListNode* <span class="title">reverseList</span><span class="params">(ListNode* head)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!head || !head-&gt;next) <span class="keyword">return</span> head;</span><br><span class="line">    ListNode* q = reverseList(head-&gt;next);</span><br><span class="line">    head-&gt;next-&gt;next = head;</span><br><span class="line">    head-&gt;next = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">return</span> q;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 反转前 n 个节点</span></span><br><span class="line"><span class="function">ListNode* <span class="title">reverseN</span><span class="params">(ListNode* head, <span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ListNode* p = head;</span><br><span class="line">    <span class="keyword">while</span>(--n &gt; <span class="number">0</span>) p = p-&gt;next;</span><br><span class="line">    </span><br><span class="line">    ListNode* q = p-&gt;next;</span><br><span class="line">    p-&gt;next = <span class="literal">nullptr</span>;</span><br><span class="line">    </span><br><span class="line">    ListNode* r = reverseList(head);</span><br><span class="line">    head-&gt;next = q;</span><br><span class="line">    <span class="keyword">return</span> r;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">ListNode* <span class="title">reverseBetween</span><span class="params">(ListNode* head, <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(left == <span class="number">1</span>) <span class="keyword">return</span> reverseN(head, right);</span><br><span class="line">    </span><br><span class="line">    head-&gt;next = reverseBetween(head-&gt;next, left - <span class="number">1</span>, right - <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">return</span> head;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 纯迭代解法 */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 反转整个链表</span></span><br><span class="line"><span class="function">ListNode* <span class="title">reverseList</span><span class="params">(ListNode* head)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ListNode* p = <span class="literal">nullptr</span>;</span><br><span class="line">    ListNode* q = p;</span><br><span class="line">    <span class="keyword">while</span>(head)</span><br><span class="line">    &#123;</span><br><span class="line">        q = head-&gt;next;</span><br><span class="line">        head-&gt;next = p;</span><br><span class="line">        p = head;</span><br><span class="line">        head = q;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 反转前 n 个节点</span></span><br><span class="line"><span class="function">ListNode* <span class="title">reverseN</span><span class="params">(ListNode* head, <span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ListNode* p = head;</span><br><span class="line">    <span class="keyword">while</span>(--n &gt; <span class="number">0</span>) p = p-&gt;next;</span><br><span class="line">    </span><br><span class="line">    ListNode* q = p-&gt;next;</span><br><span class="line">    p-&gt;next = <span class="literal">nullptr</span>;</span><br><span class="line">    </span><br><span class="line">    ListNode* r = reverseList(head);</span><br><span class="line">    head-&gt;next = q;</span><br><span class="line">    <span class="keyword">return</span> r;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">ListNode* <span class="title">reverseBetween</span><span class="params">(ListNode* head, <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(left == <span class="number">1</span>) <span class="keyword">return</span> reverseN(head, right);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 计算反转的实际节点数</span></span><br><span class="line">    <span class="keyword">int</span> n = right - left + <span class="number">1</span>;</span><br><span class="line">    ListNode* p = head;</span><br><span class="line">    </span><br><span class="line">    left--;</span><br><span class="line">    <span class="keyword">while</span>(--left &gt; <span class="number">0</span>) p = p-&gt;next;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// p 现在指向第 left 个节点的前一个节点</span></span><br><span class="line">    p-&gt;next = reverseN(p-&gt;next, n);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> head;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -498,6 +499,8 @@
   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: [2,7,4,3,5]</span><br><span class="line">Output: [7,0,5,5,0]</span><br></pre></td></tr></table></figure>
 </blockquote>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 像这种下一个最大元素之类的问题, 一定用的是单调栈的技巧</span></span><br><span class="line"><span class="comment">// 有几道数组的题目是找下一个最大元素</span></span><br><span class="line"><span class="comment">// 这里给换成了链表了, 换汤不换药</span></span><br><span class="line"><span class="comment">// 这里主要学习的技术是链表的后序遍历</span></span><br><span class="line"><span class="comment">// 对的, 链表就是一种特殊的二叉树嘛</span></span><br><span class="line"><span class="comment">// 链表的后序遍历就是从后向前访问节点</span></span><br><span class="line"><span class="comment">// 你当然可以用栈来完成</span></span><br><span class="line"><span class="comment">// 这里用递归完成</span></span><br><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">nextLargerNodes</span><span class="params">(ListNode* head)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 存放答案的向量</span></span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; res;</span><br><span class="line">    <span class="built_in">stack</span>&lt;<span class="keyword">int</span>&gt; s;</span><br><span class="line">    helper(head, s, res);</span><br><span class="line">    <span class="comment">// 最后需要反转一下 vector</span></span><br><span class="line">    <span class="comment">// 因为递归函数是从后向前添加的</span></span><br><span class="line">    reverse(res.begin(), res.end());</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">helper</span><span class="params">(ListNode* head, <span class="built_in">stack</span>&lt;<span class="keyword">int</span>&gt;&amp; s, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; res)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// base case</span></span><br><span class="line">    <span class="keyword">if</span>(!head) <span class="keyword">return</span>;</span><br><span class="line">    <span class="comment">// 先不访问节点, 递归去下一个节点</span></span><br><span class="line">    helper(head-&gt;next, s, res);</span><br><span class="line">    <span class="comment">// 后序遍历代码</span></span><br><span class="line">    <span class="comment">// 下面代码都是是固定的单调栈算法的模板</span></span><br><span class="line">    <span class="keyword">while</span>(!s.empty() &amp;&amp; s.top() &lt;= head-&gt;val)</span><br><span class="line">        s.pop();</span><br><span class="line">    res.push_back(s.empty() ? <span class="number">0</span> : s.top());</span><br><span class="line">    s.push(head-&gt;val);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
     </div>
 
     
@@ -508,6 +511,7 @@
           <div class="post-tags">
               <a href="/tags/leetcode/" rel="tag"># leetcode</a>
               <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
           </div>
 
         
