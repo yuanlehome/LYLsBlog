@@ -13,16 +13,18 @@
       
       <categories>
           
-          <category> 读书笔记 </category>
-          
-          <category> Effective C++ </category>
+          <category> leetcode </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> Effective C++ </tag>
+            <tag> 数据结构 </tag>
+            
+            <tag> leetcode </tag>
+            
+            <tag> 算法 </tag>
             
         </tags>
       
