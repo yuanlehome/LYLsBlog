@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#7d574c">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#7d574c">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yuanlehome.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="解释右值引用和左值引用的区别 移动构造函数和移动赋值运算符 理解std::move和std::forward">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++重要知识点详细解读之移动语义">
+<meta property="og:url" content="https://yuanlehome.github.io/63ixVU2ANYIUKUrm/index.html">
+<meta property="og:site_name" content="LYL&#39;s Blog">
+<meta property="og:description" content="解释右值引用和左值引用的区别 移动构造函数和移动赋值运算符 理解std::move和std::forward">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-10T13:35:42.000Z">
+<meta property="article:modified_time" content="2021-02-10T13:35:42.000Z">
+<meta property="article:author" content="Liu Y.L.">
+<meta property="article:tag" content="C++重要知识点">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://yuanlehome.github.io/63ixVU2ANYIUKUrm/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>C++重要知识点详细解读之移动语义 | LYL's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">LYL's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/63ixVU2ANYIUKUrm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          C++重要知识点详细解读之移动语义
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-10 21:35:42" itemprop="dateCreated datePublished" datetime="2021-02-10T21:35:42+08:00">2021-02-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <ol>
+<li>解释<strong>右值引用</strong>和左值引用的区别</li>
+<li>移动构造函数和移动赋值运算符</li>
+<li>理解<code>std::move</code>和<code>std::forward</code></li>
+</ol>
+<a id="more"></a>
+
+<h4 id="解释右值引用和左值引用的区别"><a href="#解释右值引用和左值引用的区别" class="headerlink" title="解释右值引用和左值引用的区别"></a>解释<strong>右值引用</strong>和左值引用的区别</h4><p>所谓<strong>右值引用</strong>就是必须绑定到右值的引用，通过<code>&amp;&amp;</code>获得。右值引用只能绑定到一个将要销毁的对象上，因此可以自由地移动其资源。<strong>左值引用</strong>，不能绑定到要转换的表达式、字面常量或返回右值的表达式。而右值引用恰好相反，可以绑定到这类表达式，但不能绑定到一个左值上。</p>
+<p><strong>返回左值的表达式</strong>包括返回左值引用的函数及赋值、下标、解引用和前置递增<code>/</code>递减运算符，<strong>返回右值的表达式</strong>包括返回非引用类型的函数及算术、关系、位和后置递增<code>/</code>递减运算符。可以看到，左值的特点是有持久的状态，而右值则是短暂的。</p>
+<p><strong>变量是左值</strong>，因此我们不能将一个右值引用直接绑定到一个变量上，即使这个变量是右值引用类型也不行。</p>
+<p>函数参数和其它任何变量一样，都是左值表达式。</p>
+<h4 id="移动构造函数和移动赋值运算符"><a href="#移动构造函数和移动赋值运算符" class="headerlink" title="移动构造函数和移动赋值运算符"></a>移动构造函数和移动赋值运算符</h4><p>参见<code>C++ primer 13.6</code>。</p>
+<p>与移动构造函数一样，如果我们的移动赋值运算符不抛出任何异常，我们就应该将它标记为<code>noexcept</code>。</p>
+<p>在移动操作之后，移后源对象必须保持有效的、可析构的状态，但是用户不能对其值进行任何假设。</p>
+<p>只有当一个类没有定义任何自己版本的拷贝控制成员，且类的<strong>每个非<code>static</code>数据成员</strong>都可以移动时，编译器才会为它合成移动构造函数或移动赋值运算符。编译器可以移动内置类型的成员。如果一个成员是类类型，且该类有对应的移动操作，编译器也能移动这个成员。</p>
+<p>移动构造函数被定义为删除的函数的条件是：有类成员定义了自己的拷贝构造函数且未定义移动构造函数，或者是有类成员未定义自己的拷贝构造函数且编译器不能为其合成移动构造函数。移动赋值运算符的情况类似。</p>
+<p>如果有类成员的移动构造函数或移动赋值运算符被定义为删除的或是不可访问的，则类的移动构造函数或移动赋值运算符被定义为删除的。</p>
+<p>类似拷贝构造函数和拷贝赋值运算符，如果类的析构函数被定义为删除的或不可访问的，则类的移动构造函数被定义为删除的。如果有类成员是<code>const</code>的或是引用，则类的移动赋值运算符被定义为删除的。</p>
+<p>定义了一个移动构造函数或移动赋值运算符的类必须也定义自己的拷贝操作。否则，这些成员默认地被定义为删除的。</p>
+<p>如果一个类既有移动构造函数，也有拷贝构造函数，编译器使用普通的函数匹配规则来确定使用哪个构造函数：移动右值，拷贝左值，但如果没有移动构造函数，右值也被拷贝（即，通过拷贝构造函数来“移动”）。</p>
+<p><strong><em>拷贝并交换赋值运算符和移动操作</em></strong><br><code>HasPtr</code>类定义了一个拷贝并交换赋值运算符，如果为此类添加一个移动构造函数，它实际上也会获得一个移动赋值运算符：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HasPtr</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// 添加的移动构造函数</span></span><br><span class="line">    HasPtr(HasPtr &amp;&amp;p) <span class="keyword">noexcept</span> : ps(p.ps), i(p.i)</span><br><span class="line">    &#123;</span><br><span class="line">        p.ps = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 赋值运算符既是移动赋值运算符, 也是拷贝赋值运算符</span></span><br><span class="line">    HasPtr&amp; <span class="keyword">operator</span>=(HasPtr&amp; rhs)</span><br><span class="line">    &#123;</span><br><span class="line">        HasPtr temp(rhs); <span class="comment">// copy and</span></span><br><span class="line">        swap(*<span class="keyword">this</span>, temp); <span class="comment">// swap</span></span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 其他成员的定义</span></span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在这个版本中，我们为类添加了一个移动构造函数，它接管了给定实参的值。构造函数体将给定的<code>HasPtr</code>的指针置为<code>0</code>，从而确保销毁移后源对象是安全的。此函数不会抛出异常，因此我们将其标记为<code>noexcept</code>。<br>现在让我们观察赋值运算符。<strong>此运算符有一个非引用参数</strong>，这意味着此参数要进行拷贝初始化。依赖于实参的类型，拷贝初始化要么使用拷贝构造函数，要么使用移动构造函数——左值被拷贝，右值被移动。因此，单一的赋值运算符就实现了拷贝赋值运算符和移动赋值运算符两种功能。<br>假定<code>hp</code>和<code>hp2</code>都是<code>HasPtr</code>对象：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hp = hp2;	<span class="comment">// hp2 是一个左值; hp2 通过拷贝构造函数来拷贝</span></span><br><span class="line">hp = <span class="built_in">std</span>::move(hp2); <span class="comment">// 移动构造函数移动 hp2</span></span><br></pre></td></tr></table></figure>
+
+<p>在第一个赋值中，右侧运算对象是一个左值，因此移动构造函数是不可行的。<code>rhs</code>将使用拷贝构造函数来初始化。拷贝构造函数将分配一个新<code>string</code>，并拷贝<code>hp2</code>指向的<code>string</code>。<br>在第二个赋值中，我们调用<code>std::move</code>将一个右值引用绑定到<code>hp2</code>上。在此情况下，拷贝构造函数和移动构造函数都是可行的。但是，由于实参是一个右值引用，移动构造函数是精确匹配的。移动构造函数从<code>hp2</code>拷贝指针，而不会分配任何内存。<br>不管使用的是拷贝构造函数还是移动构造函数，赋值运算符的函数体都<code>swap</code>两个运算对象的状态。交换<code>HasPtr</code>会交换两个对象的指针成员。在<code>swap</code>之后，<code>rhs</code>中的指针将指向原来左侧运算对象所拥有的<code>string</code>。当<code>rhs</code>离开其作用域时，这个<code>string</code>将被销毁。</p>
+<h4 id="理解std-move和std-forward"><a href="#理解std-move和std-forward" class="headerlink" title="理解std::move和std::forward"></a>理解<code>std::move</code>和<code>std::forward</code></h4><p>参见<code>C++ primer 16.2.6 &amp; 16.2.7</code>。</p>
+<p><strong>调用<code>std::move</code>就意味着承诺：除了对移后源赋值或销毁外，我们将不再使用它。</strong></p>
+<h5 id="标准库中std-move的实现"><a href="#标准库中std-move的实现" class="headerlink" title="标准库中std::move的实现"></a>标准库中<code>std::move</code>的实现</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">typename</span> remove_reference&lt;T&gt;::<span class="function">type&amp;&amp; <span class="title">move</span><span class="params">(T&amp;&amp; t)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 从一个左值 static_cast 到一个右值引用是允许的</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">static_cast</span>&lt;<span class="keyword">typename</span> remove_reference&lt;T&gt;::type&amp;&amp;&gt;(t);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中，<code>remove_reference</code>模板有一个模板类型参数和一个名为<code>type</code>的（<code>public</code>）类型成员。如果我们用一个引用类型实例化<code>remove_reference</code>，则<code>type</code>将表示被引用的类型。例如，如果我们实例化<code>remove_reference&lt;string&amp;&gt;</code>，则<code>type</code>成员将是<code>string</code>。更一般的，给定一个迭代器<code>beg</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">remove_reference&lt;<span class="keyword">decltype</span>(*beg)&gt;::type</span><br></pre></td></tr></table></figure>
+
+<p>将获得<code>beg</code>引用的元素的类型：<code>decltype(*beg)</code>返回元素类型的引用类型。<code>remove_reference::type</code>脱去引用，剩下元素类型本身。</p>
+<h5 id="std-move是如何工作的"><a href="#std-move是如何工作的" class="headerlink" title="std::move是如何工作的"></a><code>std::move</code>是如何工作的</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">string s1("hi!"), s2;</span><br><span class="line">s2 = <span class="built_in">std</span>::move(<span class="built_in">string</span>(<span class="string">"bye!"</span>));	<span class="comment">// 正确: 从一个右值移动数据</span></span><br><span class="line">s2 = <span class="built_in">std</span>::move(s1);	<span class="comment">// 正确: 但在赋值之后, s1的值是不确定的</span></span><br></pre></td></tr></table></figure>
+
+<p>在第一个赋值中，传递给<code>move</code>的实参是<code>string</code>的构造函数的右值结果——<code>string(&quot;bye!&quot;)</code>。因此，在<code>std::move(string(&quot;bye!&quot;))</code>中：</p>
+<ul>
+<li>推断出的<code>T</code>的类型为<code>string</code>；</li>
+<li>因此，<code>remove_reference</code>用<code>string</code>进行实例化；</li>
+<li><code>remove_reference&lt;string&gt;</code>的<code>type</code>成员是<code>string</code>；</li>
+<li><code>move</code>的返回类型是<code>string&amp;&amp;</code>；</li>
+<li><code>move</code>的函数参数<code>t</code>的类型为<code>string&amp;&amp;</code>。</li>
+</ul>
+<p>因此，这个调用实例化<code>move&lt;string&gt;</code>，即函数</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span>&amp;&amp; <span class="title">move</span><span class="params">(<span class="built_in">string</span>&amp;&amp; t)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>函数体返回<code>static_cast&lt;string&amp;&amp;&gt;(t)</code>。<code>t</code>的类型已经是<code>string&amp;&amp;</code>，于是类型转换什么都不做。因此，此调用的结果就是它所接受的右值引用。</p>
+<p>现在考虑第二个赋值，它调用了<code>std::move</code>。在此调用中，传递给<code>move</code>的实参是一个左值。这样：</p>
+<ul>
+<li>推断出的<code>T</code>的类型为<code>string&amp;</code>；</li>
+<li>因此，<code>remove_reference</code>用<code>string&amp;</code>进行实例化；</li>
+<li><code>remove_reference&lt;string&amp;&gt;</code>的<code>type</code>成员是<code>string</code>；</li>
+<li><code>move</code>的返回类型仍是<code>string&amp;&amp;</code>；</li>
+<li><code>move</code>的函数参数<code>t</code>实例化为<code>string&amp;&amp; &amp;</code>，会折叠为<code>string&amp;</code>。</li>
+</ul>
+<p>因此，这个调用实例化<code>move&lt;string&amp;&gt;</code>，即</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span>&amp;&amp; <span class="title">move</span><span class="params">(<span class="built_in">string</span>&amp; t)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>这正是我们所寻求的——我们希望将一个右值引用绑定到一个左值。这个实例的函数体返回<code>static_cast&lt;string&amp;&amp;&gt;(t)</code>。在此情况下，<code>t</code>的类型为<code>string&amp;</code>，<code>static_cast</code>将其转换为<code>string&amp;&amp;</code>。</p>
+<h5 id="标准库中std-forward的实现"><a href="#标准库中std-forward的实现" class="headerlink" title="标准库中std::forward的实现"></a>标准库中<code>std::forward</code>的实现</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">T</span>&amp;&amp; <span class="title">forward</span>(<span class="title">typename</span> <span class="title">std</span>:</span>:remove_reference&lt;T&gt;::type&amp; t)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">static_cast</span>&lt;T&amp;&amp;&gt;(t);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">T</span>&amp;&amp; <span class="title">forward</span>(<span class="title">typename</span> <span class="title">std</span>:</span>:remove_reference&lt;T&gt;::type&amp;&amp; t)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">static_cast</span>&lt;T&amp;&amp;&gt;(t);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>std::forward&lt;T&gt;</code>的返回类型是<code>T&amp;&amp;</code>。通常情况下，使用<code>forward</code>传递那些<strong>定义为模板类型参数的右值引用的函数参数</strong>。通过其返回类型上的引用折叠，<code>forward</code>可以保持给定实参的左值<code>/</code>右值以及<code>const</code>属性：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(T&amp;&amp; t)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 在这里使用 std::forward&lt;T&gt;(t)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果实参<code>t</code>是一个右值，则<code>T</code>被推断为一个普通（非引用）类型，<code>std::forward&lt;T&gt;</code>将返回<code>T&amp;&amp;</code>。如果实参是一个左值，则通过引用折叠，<code>T</code>被推断为一个左值引用类型。在此情况下，<code>std::forward&lt;T&gt;</code>返回类型是一个指向左值引用类型的右值引用<code>T&amp;&amp; &amp;</code>，再次引用折叠，将返回一个左值引用类型<code>T&amp;</code>。</p>
+<p>注意：<strong>不能使用一个左值实例化一个右值引用类型的函数参数</strong>。函数参数和其它任何变量一样，在函数体内都是左值表达式。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C-%E9%87%8D%E8%A6%81%E7%9F%A5%E8%AF%86%E7%82%B9/" rel="tag"># C++重要知识点</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/B90hHtDrYEYJD3xv/" rel="prev" title="leetcode刷题系列之二叉树">
+      <i class="fa fa-chevron-left"></i> leetcode刷题系列之二叉树
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/cuQpjpPOQ0qnpSE2/" rel="next" title="C++重要知识点详细解读之排序算法实现及效率分析">
+      C++重要知识点详细解读之排序算法实现及效率分析 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC80OTQ0NS8yNTkzNw=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#解释右值引用和左值引用的区别"><span class="nav-number">1.</span> <span class="nav-text">解释右值引用和左值引用的区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#移动构造函数和移动赋值运算符"><span class="nav-number">2.</span> <span class="nav-text">移动构造函数和移动赋值运算符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#理解std-move和std-forward"><span class="nav-number">3.</span> <span class="nav-text">理解std::move和std::forward</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#标准库中std-move的实现"><span class="nav-number">3.1.</span> <span class="nav-text">标准库中std::move的实现</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#std-move是如何工作的"><span class="nav-number">3.2.</span> <span class="nav-text">std::move是如何工作的</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#标准库中std-forward的实现"><span class="nav-number">3.3.</span> <span class="nav-text">标准库中std::forward的实现</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Liu Y.L."
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Liu Y.L.</p>
+  <div class="site-description" itemprop="description">寒江孤影-江湖故人-相逢何必曾相识</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yuanlehome" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuanlehome" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yuanlehome@163.com" title="E-Mail → mailto:yuanlehome@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/295413378" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;295413378" rel="noopener" target="_blank"><i class=" fa-fw"></i>Bilibili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://wpa.qq.com/msgrd?v=3&uin=804230989&site=qq&menu=yes" title="QQ → http:&#x2F;&#x2F;wpa.qq.com&#x2F;msgrd?v&#x3D;3&amp;uin&#x3D;804230989&amp;site&#x3D;qq&amp;menu&#x3D;yes" rel="noopener" target="_blank"><i class="fa fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+      <!-- 音乐播放器 -->
+      <div>
+      
+        <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=300 height="400" src="//music.163.com/outchain/player?type=0&id=6679290542&auto=1&height=400"></iframe>
+      
+      </div>
+
+    </div>
+  </aside>
+
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Liu Y.L.</span>
+</div>
+
+<span>我已在此等候你 <span id="showDays"></span></span>
+<script>
+  var seconds = 1000;
+  var minutes = seconds * 60;
+  var hours = minutes * 60;
+  var days = hours * 24;
+  var years = days * 365;
+  var birthDay = Date.UTC(2020,04,04,00,00,00); // 这里设置建站时间
+  setInterval(function() {
+    var today = new Date();
+    var todayYear = today.getFullYear();
+    var todayMonth = today.getMonth()+1;
+    var todayDate = today.getDate();
+    var todayHour = today.getHours();
+    var todayMinute = today.getMinutes();
+    var todaySecond = today.getSeconds();
+    var now = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+    var diff = now - birthDay;
+    var diffYears = Math.floor(diff/years);
+    var diffDays = Math.floor((diff/days)-diffYears*365);
+    var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+    var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+    var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+      document.getElementById('showDays').innerHTML=""+diffYears+" 年 "+diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+  }, 1000);
+</script>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
