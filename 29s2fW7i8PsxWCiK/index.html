@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#7d574c">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#7d574c">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yuanlehome.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="并发的概念在单处理器多道程序设计系统中，进程会被交替地执行，因而表现出一种并发执行的外部特征。支持并发进程的基本需求是加强互斥的能力。也就是说，当一个进程被授予互斥能力时，那么在其活动期间，它具有排斥所有其他进程的能力。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="操作系统之并发与同步">
+<meta property="og:url" content="https://yuanlehome.github.io/29s2fW7i8PsxWCiK/index.html">
+<meta property="og:site_name" content="LYL&#39;s Blog">
+<meta property="og:description" content="并发的概念在单处理器多道程序设计系统中，进程会被交替地执行，因而表现出一种并发执行的外部特征。支持并发进程的基本需求是加强互斥的能力。也就是说，当一个进程被授予互斥能力时，那么在其活动期间，它具有排斥所有其他进程的能力。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yuanlehome.github.io/29s2fW7i8PsxWCiK/images/image-20210410143441173.png">
+<meta property="article:published_time" content="2021-03-06T13:35:42.000Z">
+<meta property="article:modified_time" content="2021-03-06T13:35:42.000Z">
+<meta property="article:author" content="Liu Y.L.">
+<meta property="article:tag" content="操作系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yuanlehome.github.io/29s2fW7i8PsxWCiK/images/image-20210410143441173.png">
+
+<link rel="canonical" href="https://yuanlehome.github.io/29s2fW7i8PsxWCiK/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>操作系统之并发与同步 | LYL's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">LYL's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/29s2fW7i8PsxWCiK/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          操作系统之并发与同步
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-06 21:35:42" itemprop="dateCreated datePublished" datetime="2021-03-06T21:35:42+08:00">2021-03-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h5 id="并发的概念"><a href="#并发的概念" class="headerlink" title="并发的概念"></a>并发的概念</h5><p>在单处理器多道程序设计系统中，进程会被交替地执行，因而表现出一种并发执行的外部特征。支持并发进程的基本需求是加强互斥的能力。也就是说，当一个进程被授予互斥能力时，那么在其活动期间，它具有排斥所有其他进程的能力。</p>
+<a id="more"></a>
+
+<h4 id="并发与同步"><a href="#并发与同步" class="headerlink" title="并发与同步"></a>并发与同步</h4><h5 id="并发的概念-1"><a href="#并发的概念-1" class="headerlink" title="并发的概念"></a>并发的概念</h5><p>在单处理器多道程序设计系统中，进程会被交替地执行，因而表现出一种并发执行的外部特征。支持并发进程的基本需求是加强互斥的能力。也就是说，当一个进程被授予互斥能力时，那么在其活动期间，它具有排斥所有其他进程的能力。</p>
+<p>并发包括很多设计问题，其中有进程间通信、资源共享与竞争（如内存、文件、<code>I/O</code>访问)、多个进程活动的同步以及给进程分配处理器时间等。并发问题源于多道程序设计系统的一个基本特性：进程的相对执行速度不可预测，它取决于其他进程的活动、操作系统处理中断的方式以及操作系统的调度策略。</p>
+<table>
+<thead>
+<tr>
+<th align="center">术语</th>
+<th align="center">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">临界区</td>
+<td align="center">一段代码，在这段代码中进程将访问共享资源，当另外一个进程已在这段代码中运行时，这个进程就不能在这段代码中执行</td>
+</tr>
+<tr>
+<td align="center">死锁</td>
+<td align="center">两个或两个以上的进程因每个进程都在等待其他进程做完某些事情而不能继续执行的情形</td>
+</tr>
+<tr>
+<td align="center">互斥</td>
+<td align="center">当一个进程在临界区访问共享资源时，其他进程不能进入该临界区访问任何共享资源的情形</td>
+</tr>
+<tr>
+<td align="center">竞争条件</td>
+<td align="center">多个线程或进程在读写一个共享数据时，结果依赖于它们执行的相对时间的情形</td>
+</tr>
+<tr>
+<td align="center">饥饿</td>
+<td align="center">一个可运行进程尽管能继续执行，但被调度程序无限期地忽视，而不能被调度执行的情形</td>
+</tr>
+<tr>
+<td align="center">原子操作</td>
+<td align="center">保证指令序列要么作为一个组来执行，要么都不执行</td>
+</tr>
+</tbody></table>
+<p>如果需要保护共享的全局变量（以及其他共享的全局资源），唯一的办法是控制访问该变量的代码。</p>
+<p><strong><em>原子性和顺序性</em></strong></p>
+<p>原子性确保指令执行期间不被打断，要么全部执行完，要么根本不执行。另一方面，顺序性确保即使两条或多条指令出现在独立的执行线程中，甚至独立的处理器上，它们本该的执行顺序却依然要保持。顺序性通过屏障（<code>barrier</code>）指令来实施。</p>
+<h5 id="进程交互的分类"><a href="#进程交互的分类" class="headerlink" title="进程交互的分类"></a>进程交互的分类</h5><ul>
+<li>进程之间互相不知道对方的存在，它们表现出<strong>竞争</strong>关系</li>
+<li>进程间接知道对方的存在，但它们共享某些对象，表现出通过<strong>共享合作</strong>的关系</li>
+<li>进程直接知道对方的存在，可以通过进程ID互相传递消息进行通信，表现出通过<strong>通信合作</strong>的关系</li>
+</ul>
+<p><strong>竞争进程</strong>面临三个控制问题：</p>
+<ol>
+<li><p>互斥</p>
+<p> 假设两个或更多的进程需要访问一个不可共享的资源，如打印机。在执行过程中，每个进程都给该<code>IO</code>设备发命令，接收状态信息，发送数据和接收数据。我们把这类资源称为临界资源，使用临界资源的那部分程序称为程序的临界区。一次只允许有一个程序在临界区中，这一点非常重要。</p>
+</li>
+</ol>
+<p>为了实现互斥则产生了下面两个问题：</p>
+<ol start="2">
+<li><p>死锁</p>
+<p> 考虑两个进程<code>P1</code>和<code>P2</code>，以及两个资源<code>R1</code>和<code>R2</code>，假设每个进程为执行部分功能都需要访问这两个资源，那么就有可能出现下列情况：操作系统把<code>R1</code>分配给<code>P2</code>，把<code>R2</code>分配给<code>P1</code>，每个进程都在等待另一个资源，且在获得其他资源并完成功能前，谁都不会释放自己已拥有的资源，此时这两个进程就会发生死锁。</p>
+</li>
+<li><p>饥饿</p>
+<p> 假设有三个进程（<code>P1</code>、<code>P2</code>和<code>P3</code>），每个进程都周期性地访问资源<code>R</code>。假设操作系统把访问权轮流授予<code>P1</code>和<code>P3</code>，那么即使没有死锁，<code>P2</code>也可能被无限地拒绝访间资源。</p>
+</li>
+</ol>
+<p><strong>合作进程</strong>和竞争进程的唯一区别是可以按两种不同的模式（读和写）访问数据项，并且<strong>只有写操作必须保证互斥</strong>。除了面临上面三个问题外，还有一个新的要求：<strong>数据一致性</strong>。</p>
+<p>若使用临界区来保护数据的一致性，则没有确定的资源或变量可作为参数。此时，可以把参数视为一个在并发进程间共享的标识符，用于标识必须互斥的临界区。</p>
+<h5 id="互斥的要求以及实现"><a href="#互斥的要求以及实现" class="headerlink" title="互斥的要求以及实现"></a>互斥的要求以及实现</h5><ol>
+<li>必须强制实施互斥：在与相同资源或共享对象的临界区有关的所有进程中，一次只允许一个进程进入临界区。</li>
+<li>没有进程在临界区中时，任何需要进入临界区的进程必须能够立即进入。</li>
+<li>一个进程驻留在临界区中的时间必须是有限的。</li>
+</ol>
+<p><strong><em>硬件支持的实现</em></strong></p>
+<ol>
+<li><p>禁用中断</p>
+<p> 为保证互斥，只需保证一个进程不被中断即可，这种能力可通过系统内核为启用和禁用中断定义的原语来提供。但代价非常高。</p>
+</li>
+<li><p>专用机器指令</p>
+<p> 在硬件级别上，对存储单元的访问排斥对相同单元的其他访问。因此，处理器的设计者人员提出了一些机器指令，用于保证两个动作的原子性。</p>
+</li>
+</ol>
+<p><strong><em>软件支持的实现</em></strong></p>
+<table>
+<thead>
+<tr>
+<th>并发机制</th>
+<th align="left">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>信号量</td>
+<td align="left">用于进程间传递信号的一个整数值。在信号量上只可进行三种操作，即初始化、递减和递增，它们都是原子操作。递减操作用于阻塞一个进程，递增操作用于解除一个进程的阻塞</td>
+</tr>
+<tr>
+<td>二元信号量</td>
+<td align="left">只取<code>0</code>值和<code>1</code>值的信号量</td>
+</tr>
+<tr>
+<td>互斥量</td>
+<td align="left">类似于二元信号量。关键区别在于为其加锁（设定值为<code>0</code>）的进程和为其解锁（设定值为<code>1</code>）的进程必须为同一个进程，一般被用在构造临界区上</td>
+</tr>
+<tr>
+<td>条件变量</td>
+<td align="left">一种数据类型，用于阻塞进程或线程，直到特定的条件为真</td>
+</tr>
+<tr>
+<td>自旋锁</td>
+<td align="left">一种互斥机制，进程在一个无条件循环中执行，等待锁变量的值可用</td>
+</tr>
+</tbody></table>
+<h6 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h6><p><code>Linux</code>中的信号量是一种<strong>睡眠</strong>锁。如果有一个任务试图获得一个不可用（已经被占用）的信号量时，信号量会将其推进一个等待队列，然后让其睡眠。这时处理器能重获自由，从而去执行其他代码。当持有的信号量可用（被释放）后，处于等待队列中的那个任务将被唤醒。</p>
+<p>我们可以从信号量的睡眠特性得出一些有意思的结论：</p>
+<ul>
+<li>由于争用信号量的进程在等待锁重新变为可用时会睡眠，所以信号量适用于锁会被长时间持有的情况。</li>
+<li>相反，锁被短时间持有时，使用信号量就不太适宜了。因为睡眠、维护等待队列以及唤醒所花费的开销可能比锁被占用的全部时间还要长。</li>
+<li>面于执行线程在锁被争用时会睡眠，所以只能在进程上下文中才能获取信号量锁，因为在中断上下文中是不能进行调度的。</li>
+<li>你可以在持有信号量时去睡眠，因为当其他进程试图获得同一信号量时不会因此而死锁（因为该进程也只是去睡眠而已，而你最终会继续执行的）。</li>
+</ul>
+<p>为达到预期效果，可把信号量视为一个值为整数的变量，整数值上定义了三个操作：</p>
+<ol>
+<li>一个信号量可以初始化成非负数。</li>
+<li><code>semWait</code>操作使信号量减<code>1</code>。若值变成负数，则阻塞执行<code>semWait</code>的进程，否则进程继续执行。</li>
+<li><code>semSignal</code>操作使信号量加<code>1</code>。被<code>semWait</code>操作阻塞的进程之一（可能没有被阻塞的）解除阻塞。</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用 比较和交换指令 实现的信号量原语</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">semaphore</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> count;</span><br><span class="line">    <span class="keyword">bool</span> flag;</span><br><span class="line">    queueType <span class="built_in">queue</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">semwait</span><span class="params">(semaphore s)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(compare_and_swap(s.flag, <span class="number">0</span>, <span class="number">1</span>) == <span class="number">1</span>);</span><br><span class="line">    s.count--;</span><br><span class="line">    <span class="keyword">if</span>(s.count &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/* 把当前进程插入队列 */</span>;</span><br><span class="line">        <span class="comment">/* 阻塞当前进程 */</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    s.flag = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">semSignal</span><span class="params">(semaphore s)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(compare_and_swap(s.flag, <span class="number">0</span>, <span class="number">1</span>) == <span class="number">1</span>);</span><br><span class="line">    s.count++;</span><br><span class="line">    <span class="keyword">if</span>(s.count &lt;= O)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/* 把进程 P 从队列中移除 */</span>;</span><br><span class="line">        <span class="comment">/* 把进程卫插入就绪队列 */</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    s.flag = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>s.count ≥ 0</code>：<code>s.count</code>是可执行<code>semwait(s)</code>而不被阻塞的进程数。这种情形允许信号量支持同步与互斥。</li>
+<li><code>s.count &lt; 0</code>：<code>s.count</code>的大小是阻塞在<code>s.queue</code>队列中的进程数。</li>
+</ul>
+<h6 id="二元信号量"><a href="#二元信号量" class="headerlink" title="二元信号量"></a>二元信号量</h6><ol>
+<li>二元信号量可以初始化为<code>0</code>或<code>1</code>。</li>
+<li><code>semWaitB</code>操作检查信号的值。若值为<code>0</code>，则进程执行<code>semwaitB</code>就会受阻。若值为<code>1</code>，则将值改为<code>0</code>，并继续执行该进程。</li>
+<li><code>semSignalB</code>操作检查是否有任何进程在该信号上受阻。若有进程受阻，则通过<code>semWaitB</code>操作受阻的进程会被唤醒：若没有进程受阻，则值设置为<code>1</code>。</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">binary_semaphore</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">enum</span> &#123;zero, one&#125; value;</span><br><span class="line">    qrueueType <span class="built_in">queue</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">semwaitB</span><span class="params">(binary semaphore s)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(s.value = one)</span><br><span class="line">        s.value = zero;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/* 把当前进程插入队列 */</span>;</span><br><span class="line">        <span class="comment">/* 阻塞当前进程 */</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">semSignalB</span><span class="params">(semaphore s)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(s.<span class="built_in">queue</span> is empty())</span><br><span class="line">        s.value =one;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/* 把进程 P 从等待队列中移除 */</span>;</span><br><span class="line">        <span class="comment">/* 把进程卫插入就绪队列 */</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>不论是计数信号量还是二元信号量，都需要使用队列来保存于信号量上等待的进程。这就产生了一个问题，进程按什么顺序从队列中移出？最公平的策略是先进先出，被阻塞时间最久的进程最先从队列释放。采用这一策略定义的信号量称为强信号量，而没有规定进程从队列中移出顺序的信号量称为弱信号量。</p>
+<p>强信号量保证不会饥饿，而弱信号量则无法保证。</p>
+<h6 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h6><p>自旋锁最多只能被一个可执行线程持有。如果一个执行线程试图获得一个被已经持有（即所谓的争用）的自旋锁，那么该线程就会一直进行忙循环一旋转，等待锁重新可用。要是锁未被争用，请求锁的执行线程便能立刻得到它，继续执行。在任意时间，自旋锁都可以防止多于一个的执行线程同时进入临界区。</p>
+<p>自旋锁是不可递归的（不可重入的）。</p>
+<p>自旋锁可以使用在中断处理程序中（此处不能使用信号量，因为它们会导致睡眠）。在中断处理程序中使用自旋锁时，一定要在获取锁之前，首先禁止本地中断（在当前处理器上的中断请求），否则，中断处理程序就会打断正持有锁的内核代码，有可能会试图去争用这个已经被持有的自旋锁。这样一来，中断处理程序就会自旋，等待该锁重新可用，但是锁的持有者在这个中断处理程序执行完毕前不可能运行。这正是我们在前面的内容中提到的双重请求死锁。注意，需要关闭的只是当前处理器上的中断。如果中断发生在不同的处理器上，即使中断处理程序在同一锁上自旋，也不会妨碍锁的持有者（在不同处理器上）最终释放锁。</p>
+<h6 id="互斥量mutex"><a href="#互斥量mutex" class="headerlink" title="互斥量mutex"></a>互斥量<code>mutex</code></h6><ul>
+<li>任何时刻中只有一个任务可以持有<code>mutex</code>，也就是说，<code>mutex</code>的使用计数永远是<code>1</code>。</li>
+<li>给<code>mutex</code>上锁者必须负责给其再解锁——你不能在一个上下文中锁定一个<code>mutex</code>，而在另一个上下文中给它解锁。这个限制使得<code>mutex</code>不适合内核同用户空间复杂的同步场景。最常使用的方式是：在同一上下文中上锁和解锁。</li>
+<li>递归地上锁和解锁是不允许的。也就是说，你不能递归地持有同一个锁，同样你也不能再去解锁一个已经被解开的<code>mutex</code>。</li>
+<li>当持有一个<code>mutex</code>时，进程不可以退出。</li>
+<li><code>mutex</code>只能通过官方<code>API</code>管理，不可被拷贝、赋值、重复初始化。</li>
+</ul>
+<p><strong>除非<code>mutex</code>的某个约束妨碍你使用，否则相比信号量要优先使用<code>mutex</code>。在中断上下文中只能使用自旋锁，而在任务睡眠时只能使用<code>mutex</code></strong>。</p>
+<h5 id="死锁原理"><a href="#死锁原理" class="headerlink" title="死锁原理"></a>死锁原理</h5><p>死锁定义为一组相互竞争系统资源或进行通信的进程间的“永久”阻塞。当一组进程中的每个进程都在等待某个事件（典型情况下是等待释放所请求的资源），而仅有这组进程中被阻塞的其他进程才可触发该事件时，就称这组进程发生了死锁。</p>
+<p>资源通常分为两类：可重用资源和可消耗资源。<strong>可重用资源</strong>是指一次仅供一个进程安全使用且不因使用而耗尽的资源。可重用资源的例子包括处理器、<code>I/O</code>通道、内存和外存、设备，以及诸如文件、数据库和信号量之类的数据结构。<strong>可消耗资源</strong>是指可被创建（生产）和销毁（消耗）的资源。存在。可消耗资源的例子有中断、信号、消息和<code>I/O</code>缓冲区中的信息。</p>
+<p>产生死锁有三个必要条件：</p>
+<ol>
+<li>互斥。一次只有一个进程可以使用一个资源。其他进程不能访问已分配给其他进程的资源。</li>
+<li>占有且等待。当一个进程等待其他进程时，继续占有已分配的资源。</li>
+<li>不可抢占。不能强行抢占进程已占有的资源。</li>
+</ol>
+<p>要产生死锁，还需要第四个条件：</p>
+<ol start="4">
+<li>循环等待。存在一个闭合的进程链，每个进程至少占有此链中下一个进程所需的一个资源。</li>
+</ol>
+<p>第四个条件实际上是前三个条件的潜在结果，即假设前三个条件存在，那么可能发生的系列事件会导致不可解的循环等待。这个不可解的循环等待实际上就是死锁的定义。循环等待之所以不可解，是因为有前面三个条件的存在。因此，这四个条件一起构成 了死锁的充分必要条件。</p>
+<h5 id="死锁预防"><a href="#死锁预防" class="headerlink" title="死锁预防"></a>死锁预防</h5><p>死锁预防方法分为两类。一类是间接死锁预防方法，即防止前面列出的三个必要条件中的任何一个条件的发生；另一类是直接死锁预防方法，即防止循环等待的发生。</p>
+<ol>
+<li><p>互斥</p>
+<p> 不可能禁止。如果需要对资源进行互斥访问，那么操作系统就必须支持互斥。</p>
+</li>
+<li><p>占有且等待</p>
+<p> 为预防占有且等待的条件，可以要求进程一次性地请求所有需要的资源，并阻塞这个进程直到所有请求都同时满足。</p>
+</li>
+<li><p>不可抢占</p>
+<p> 预防不可抢占的方法有几种。首先，占有某些资源的一个进程进一步申请资源时若被拒绝，则该进程必须释放其最初占有的资源，必要时可再次申请这些资源和其他资源。其次，一个进程请求当前被另一个进程占有的一个资源时，操作系统可以抢占另一个进程，要求它释放资源。只有在任意两个进程的优先级都不同的条件下，后一种方案才能预防死锁。</p>
+<p> 此外，只有在资源状态可以很容易地保存和恢复的情况下（如<code>CPU</code>上下文），这种方法才是实用的。</p>
+</li>
+<li><p>循环等待</p>
+<p> 循环等待条件可通过定义资源类型的线性顺序来预防。若一个进程已分配了<code>R</code>类型的资源，则其接下来请求的资源只能是那些排在<code>R</code>类型之后的资源。</p>
+</li>
+</ol>
+<h5 id="死锁避免"><a href="#死锁避免" class="headerlink" title="死锁避免"></a>死锁避免</h5><p>在死锁避免中，是否允许当前的资源分配请求是通过判断该请求是否可能导致死锁来决定的。因此，死锁避免需要知道未来进程资源请求的情况。</p>
+<ol>
+<li>进程启动拒绝。若一个进程的请求会导致死锁，则不启动该进程。</li>
+<li>资源分配拒绝，又称<strong>银行家算法</strong>。若一个进程增加的资源请求会导致死锁，则不允许这一资源分配。</li>
+</ol>
+<p>死锁避免的优点是，无须死锁预防中的抢占和回滚进程，</p>
+<h5 id="死锁检测"><a href="#死锁检测" class="headerlink" title="死锁检测"></a>死锁检测</h5><p>对于死锁检测来说，只要有可能，就会给进程分配其所请求的资源。操作系统周期性地执行一个算法来检测前面的循环等待条件。算法的策略是查找一个进程，使得可用资源能满足该进程的资源请求，然后假设同意这些资源，让该进程运行直到结束，再释放它的所有资源。然后，算法再寻找另一个可以满足资源请求的进程。</p>
+<p><img src="images/image-20210410143441173.png" alt="image-20210410143441173"></p>
+<p><strong>死锁恢复</strong>：</p>
+<ol>
+<li>取消所有的死锁进程。这是操作系统中最常采用的方法。</li>
+<li>连续取消死锁进程直到不再存在死锁。所选取消进程的顺序应基于某种最小代价原则。每次取消后，必须重新调用检测算法，以测试是否仍存在死锁。</li>
+<li>连续抢占资源直到不再存在死锁。</li>
+</ol>
+<p><strong>对于内存资源来说，基于抢占的死锁预防是最适合的策略</strong>。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag"># 操作系统</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/DRLdCV5y4mc6kSqv/" rel="prev" title="操作系统之进程与线程管理">
+      <i class="fa fa-chevron-left"></i> 操作系统之进程与线程管理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/CB6w5vAiSmICT1OK/" rel="next" title="操作系统之内存管理">
+      操作系统之内存管理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC80OTQ0NS8yNTkzNw=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#并发的概念"><span class="nav-number">1.</span> <span class="nav-text">并发的概念</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#并发与同步"><span class="nav-number"></span> <span class="nav-text">并发与同步</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#并发的概念-1"><span class="nav-number">1.</span> <span class="nav-text">并发的概念</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#进程交互的分类"><span class="nav-number">2.</span> <span class="nav-text">进程交互的分类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#互斥的要求以及实现"><span class="nav-number">3.</span> <span class="nav-text">互斥的要求以及实现</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#信号量"><span class="nav-number">3.1.</span> <span class="nav-text">信号量</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#二元信号量"><span class="nav-number">3.2.</span> <span class="nav-text">二元信号量</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#自旋锁"><span class="nav-number">3.3.</span> <span class="nav-text">自旋锁</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#互斥量mutex"><span class="nav-number">3.4.</span> <span class="nav-text">互斥量mutex</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#死锁原理"><span class="nav-number">4.</span> <span class="nav-text">死锁原理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#死锁预防"><span class="nav-number">5.</span> <span class="nav-text">死锁预防</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#死锁避免"><span class="nav-number">6.</span> <span class="nav-text">死锁避免</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#死锁检测"><span class="nav-number">7.</span> <span class="nav-text">死锁检测</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Liu Y.L."
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Liu Y.L.</p>
+  <div class="site-description" itemprop="description">寒江孤影-江湖故人-相逢何必曾相识</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yuanlehome" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuanlehome" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yuanlehome@163.com" title="E-Mail → mailto:yuanlehome@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/295413378" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;295413378" rel="noopener" target="_blank"><i class=" fa-fw"></i>Bilibili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://wpa.qq.com/msgrd?v=3&uin=804230989&site=qq&menu=yes" title="QQ → http:&#x2F;&#x2F;wpa.qq.com&#x2F;msgrd?v&#x3D;3&amp;uin&#x3D;804230989&amp;site&#x3D;qq&amp;menu&#x3D;yes" rel="noopener" target="_blank"><i class="fa fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+      <!-- 音乐播放器 -->
+      <div>
+      
+        <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=300 height="400" src="//music.163.com/outchain/player?type=0&id=6679290542&auto=1&height=400"></iframe>
+      
+      </div>
+
+    </div>
+  </aside>
+
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Liu Y.L.</span>
+</div>
+
+<span>我已在此等候你 <span id="showDays"></span></span>
+<script>
+  var seconds = 1000;
+  var minutes = seconds * 60;
+  var hours = minutes * 60;
+  var days = hours * 24;
+  var years = days * 365;
+  var birthDay = Date.UTC(2020,04,04,00,00,00); // 这里设置建站时间
+  setInterval(function() {
+    var today = new Date();
+    var todayYear = today.getFullYear();
+    var todayMonth = today.getMonth()+1;
+    var todayDate = today.getDate();
+    var todayHour = today.getHours();
+    var todayMinute = today.getMinutes();
+    var todaySecond = today.getSeconds();
+    var now = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+    var diff = now - birthDay;
+    var diffYears = Math.floor(diff/years);
+    var diffDays = Math.floor((diff/days)-diffYears*365);
+    var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+    var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+    var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+      document.getElementById('showDays').innerHTML=""+diffYears+" 年 "+diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+  }, 1000);
+</script>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
