@@ -27,13 +27,13 @@
 <meta property="og:site_name" content="LYL&#39;s Blog">
 <meta property="og:description" content="并发的概念在单处理器多道程序设计系统中，进程会被交替地执行，因而表现出一种并发执行的外部特征。支持并发进程的基本需求是加强互斥的能力。也就是说，当一个进程被授予互斥能力时，那么在其活动期间，它具有排斥所有其他进程的能力。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://yuanlehome.github.io/29s2fW7i8PsxWCiK/images/image-20210410143441173.png">
+<meta property="og:image" content="https://yuanlehome.github.io/29s2fW7i8PsxWCiK/image-20210410143441173.png">
 <meta property="article:published_time" content="2021-03-06T13:35:42.000Z">
 <meta property="article:modified_time" content="2021-03-06T13:35:42.000Z">
 <meta property="article:author" content="Liu Y.L.">
 <meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://yuanlehome.github.io/29s2fW7i8PsxWCiK/images/image-20210410143441173.png">
+<meta name="twitter:image" content="https://yuanlehome.github.io/29s2fW7i8PsxWCiK/image-20210410143441173.png">
 
 <link rel="canonical" href="https://yuanlehome.github.io/29s2fW7i8PsxWCiK/">
 
@@ -449,7 +449,7 @@
 </ol>
 <p>死锁避免的优点是，无须死锁预防中的抢占和回滚进程，</p>
 <h5 id="死锁检测"><a href="#死锁检测" class="headerlink" title="死锁检测"></a>死锁检测</h5><p>对于死锁检测来说，只要有可能，就会给进程分配其所请求的资源。操作系统周期性地执行一个算法来检测前面的循环等待条件。算法的策略是查找一个进程，使得可用资源能满足该进程的资源请求，然后假设同意这些资源，让该进程运行直到结束，再释放它的所有资源。然后，算法再寻找另一个可以满足资源请求的进程。</p>
-<p><img src="images/image-20210410143441173.png" alt="image-20210410143441173"></p>
+<p><img src="image-20210410143441173.png" alt="image-20210410143441173"></p>
 <p><strong>死锁恢复</strong>：</p>
 <ol>
 <li>取消所有的死锁进程。这是操作系统中最常采用的方法。</li>

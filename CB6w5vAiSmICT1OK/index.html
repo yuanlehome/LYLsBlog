@@ -27,33 +27,33 @@
 <meta property="og:site_name" content="LYL&#39;s Blog">
 <meta property="og:description" content="操作系统将内存分为两部分：一部分供操作系统使用（驻留内核进程和重要的数据结构等），另一部分供用户进程使用，必须将内存进一步的细分给不同的用户进程以满足多个进程的需求。操作系统完成这一“细分”的任务的过程就叫做内存管理。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/images/image-20210325190827823.png">
-<meta property="og:image" content="https://yuanlehome.github.io/Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325191522172.png">
-<meta property="og:image" content="https://yuanlehome.github.io/Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325192023851.png">
-<meta property="og:image" content="https://yuanlehome.github.io/Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325152953062.png">
-<meta property="og:image" content="https://yuanlehome.github.io/Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325154011859.png">
-<meta property="og:image" content="https://yuanlehome.github.io/Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325154456738.png">
-<meta property="og:image" content="https://yuanlehome.github.io/Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325154511633.png">
-<meta property="og:image" content="https://yuanlehome.github.io/Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325214215830.png">
-<meta property="og:image" content="https://yuanlehome.github.io/Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325214238480.png">
-<meta property="og:image" content="https://yuanlehome.github.io/Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325214616001.png">
-<meta property="og:image" content="https://yuanlehome.github.io/Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325214950642.png">
-<meta property="og:image" content="https://yuanlehome.github.io/Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325215417101.png">
-<meta property="og:image" content="https://yuanlehome.github.io/Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325220947686.png">
-<meta property="og:image" content="https://yuanlehome.github.io/Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325221118176.png">
-<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/images/1356672578_8600.jpg">
-<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/images/%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E8%AE%BF%E9%97%AE.jpg">
-<meta property="og:image" content="https://yuanlehome.github.io/Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210326150018056.png">
-<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/images/20170112101815302.jpg">
-<meta property="og:image" content="https://yuanlehome.github.io/Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/20160901214930068.jpg">
-<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/images/20160901214948512.jpg">
-<meta property="og:image" content="https://yuanlehome.github.io/Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/20160901215111055.jpg">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/image-20210325190827823.png">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/image-20210325191522172.png">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/image-20210325192023851.png">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/image-20210325152953062.png">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/image-20210325154011859.png">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/image-20210325154456738.png">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/image-20210325154511633.png">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/image-20210325214215830.png">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/image-20210325214238480.png">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/image-20210325214616001.png">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/image-20210325214950642.png">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/image-20210325215417101.png">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/image-20210325220947686.png">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/image-20210325221118176.png">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/1356672578_8600.jpg">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E8%AE%BF%E9%97%AE.jpg">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/image-20210326150018056.png">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/20170112101815302.jpg">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/20160901214930068.jpg">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/20160901214948512.jpg">
+<meta property="og:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/20160901215111055.jpg">
 <meta property="article:published_time" content="2021-03-12T13:35:42.000Z">
 <meta property="article:modified_time" content="2021-03-12T13:35:42.000Z">
 <meta property="article:author" content="Liu Y.L.">
 <meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/images/image-20210325190827823.png">
+<meta name="twitter:image" content="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/image-20210325190827823.png">
 
 <link rel="canonical" href="https://yuanlehome.github.io/CB6w5vAiSmICT1OK/">
 
@@ -344,7 +344,7 @@
 </tr>
 </tbody></table>
 <h6 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h6><p>创建活动进程的第一步是把程序装入内存，并创建一个进程映像。应用程序由许多已编译过或汇编过的模块组成，这些模块以目标代码的形式存在，并被链接起来以解析模块间的任何访问和对库例程的访问。库例程可以合并到程序中，或作为操作系统在运行时提供的共享访问代码。</p>
-<p><img src="images/image-20210325190827823.png" alt="image-20210325190827823"></p>
+<p><img src="image-20210325190827823.png" alt="image-20210325190827823"></p>
 <p>加载器把加载的模块放置在内存中从<code>x</code>开始的位置。一般而言，可以采用三种方法:</p>
 <ul>
 <li><p>绝对加载</p>
@@ -356,7 +356,7 @@
 <p>  在加载之前就把内存访问绑定到具体的地址的缺点是，会使得加载模块只能放置到内存中的一个区域。但是，当多个程序共享内存时，不可能事先确定哪块区域用于加载哪个特定的模块，最好是在加载时确定。因此，需要一个可分配到内存中任何地方的加载模块。</p>
 <p>  为满足这个新需求，汇编器或编译器不产生实际的内存地址（绝对地址），而是使用相对于某些已知点的地址，如相对于程序的起点。加载模块中的所有其他内存访问都用与该模块起点的相对值来表示。</p>
 <p>  既然所有内存访问都以相对形式表示，那么加载器就可以很容易地把模块放置在期望的位置。如果该模块要加载到从<code>x</code>位置开始的地方，则当加载器把该模块加载到内存中时，只需简单地给每个内存访问都加上<code>x</code>。为完成这一任务，加载模块必须包含一些需要告诉加载器的信息，如地址访问在哪里、如何解释它们（通常相对于程序的起点）。由编译器或汇编器准备这些信息，通常称这些信息为重定位地址库。</p>
-  <img src="../../../Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325191522172.png" alt="image-20210325191522172" style="zoom: 67%;" />
+  <img src="image-20210325191522172.png" alt="image-20210325191522172" style="zoom: 67%;" />
 </li>
 <li><p>动态运行时加载</p>
 <p>  动态运行时加载可重定位加载器非常普遍，且相对于绝对加载器具有明显的优点。但是，在多道程序设计环境中，即使不依赖于虚存，可重定位的加载方案仍是不够的。由于需要把进程换入或换出内存来增大处理器的利用率，而为最大程度地利用内存，又希望能在不同的时刻把一个进程映像换回到不同的位置，因此，程序被加载后，可能被换出到磁盘，然后又被换回到内存中不同的位置。如果在开始加载时，内存访问就被绑足到绝对地址，那么前面提到的情况是不可能实现的。</p>
@@ -365,7 +365,7 @@
 </li>
 </ul>
 <h6 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h6><p>链接器的功能是把一组目标模块作为输入，产生一个包含完整程序和数据模块的加载模块，并传递给加载器。在每个目标模块中，可能有到其他模块的地址访问，每个这样的访问可以在未链接的目标模块中用符号表示。链接器会创建一个单独的加载模块，它把所有目标模块逐个链接起来。每个模块内的引用必须从符号地址转换为对整个加载模块中的一个位置的引用。</p>
-<img src="../../../Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325192023851.png" alt="image-20210325192023851" style="zoom:67%;" />
+<img src="image-20210325192023851.png" alt="image-20210325192023851" style="zoom:67%;" />
 
 <p>产生可重定位加载模块的链接器通常称为<strong>链接编辑程序</strong>。地址链接的性质取决于链接发生时要创建的加载模块的类型。通常情况下需要可重定位的加载模块，然后链接按以下方式完成：同时创建每个已编译或汇编的目标模块及相对于该目标模块开始处的引用。所有这些模块，连同相对于该加载模块起点的所有引用，一起放进一个可重定位的加载模块中。该模块可以作为可重定位加载或动态运行时加载的输入。</p>
 <p>像加载一样，可以推迟某些链接功能。<strong>动态链接</strong>是指把某些外部模块的链接推迟到创建加载模块之后。因此，加载模块包含到其他程序的未解析的引用，这些引用可以在加载时或运行时解析。</p>
@@ -481,21 +481,21 @@
 <p><strong>放置算法</strong>把一个进程装入或换入内存时，如果内存中有多个足够大的空闲块，那么操作系统必须确定要为此进程分配哪个空闲块。可供考虑的放置算法有三种：最佳适配、首次适配和下次适配。<strong>首次适配算法</strong>是最简单，最好和最快的。</p>
 <p><strong>置换算法</strong>使得操作系统将一个阻塞的进程换出内存，给新进程或处于就绪-挂起态的进程让出空间。因此,操作系统必须选择要替换哪个进程。</p>
 <p><strong><em>伙伴系统</em></strong></p>
-<img src="../../../Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325152953062.png" alt="image-20210325152953062" style="zoom:67%;" />
+<img src="image-20210325152953062.png" alt="image-20210325152953062" style="zoom:67%;" />
 
 <h5 id="简单分页"><a href="#简单分页" class="headerlink" title="简单分页"></a>简单分页</h5><p>大小不等的固定分区和大小可变的分区技术在内存的使用上都是低效的，前者会产生内部碎片，后者会产生外部碎片。但是，如果内存被划分成大小固定、相等的块，且块相对比较小，每个进程也被分成同样大小的小块，那么进程中称为页的块可以分配到内存中称为页框的可用块。使用分页技术时，每个进程在内存中浪费的空间，仅是进程最后一页的一小部分形成的内部碎片，没有任何外部碎片。</p>
 <p>在某个给定时刻，内存中的某些页框正被使用，某些页框是空闲的，操作系统维护空闲页框的列表。</p>
 <p>这时仅有一个简单的基址寄存器是不够的，<strong>操作系统需要为每个进程维护一个页表</strong>。<strong>页表给出了该进程的每页所对应页框的位置。在程序中，每个逻辑地址包括一个页号和在该页中的偏移量</strong>。在简单分区的情况下，逻辑地址是一个字相对于程序开始处的位置，处理器把它转换为一个物理地址。在分页中，逻辑地址到物理地址的转换仍然由处理器硬件完成，且处理器必须知道如何访问当前进程的页表。给出逻辑地址（页号，偏移量）后，处理器使用页表产生物理地址（页框号，偏移量）。</p>
-<img src="../../../Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325154011859.png" alt="image-20210325154011859" style="zoom:67%;" />
+<img src="image-20210325154011859.png" alt="image-20210325154011859" style="zoom:67%;" />
 
-<img src="../../../Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325154456738.png" alt="image-20210325154456738" style="zoom:67%;" />
+<img src="image-20210325154456738.png" alt="image-20210325154456738" style="zoom:67%;" />
 
 <p>进程的每页在页表中都有一项，因此页表很容易按页号对进程的所有页进行索引（从<code>0</code>页开始）。每个页表项包含内存中用于保存相应页的页框的页框号。此外，操作系统为当前内存中未被占用、可供使用的所有页框维护一个空闲页框列表。</p>
 <p>总之，采用简单的分页技术，内存可分成许多大小相等且很小的页框，每个进程可划分成同样大小的页；较小的进程需要较少的页，较大的进程需要较多的页；装入一个进程时，其所有页都装入可用页框中，并建立一个页表。</p>
 <h5 id="简单分段"><a href="#简单分段" class="headerlink" title="简单分段"></a>简单分段</h5><p>把程序和与其相关的数据划分到几个段中。并不要求所有程序的所有段的长度都相等。和分页一样，采用分段技术时的逻辑地址也由两部分组成：段号和偏移量。</p>
 <p>一般情况下，程序员或编译器会把程序和数据指定到不同的段。为了实现模块化程序设计的目的，程序或数据可能会进一步分成多个段。</p>
 <p>采用大小不等的段的另一个结果是，逻辑地址和物理地址间不再是简单的对应关系。类似于分页，在简单的分段方案中，每个进程都有一个段表，系统也会维护一个内存中的空闲块列表。每个段表项必须给出相应段在内存中的起始地址，还必须指明段的长度，以确保不会使用无效地址。当进程进入运行状态时，系统会把其段表的地址装载到一个寄存器中，由内存管理硬件来使用这个寄存器。</p>
-<img src="../../../Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325154511633.png" alt="image-20210325154511633" style="zoom:67%;" />
+<img src="image-20210325154511633.png" alt="image-20210325154511633" style="zoom:67%;" />
 
 <p>总之，采用简单的分段技术，进程可划分为许多段，段的大小无须相等；调入一个进程时，其所有段都装入内存的可用区域，并建立一个段表。</p>
 <h5 id="虚拟内存概念"><a href="#虚拟内存概念" class="headerlink" title="虚拟内存概念"></a>虚拟内存概念</h5><table>
@@ -551,19 +551,19 @@
 </ul>
 <h5 id="虚拟分页"><a href="#虚拟分页" class="headerlink" title="虚拟分页"></a>虚拟分页</h5><p>每个进程都有自己的页表，当它的所有页都装入内存时，将创建页表并装入内存。<strong>页表项（<code>Page Table Entry</code>，<code>PTE</code>）包含有与内存中的页框相对应的页框号</strong>。由于一个进程可能只有一些页在内存中，因而每个页表项需要有一位<code>P</code>来表示它所对应的页当前是否在内存中。若这一位表示该页在内存中，则这个页表项还包括该页的页框号。</p>
 <p>页表项中所需要的另一个控制位是修改位<code>M</code>，它表示相应页的内容从上次装入内存到现在是否已改变。若未改变，则在需要把该页换出时，无须用页框中的内容更新该页。页表项还须提供其他一些控制位，例如，保护位和共享位。</p>
-<img src="../../../Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325214215830.png" alt="image-20210325214215830" style="zoom:67%;" />
+<img src="image-20210325214215830.png" alt="image-20210325214215830" style="zoom:67%;" />
 
 <h6 id="页表结构"><a href="#页表结构" class="headerlink" title="页表结构"></a>页表结构</h6><p>从内存中读取一个字的基本机制包括使用页表从虚拟地址到物理地址的转换。虚拟地址又称为逻辑地址，它由页号和偏移量组成，而物理地址由页框号和偏移量组成。由于页表的长度可基于进程的长度而变化，因而不能期望在寄存器中保存它，它须在内存中且可以访问。当某个特定的进程正运行时，一个寄存器保存该进程页表的起始地址。虚拟地址的页号用于检索页表、查找相应的页框号，并与虚拟地址的偏移量结合起来形成需要的实地址。一般来说，页号域长于页框号域（<code>n &gt; m</code>）。</p>
-<img src="../../../Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325214238480.png" alt="image-20210325214238480" style="zoom:67%;" />
+<img src="image-20210325214238480.png" alt="image-20210325214238480" style="zoom:67%;" />
 
 <p>每个进程可以占据大量的虚存空间，因而一个进程会有大量的页表项，这会导致保存页表的内存空间太大。大多数虚拟内存方案都在虚存而非实存中保存页表。这意味着页表和其他页一样都服从分页管理。一个进程正在运行时，它的页表至少有一部分须在内存中，这一部分包括正在运行的页的页表项。一些处理器使用<strong>两级方案</strong>来组织大型页表。在这类方案中有一个页目录，其中的每项指向一个页表。</p>
-<img src="../../../Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325214616001.png" alt="image-20210325214616001" style="zoom: 80%;" />
+<img src="image-20210325214616001.png" alt="image-20210325214616001" style="zoom: 80%;" />
 
 <p>假设采用字节级的寻址，页尺寸为<code>4KB</code>(2^12^)，则<code>4GB</code>(2^32^)虚拟地址空间由2^20^页组成。若这些页中的每页都由一个<code>4</code>字节的页表项映射，则可创建由2^20^个页表项组成的一个页表，这时需要<code>4MB</code>(2^22^)的内存空间。这个由2^10^页组成的巨大用户页表可以保留在虚存中，并由一个包括2^10^个页表项的根页表映射，根页表占据的内存为<code>4KB</code>(2^12^)。</p>
-<img src="../../../Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325214950642.png" alt="image-20210325214950642" style="zoom:67%;" />
+<img src="image-20210325214950642.png" alt="image-20210325214950642" style="zoom:67%;" />
 
 <h6 id="转换检测缓冲区TLB"><a href="#转换检测缓冲区TLB" class="headerlink" title="转换检测缓冲区TLB"></a>转换检测缓冲区<code>TLB</code></h6><p>原则上，每次虚存访问都可能会引起两次物理内存访问：一次取相应的页表项，另一次取需要的数据（进程页）。因此，虚拟内存方案都为页表项使用了一个特殊的高速缓存，通常称为转换检测缓冲区（<code>Translation Lookaside Buffer</code>，<code>TLB</code>）。<code>TLB</code>中包含有最近用过的<strong>页号和完整的页表项</strong>。给定一个虚拟地址，处理器首先检查<code>TLB</code>，若需要的页表项在其中（<code>TLB</code>命中），则检索页框号并形成实地址。若未找到需要的页表项（<code>TLB</code>未命中）,则处理器用页号检索进程页表，并检查相应的页表项。若“存在位”已置位，则该页在内存中，处理器从页表项中检索页框号以形成实地址。处理器同时更新<code>TLB</code>，使其包含这个新页表项。最后，若“存在位”未置位，则表示需要的页不在内存中，这时会产生一次内存访问故障，称为缺页（<code>page fault</code>）故障。此时离开硬件作用范围，调用操作系统，由操作系统负责装入所需要的页，并更新页表。</p>
-<img src="../../../Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325215417101.png" alt="image-20210325215417101" style="zoom:67%;" />
+<img src="image-20210325215417101.png" alt="image-20210325215417101" style="zoom:67%;" />
 
 <p>页尺寸对缺页中断发生概率的影响使得这些问题变得更为复杂。一般而言，基于局部性原理，如果页尺寸非常小，那么每个进程在内存中就有较多数量的页。一段时间后，内存中的页都包含有最近访问的部分，因此缺页率较低。当页尺寸增加时，每页包含的单元和任何一个最近访问过的单元越来越远。因此局部性原理的影响被削弱，缺页率开始增长。</p>
 <p>更为复杂的是，缺页率还取决于分配给一个进程的页框的数量。对固定的页尺寸，当内存中的页数量增加时，缺页率会下降。因此，软件策略（分配给每个进程的内存总量）影响着硬件设计决策（页尺寸)。</p>
@@ -577,10 +577,10 @@
 <p><strong>段页式系统</strong></p>
 <p>在段页式系统中，用户的地址空间被程序员划分为许多段。每段依次划分为许多固定大小的页，页的长度等于内存中的页框大小。若某段的长度小于一页，则该段只占据一页。从程序员的角度看，逻辑地址仍然由段号和段偏移量组成：从系统的角度看，段偏移量可视为指定段中的一个页号和页偏移量。</p>
 <p>每个进程都使用一个段表和一些页表，且每个进程段使用一个页表。某个特定的进程运行时，使用一个寄存器记录该进程段表的起始地址。对每个虚拟地址，处理器使用段号部分来检索进程段表以寻找该段的页表。然后虚拟地址的页号部分用于检索页表并查找相应的页框号。这种方式结合虚拟地址的偏移部分，就形成了需要的实地址。</p>
-<img src="../../../Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325220947686.png" alt="image-20210325220947686" style="zoom:67%;" />
+<img src="image-20210325220947686.png" alt="image-20210325220947686" style="zoom:67%;" />
 
 <p><strong>分段有助于实现保护与共享机制</strong>。实际上，操作系统要求的保护和共享功能通常在段一级处理。由于每个段表项包括一个长度和一个基地址，因而程序不会不经意地访问超出该段的内存单元。为实现共享，一个段可能会在多个进程的段表中引用。</p>
-<img src="../../../Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210325221118176.png" alt="image-20210325221118176" style="zoom:67%;" />
+<img src="image-20210325221118176.png" alt="image-20210325221118176" style="zoom:67%;" />
 
 <h5 id="操作系统软件的支持"><a href="#操作系统软件的支持" class="headerlink" title="操作系统软件的支持"></a>操作系统软件的支持</h5><p><strong>这里主要涉及的是操作系统为虚存方案提供的算法</strong>。在段页式虚存系统中，操作系统所面临的内存管理问题大多数都<strong>与分页有关</strong>。</p>
 <p>在各种情况下，最重要的都是<strong>与性能相关</strong>的问题：由于缺页中断会带来巨大的软件开销，所以希望使缺页中断发生的频率最小。这类开销至少包括决定置换哪个或哪些驻留页，以及交换这些页所需要的<code>IO</code>操作。此外，在这个页<code>IO</code>操作的过程中，操作系统还须调度另一个进程运行，即导致一次进程切换。因此，希望能通过适当的安排，使得在一个进程正在执行时，访问一个未命中的页中的字的概率最小。</p>
@@ -642,16 +642,16 @@
 <p><strong>可变分配策略</strong>允许分配给一个进程的页框在该进程的生命周期中不断地发生变化。<strong>其大小可根据当前进程的缺页率大小来实时调整</strong>。理论上，若一个进程的缺页率一直比较高，则表明在该进程中局部性原理表现较弱，应给它多分配一些页框以减小缺页率；而若一个进程的缺页率特别低，则表明从局部性的角度看该进程的表现非常好，可在不明显增大缺页率的前提下减少分配给它的页框。</p>
 <p><strong>置换范围</strong></p>
 <p><strong>局部置换策略</strong>在产生这次缺页的进程的驻留页中选择，而<strong>全局置换策略</strong>则把内存中所有未被锁定的页都作为置换的候选页，而不管它们属于哪个进程。</p>
-<h5 id="Linux内存管理"><a href="#Linux内存管理" class="headerlink" title="Linux内存管理"></a><code>Linux</code>内存管理</h5><p><img src="images/1356672578_8600.jpg" alt="1356672578_8600"></p>
+<h5 id="Linux内存管理"><a href="#Linux内存管理" class="headerlink" title="Linux内存管理"></a><code>Linux</code>内存管理</h5><p><img src="1356672578_8600.jpg" alt="1356672578_8600"></p>
 <p><strong>虚存寻址</strong></p>
-<p><img src="images/%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E8%AE%BF%E9%97%AE.jpg" alt="虚拟地址访问"></p>
+<p><img src="%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E8%AE%BF%E9%97%AE.jpg" alt="虚拟地址访问"></p>
 <p><code>Linux</code>使用三级页表结构（<strong>最新版本已经使用四级页表了</strong>），它由下面几种类型的表组成（每个表的大小都是一页）：</p>
 <ul>
 <li>顶级页表是页全局目录（<code>PGD</code>），它包含了一个<code>pgd_t</code>类型数组，多数体系结构中<code>pgd_t</code>类型等同于无符号长整型类型。<code>PGD</code>中的表项指向二级页目录中的表项：<code>PMD</code>。每个活动进程的页目录都必须在内存中。</li>
 <li>二级页表是中间页目录（<code>PMD</code>），它是个<code>pmd_t</code>类型数组，其中的表项指向<code>PTE</code>中的表项。页中间目录可能跨越多个页。页中间目录中的每项指向页表中的一页。</li>
 <li>最后一级的页表简称页表，其中包含了<code>pte_t</code>类型的页表项，该页表项指向物理页面。页表也可跨越多个页。每个页表项指向该进程的一个虚拟页。</li>
 </ul>
-<img src="../../../Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/image-20210326150018056.png" alt="image-20210326150018056" style="zoom:67%;" />
+<img src="image-20210326150018056.png" alt="image-20210326150018056" style="zoom:67%;" />
 
 <p><strong>页面分配</strong></p>
 <p>页面分配为提升向内存中读入和从内存中写出页的效率，<code>Linux</code>定义了一种机制，用于把连续的页映射到连续的页框中。基于这一目的，它使用了<strong>伙伴系统</strong>。内核维护一系列大小固定的连续页框组，一组可以包含<code>1、2、4、8、16、32</code>个页框。当一页在内存中被分配或被解除分配时，可用的页框组使用伙伴算法来分裂或合并。</p>
@@ -726,7 +726,7 @@
 <p>内存地址是一个给定的值，它要在地址空间范围之内，比如<code>4021F000</code>。这个值表示的是进程32位地址空间中的一个特定的字节。尽管一个进程可以寻址<code>4GB</code>的虚拟内存（在32位的地址空间中)，但这并不代表它就有权访问所有的虚拟地址。在地址空间中，我们更为关心的是一些虚拟内存的地址区间，比如<code>08048000 - 0804C000</code>，它们可被进程访问。这些可被访问的合法地址空间称为内存区域。<strong>通过内核，进程可以给自己的地址空间动态地添加或减少内存区域</strong>。</p>
 <p>进程只能访问有效内存区域内的内存地址。每个内存区域也具有相关权限如对相关进程有可读、可写、可执行属性。<strong>如果一个进程访问了不在有效范围中的内存区域，或以不正确的方式访向了有效地址</strong>，那么内核就会终止该进程，并返回“<strong>段错误</strong>”信息。</p>
 <h6 id="内存描述符"><a href="#内存描述符" class="headerlink" title="内存描述符"></a>内存描述符</h6><p><code>Linux</code>内核使用内存描述符来表示进程的地址空间，该描述符表示着进程所有地址空间的信息。内存描述符由<code>mm_struct</code>结构体表示，下面给出内存描述符结构中各个域的描述，请大家结合前面的进程内存段布局图一起看：</p>
-<p><img src="images/20170112101815302.jpg" alt=""></p>
+<p><img src="20170112101815302.jpg" alt=""></p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">mm_struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">vm_area_struct</span> *<span class="title">mmap</span>;</span> <span class="comment">/* 内存区域组织成链表 */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rb_root</span> <span class="title">mm_rb</span>;</span> <span class="comment">/* 内存区域组织成红黑树 */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">vm_area_struct</span> *<span class="title">mmap_cache</span>;</span> <span class="comment">/* 最近使用的内存区域 */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> free_area_cache; <span class="comment">/* 地址空间第一个空洞 */</span></span><br><span class="line">    <span class="keyword">pgd_t</span> *pgd; <span class="comment">/* 页全局目录 */</span></span><br><span class="line">    <span class="keyword">atomic_t</span> mm_users; <span class="comment">/* 使用地址空间的用户数 */</span></span><br><span class="line">    <span class="keyword">atomic_t</span> mm_count; <span class="comment">/* 主使用计数器 */</span></span><br><span class="line">    <span class="keyword">int</span> map_count; <span class="comment">/* 内存区域的个数 */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rw_semaphore</span> <span class="title">mmap_sem</span>;</span> <span class="comment">/* 内存区域的信号量 */</span></span><br><span class="line">    <span class="keyword">spinlock_t</span> page_table_lock; <span class="comment">/* 页表锁 */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">mmlist</span>;</span> <span class="comment">/* 所有 mm_struct 形成的链表 */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> rss; <span class="comment">/* 所分配的物理页 */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> total_vm; <span class="comment">/* 全部页面数目 */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> locked_vm; <span class="comment">/* 上锁的页面数据 */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> pinned_vm; <span class="comment">/* Refcount permanently increased */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> shared_vm; <span class="comment">/* 共享页面数目 Shared pages (files) */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> exec_vm; <span class="comment">/* 可执行页面数目 VM_EXEC &amp; ~VM_WRITE */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> stack_vm; <span class="comment">/* 栈区页面数目 VM_GROWSUP/DOWN */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> def_flags;</span><br><span class="line">    <span class="comment">/* 代码段、数据段 起始地址和结束地址 */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> start_code, end_code, start_data, end_data;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> start_brk, brk, start_stack;	<span class="comment">/* 堆区起始地址和结束地址, 进程栈区的起始地址 */</span></span><br><span class="line">    <span class="comment">/* 命令行参数 和 环境变量的 起始地址和结束地址 */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> arg_start, arg_end, env_start, env_end;</span><br><span class="line">    <span class="comment">/* Architecture-specific MM context */</span></span><br><span class="line">    <span class="keyword">mm_context_t</span> context; <span class="comment">/* 体系结构特殊数据 */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Must use atomic bitops to access the bits */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> flags; <span class="comment">/* 状态标志位 */</span></span><br><span class="line">    <span class="comment">/* Coredumping and NUMA and HugePage 相关结构体 */</span></span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <p><code>mm_count</code>代表了对<code>mm_strcut</code>本身的引用，而<code>mm_users</code>代表对<code>mm_struct</code>相关资源的引用，分了两个层次。<code>mm_count</code>类似于以进程为单位。 <code>mm_users</code>类似于以线程为单位。内核线程在运行时会借用其他进程的<code>mm_struct</code>，这样的线程叫<code>anonymous users</code>，因为他们不关心<code>mm_struct</code>指向的用户空间，也不会去访问这个用户空间，他们只是临时借用（比如说当进程执行系统调用陷入到内核中，内核会借用该进程的地址空间）。<code>mm_count</code>记录这样的进程数。<code>mm_users</code>是对<code>mm_struct</code>所指向的用户空间进行共享的所有进程的计数。也就是说，会有多个进程共享同一个用户空间， 这些进程也就是所谓的线程。</p>
@@ -766,7 +766,7 @@
 <h5 id="进程用户栈、线程栈、进程内核栈、中断栈"><a href="#进程用户栈、线程栈、进程内核栈、中断栈" class="headerlink" title="进程用户栈、线程栈、进程内核栈、中断栈"></a>进程用户栈、线程栈、进程内核栈、中断栈</h5><p><strong>进程用户栈</strong></p>
 <p>进程栈是属于用户态栈，和进程虚拟地址空间 (<code>Virtual Address Space</code>) 密切相关。那我们先了解下什么是虚拟地址空间：在<code>32</code>位机器下，虚拟地址空间大小为<code>4G</code>。这些虚拟地址通过页表 (<code>Page Table</code>) 映射到物理内存，页表由操作系统维护，并被处理器的内存管理单元 (<code>MMU</code>) 硬件引用。每个进程都拥有一套属于它自己的页表，因此对于每个进程而言都好像独享了整个虚拟地址空间。</p>
 <p><code>Linux</code>内核将这<code>4G</code>字节的空间分为两部分，将最高的<code>1G</code>字节（<code>0xC0000000</code>- <code>0xFFFFFFFF</code>）供内核使用，称为内核空间。而将较低的<code>3G</code>字节（<code>0x00000000</code> - <code>0xBFFFFFFF</code>）供各个进程使用，称为用户空间。每个进程可以通过系统调用陷入内核态，因此内核空间是由所有进程共享的。虽然说内核和用户态进程占用了这么大地址空间，但是并不意味它们使用了这么多物理内存，仅表示它可以支配这么大的地址空间。它们是根据需要，将物理内存映射到虚拟地址空间中使用。</p>
-<img src="../../../Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/20160901214930068.jpg" alt="Linux虚拟地址空间" style="zoom:150%;" />
+<img src="20160901214930068.jpg" alt="Linux虚拟地址空间" style="zoom:150%;" />
 
 <p><code>Linux</code>对进程地址空间有个标准布局，地址空间中由各个不同的内存段组成 (<code>Memory Segment</code>)，主要的内存段如下：</p>
 <ul>
@@ -785,7 +785,7 @@
 <li>避免了实际分配可能永远不会被该进程触及的<code>BSS</code>页面，从而节省了内存使用量。</li>
 <li>同时仍然提供了确保每个进程中的<code>BSS</code>段看起来都是零初始化的保证。</li>
 </ol>
-<p><img src="images/20160901214948512.jpg" alt="20160901214948512"></p>
+<p><img src="20160901214948512.jpg" alt="20160901214948512"></p>
 <p>而上面进程虚拟地址空间中的栈区，正指的是我们所说的进程栈。进程栈的初始化大小是由编译器和链接器计算出来的，但是栈的实时大小并不是固定的，<code>Linux</code>内核会根据入栈情况对栈区进行动态增长（其实也就是添加新的页表）。但是并不是说栈区可以无限增长，它也有最大限制<code>RLIMIT_STACK</code>（一般为<code>8M</code>），我们可以通过<code>ulimit</code>来查看或更改<code>RLIMIT_STACK</code>的值。</p>
 <p><strong>如何确认进程栈的大小</strong></p>
 <p>我们要知道栈的大小，那必须得知道栈的起始地址和结束地址。栈起始地址获取很简单，只需要嵌入汇编指令获取栈指针<code>esp</code>寄存器的值即可。栈结束地址的获取有点麻烦，我们需要先利用递归函数把栈搞溢出了，然后再<code>GDB</code>中把栈溢出的时候把栈指针<code>esp</code>寄存器的值打印出来即可。代码如下：</p>
@@ -807,7 +807,7 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">union</span> thread_union</span><br><span class="line">&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">thread_info</span> <span class="title">thread_info</span>;</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="built_in">stack</span>[THREAD_SIZE / <span class="keyword">sizeof</span>(<span class="keyword">long</span>)];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <p><code>thread_union</code>进程内核栈和<code>task_struct</code>进程描述符有着紧密的联系。由于内核经常要访问<code>task_struct</code>，高效获取当前进程的描述符是一件非常重要的事情。因此内核将进程内核栈的头部一段空间，用于存放<code>thread_info</code>结构体，而此结构体中则记录了对应进程的描述符，两者关系如下图：</p>
-<img src="../../../Markdown_files/%25E6%2593%258D%25E4%25BD%259C%25E7%25B3%25BB%25E7%25BB%259F%25E7%25AC%2594%25E8%25AE%25B0/images/20160901215111055.jpg" alt="img" style="zoom:150%;" />
+<img src="20160901215111055.jpg" alt="img" style="zoom:150%;" />
 
 <p>有了上述关联结构后，内核可以先获取到栈顶指针<code>esp</code>，然后通过<code>esp</code>来获取<code>thread_info</code>。这里有一个小技巧，直接将<code>esp</code>的地址与上<code>~(THREAD_SIZE - 1)</code>后即可直接获得<code>thread_info</code>的地址。由于<code>thread_union</code>结构体是从<code>thread_info_cache</code>的<code>Slab</code>缓存池中申请出来的，而<code>thread_info_cache</code>在<code>kmem_cache_create</code>创建的时候，保证了地址是<code>THREAD_SIZE</code>对齐的。因此只需要对栈指针进行<code>THREAD_SIZE</code>对齐，即可获得<code>thread_union</code>的地址。成功获取到<code>thread_info</code>后，直接取出它的<code>task</code>成员就成功得到了<code>task_struct</code>。其实上面这段描述，也就是<code>current</code>宏的实现方法：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">register</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> current_stack_pointer <span class="title">asm</span> <span class="params">(<span class="string">"sp"</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> struct thread_info *<span class="title">current_thread_info</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (struct thread_info *)(current_stack_pointer &amp; ~(THREAD_SIZE - <span class="number">1</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> get_current() (current_thread_info()-&gt;task)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> current get_current()</span></span><br></pre></td></tr></table></figure>
