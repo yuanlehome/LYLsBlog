@@ -191,6 +191,108 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/tRettVqCkfzWbulf/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/tRettVqCkfzWbulf/" class="post-title-link" itemprop="url">操作系统之进程间通信（含内核实现）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-25 21:35:42" itemprop="dateCreated datePublished" datetime="2021-03-25T21:35:42+08:00">2021-03-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>11k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h5 id="进程间通信"><a href="#进程间通信" class="headerlink" title="进程间通信"></a>进程间通信</h5><h6 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a><strong>背景知识</strong></h6><ul>
+<li><p><code>IPC</code>对象</p>
+<p>内核中用于进程间通信的数据结构，全局可见，如消息队列的<code>msg_queue</code>结构体、信号量的<code>sem_array</code>结构体，共享内存的<code>shmid_kernel</code>结构体。类似于普通文件是通过文件名（文件描述符）进行读写操作，通过<code>IPC key</code>和<code>IPC</code>标识符进行<code>IPC</code>对象的读写操作。</p>
+</li>
+<li><p><code>IPC</code>标识符<code>ID</code></p>
+<p>类似于文件描述符<code>fd</code>，可以用一个<code>IPC</code>标识符来引用一个<code>IPC</code>对象，是一个<code>32</code>位整数，是<code>IPC</code>对象的外部名字。返回给用户进程的。</p>
+</li>
+<li><p><code>IPC key</code>（魔数）<br><code>IPC</code>对象的内部名，是一个独一无二的整数，用来确保<code>IPC</code>对象的唯一性。该整数类型为<code>key_t</code>，在<code>sys/types.h</code>中被定义为长整型。<br>类似于普通文件通过文件名<code>open</code>一个文件，获得文件描述符；<code>IPC</code>对象是<code>get</code>函数根据给定的<code>key</code>去创建一个<code>IPC</code>对象，并返回<code>IPC</code>标识符<code>ID</code>。根据新资源是信号量、消息队列还是共享内存，分别调用<code>semget()</code>、<code>msgget()</code>或者<code>shmget()</code>函数创建<code>IPC</code>资源。</p>
+<p>这三个函数的主要目的都是从<code>IPC key</code>（作为第一个参数传递）中导出相应的<code>IPC</code>标识符<code>ID</code>，进程以后就可以使用这个标识符对资源进行访问。如果还没有<code>IPC</code>资源和<code>IPC</code>关键字相关联，就创建一个新的资源。如果一切都顺利，那么函数就返回一个正的<code>IPC</code>标识符，否则，就返回一个错误码。</p>
+</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/tRettVqCkfzWbulf/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/fhQPnKWa9qDDelG3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1050,106 +1152,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/63ixVU2ANYIUKUrm/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Liu Y.L.">
-      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="LYL's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/63ixVU2ANYIUKUrm/" class="post-title-link" itemprop="url">C++重要知识点详细解读之移动语义</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-10 21:35:42" itemprop="dateCreated datePublished" datetime="2021-02-10T21:35:42+08:00">2021-02-10</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E9%87%8D%E8%A6%81%E7%9F%A5%E8%AF%86%E7%82%B9/" itemprop="url" rel="index"><span itemprop="name">重要知识点</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ol>
-<li>解释<strong>右值引用</strong>和左值引用的区别</li>
-<li>移动构造函数和移动赋值运算符</li>
-<li>理解<code>std::move</code>和<code>std::forward</code></li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/63ixVU2ANYIUKUrm/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1217,7 +1223,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-count">31</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

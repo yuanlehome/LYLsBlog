@@ -191,6 +191,112 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/ShyaVw4WHERlLCqZ/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ShyaVw4WHERlLCqZ/" class="post-title-link" itemprop="url">深度探索C++对象模型之data语意学</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-28 21:35:42" itemprop="dateCreated datePublished" datetime="2020-05-28T21:35:42+08:00">2020-05-28</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E6%B7%B1%E5%BA%A6%E6%8E%A2%E7%B4%A2C-%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B/" itemprop="url" rel="index"><span itemprop="name">深度探索C++对象模型</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="第3章：Data语意学"><a href="#第3章：Data语意学" class="headerlink" title="第3章：Data语意学"></a>第<code>3</code>章：<code>Data</code>语意学</h4><p><code>The size of class</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">X</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="comment">// char c; // 此时, sizeof(X) == 1, sizeof(Y) == 8, sizeof(Z) == 8, sizeof(A) == 16</span></span><br><span class="line">    <span class="keyword">char</span> c; <span class="comment">// 此时, sizeof(X) == 1, sizeof(Y) == 16, sizeof(Z) == 16, sizeof(A) == 24</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Y</span> :</span> <span class="keyword">public</span> <span class="keyword">virtual</span> X &#123; &#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Z</span> :</span> <span class="keyword">public</span> <span class="keyword">virtual</span> X &#123; &#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> :</span> <span class="keyword">public</span> Y, <span class="keyword">public</span> Z &#123; &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>一个类的大小主要受三个因素的影响：</p>
+<ol>
+<li><p>语言支持的特性所造成的负担</p>
+<p> 比如，含虚函数的类会额外多一个<code>vptr</code>指针，含<code>virtual base class</code>会再多一个额外的指针（它或者指向<code>virtual base class subobject</code>，或者指向一个相关表格；表格中存放的若不是<code>virtual base class subobject</code>地址，就是其偏移量）。</p>
+</li>
+<li><p>编译器对于特殊情况所提供的优化处理</p>
+<p> 现代编译器的对于空基类的优化处理：一个<code>empty virtual base class</code>被视为<code>derived class object</code>最开头的一部分，也就是说它并没有花费任何的额外空间。因为既然有了<code>members</code>，就不需要原本为了<code>empty class</code>而安插的一个<code>char</code>。</p>
+</li>
+<li><p><code>alignment</code>（内存对齐）</p>
+<p> 就是将数值调整到某数的整数倍。在<code>64</code>位计算机上，通常<code>alignment</code>为<code>8 bytes</code>，以使<code>bus</code>的“运输量”达到最高效率。</p>
+</li>
+</ol>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/ShyaVw4WHERlLCqZ/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/FXn6nXyz1FEw9e8Y/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1092,111 +1198,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/l4snoL8SUW9lGasI/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Liu Y.L.">
-      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="LYL's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/l4snoL8SUW9lGasI/" class="post-title-link" itemprop="url">Effective C++之让自己习惯C++</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-03-01 21:35:42" itemprop="dateCreated datePublished" datetime="2020-03-01T21:35:42+08:00">2020-03-01</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/Effective-C/" itemprop="url" rel="index"><span itemprop="name">Effective C++</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h4 id="第1章：让自己习惯C"><a href="#第1章：让自己习惯C" class="headerlink" title="第1章：让自己习惯C++"></a>第<code>1</code>章：让自己习惯<code>C++</code></h4><h5 id="条款01：视C-为一个语言联邦"><a href="#条款01：视C-为一个语言联邦" class="headerlink" title="条款01：视C++为一个语言联邦"></a>条款<code>01</code>：视<code>C++</code>为一个语言联邦</h5><ul>
-<li>将<code>C++</code>视为由<code>4</code>个次语言组成的联邦：<ul>
-<li><code>C</code>：没有模板、没有异常、没有重载…</li>
-<li><code>Object-Oriented C++</code>：类、封装、继承、多态、虚函数、动态绑定等等；</li>
-<li><code>Template C++</code>：泛型编程部分；</li>
-<li><code>STL</code>：是一个<code>Template</code>程序库，容器、迭代器、算法以及函数对象。</li>
-</ul>
-</li>
-</ul>
-<p>从某个此语言切换到另一个时，高效编程守则可能会发生变化。比如，<code>C-like</code>类型（内置类型）<code>pass by value</code>更好；对于<code>Object-Oriented C++</code>而言，<code>pass by reference to-const</code>更好；再切换到<code>STL</code>，由于迭代器和函数对象都是在<code>C</code>指针之上塑造出来的，<code>pass by value</code>守则再次适用。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/l4snoL8SUW9lGasI/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1264,7 +1269,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-count">31</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
