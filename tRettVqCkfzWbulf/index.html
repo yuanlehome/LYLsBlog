@@ -276,7 +276,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h5 id="进程间通信"><a href="#进程间通信" class="headerlink" title="进程间通信"></a>进程间通信</h5><h6 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a><strong>背景知识</strong></h6><ul>
+        <h3 id="进程间通信"><a href="#进程间通信" class="headerlink" title="进程间通信"></a>进程间通信</h3><h4 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a>背景知识</h4><ul>
 <li><p><code>IPC</code>对象</p>
 <p>内核中用于进程间通信的数据结构，全局可见，如消息队列的<code>msg_queue</code>结构体、信号量的<code>sem_array</code>结构体，共享内存的<code>shmid_kernel</code>结构体。类似于普通文件是通过文件名（文件描述符）进行读写操作，通过<code>IPC key</code>和<code>IPC</code>标识符进行<code>IPC</code>对象的读写操作。</p>
 </li>
@@ -313,7 +313,7 @@
 <li><code>seq</code>是一个序号，在分配<code>IPC</code>对象时使用，和<code>ipc_ids</code>结构中意思相同，为创建该资源是使用的<code>seq</code>。</li>
 <li><code>mode</code>保存了位掩码，指定了所有者、组、其他用户的访问权限。</li>
 </ul>
-<h6 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h6><ul>
+<h4 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h4><ul>
 <li><p><strong>数据传输</strong>：一个进程需要将它的数据发送给另一个进程，发送的数据量在一个字节到几兆字节之间。</p>
 </li>
 <li><p><strong>共享数据</strong>：多个进程想要操作共享数据，一个进程对共享数据的修改，别的进程应该立刻看到。</p>
@@ -326,7 +326,7 @@
 </li>
 </ul>
 <p>每个进程的用户地址空间都是独立的，但是内核空间是共享的，所以，进程之间要想相互通信都要经过内核。<code>Linux</code>提供的几种进程间通信方式有管道、消息队列、信号量、信号、共享内存和本地套接字</p>
-<h6 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h6><p>管道只能单向传输数据，如果要想双向传输数据，需要创建两个管道。管道分为命名管道和匿名管道。</p>
+<h4 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h4><p>管道只能单向传输数据，如果要想双向传输数据，需要创建两个管道。管道分为命名管道和匿名管道。</p>
 <p><strong>命名管道</strong>的可通过<code>mkfifo</code>命令来创建，并且指定管道名。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> mkfifo mypipe</span></span><br></pre></td></tr></table></figure>
 
@@ -362,7 +362,7 @@
 <p>如果同时满足上述条件，写入函数首先锁定内存，然后从写进程的地址空间中复制数据到内存。否则，写入进程就休眠在<code>VFS</code>索引节点的等待队列中，接下来，内核将调用调度程序，而调度程序会选择其他进程运行。写入进程实际处于可中断的等待状态，当内存中有足够的空间可以容纳写入数据，或内存被解锁时，读取进程会唤醒写入进程，这时，写入进程将接收到信号。当数据写入内存之后，内存被解锁，而所有休眠在索引节点的读取进程会被唤醒。</p>
 <p>管道的读取过程和写入过程类似，通过read系统调用转调用管道专用读操作函数<code>pipe_read</code>。但是，进程可以在没有数据或内存被锁定时立即返回错误信息，而不是阻塞该进程，这依赖于文件或管道的打开模式。反之，进程可以休眠在索引节点的等待队列中等待写入进程写入数据。当所有的进程完成了管道操作之后，管道的索引节点被丢弃，而共享数据页也被释放。</p>
 <p><strong>可以说管道适用于具有亲缘关系的进程间通信</strong>。无论是命名管道还是匿名管道，进程写入的数据都是缓存在内核的内存缓冲区中，读取的时候自然也是从内核的内存缓冲区中读取，因此需要在用户态和内核态之间转换。<strong>因此，管道的通信方式是低效率的，不适合进程间频繁地、大块地交换数据。</strong></p>
-<h6 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h6><p><strong>消息队列</strong>的通信模式比如说，<code>A</code>进程要给<code>B</code>进程发送消息，<code>A</code>进程把数据放在对应的消息队列后就可以正常返回了，<code>B</code>进程需要的时候再去读取数据就可以了。同理，<code>B</code>进程要给<code>A</code>进程发送消息也是如此。</p>
+<h4 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h4><p><strong>消息队列</strong>的通信模式比如说，<code>A</code>进程要给<code>B</code>进程发送消息，<code>A</code>进程把数据放在对应的消息队列后就可以正常返回了，<code>B</code>进程需要的时候再去读取数据就可以了。同理，<code>B</code>进程要给<code>A</code>进程发送消息也是如此。</p>
 <p><strong>消息队列是保存在内核中的消息链表</strong>，在发送数据时，会分成一个一个独立的数据单元，也就是消息体（数据块），消息体是用户自定义的数据类型，消息的发送方和接收方要约定好消息体的数据类型，所以每个消息体都是固定大小的存储块，不像管道是无格式的字节流数据。如果进程从消息队列中读取了消息体，内核就会把这个消息体删除。</p>
 <p>消息队列生命周期根随内核，如果没有释放消息队列或者没有关闭操作系统，消息队列会一直存在。发送者和接收者通过消息队列通信时，无需同时运行，例如，发送进程可以打开一个队列，写入消息，然后结束工作，接收进程在发送者结束之后启动，仍然可以访问队列并（根据消息编号）获取消息。中间的一段时间内消息由内核维护。</p>
 <p><strong>消息队列不适合比较大数据的传输</strong>，因为在内核中每个消息体都有一个最大长度的限制，<strong>每个消息都至少分配一个内存页</strong>，同时所有队列所包含的全部消息体的总长度也是有上限。在<code>Linux</code>内核中，会有两个宏定义<code>MSGMAX</code>和<code>MSGMNB</code>，它们以字节为单位，分别定义了一条消息的最大长度和一个队列的最大长度。</p>
@@ -382,7 +382,7 @@
 
 <img src="image-20210412120755697.png" alt="image-20210412120755697" style="zoom: 50%;" />
 
-<h6 id="共享内存"><a href="#共享内存" class="headerlink" title="共享内存"></a>共享内存</h6><p>操作系统内存管理采用的是虚拟内存技术，也就是每个进程都有自己独立的虚拟内存空间，不同进程的虚拟内存映射到不同的物理内存中。所以，即使进程<code>A</code>和进程<code>B</code>的虚拟地址是一样的，其实访问的是不同的物理内存地址，对于数据的增删查改互不影响。</p>
+<h4 id="共享内存"><a href="#共享内存" class="headerlink" title="共享内存"></a>共享内存</h4><p>操作系统内存管理采用的是虚拟内存技术，也就是每个进程都有自己独立的虚拟内存空间，不同进程的虚拟内存映射到不同的物理内存中。所以，即使进程<code>A</code>和进程<code>B</code>的虚拟地址是一样的，其实访问的是不同的物理内存地址，对于数据的增删查改互不影响。</p>
 <p><strong>共享内存的机制，就是拿出一块虚拟地址空间来，映射到相同的物理内存中</strong>。这样这个进程写入的东西，另外一个进程马上就能看到了，都不需要拷贝来拷贝去，传来传去，大大提高了进程间通信的速度。</p>
 <p>但是共享内存通信方式带来新的问题，那就是如果多个进程同时修改同一个共享内存，很有可能就冲突了。例如两个进程都同时写一个地址，那先写的那个进程会发现内容被别人覆盖了。</p>
 <img src="3333rtewrfg.jpg" alt="Image" style="zoom: 50%;" />
@@ -391,8 +391,7 @@
 <img src="image-20210412121016593.png" alt="image-20210412121016593" style="zoom:50%;" />
 
 <p>同样，在<code>smd_ids</code>全局变量的<code>entries</code>数组中保存了<code>kern_ipc_perm</code>和<code>shmid_kernel</code>的组合，以便管理<code>IPC</code>对象的访问权限。对每个共享内存对象都创建一个伪文件，通过<code>shm_file</code>连接到<code>shmid_kernel</code>的实例。内核使用<code>shm_file-&gt;f_mapping</code>指针访问地址空间对象（<code>struct address_space</code>），用于创建匿名映射。还需要设置所涉及各进程的页表，使得各个进程都能够访问与该<code>IPC</code>对象相关的内存区域。</p>
-<h6 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h6><p>关于信号量的详细介绍参见<code>3.3.1</code>节。</p>
-<p>为了防止多进程竞争共享资源，而造成的数据错乱，所以需要保护机制，使得共享的资源，在任意时刻只能被一个进程访问。正好，<strong>信号量</strong>就实现了这一保护机制。</p>
+<h4 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h4><p>为了防止多进程竞争共享资源，而造成的数据错乱，所以需要保护机制，使得共享的资源，在任意时刻只能被一个进程访问。正好，<strong>信号量</strong>就实现了这一保护机制。</p>
 <p><strong>信号量其实是一个整型的计数器，程序对其访问都是原子操作，主要用于实现进程间的互斥与同步，而不是用于缓存进程间通信的数据</strong>。</p>
 <p>信号量表示资源的数量，控制信号量的方式有两种原子操作：</p>
 <ul>
@@ -442,7 +441,7 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// sem.h</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sembuf</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">unsigned</span> short sem_num; <span class="comment">// 信号量在数组中的索引</span></span><br><span class="line">    short sem_op; <span class="comment">// 信号量操作</span></span><br><span class="line">    short semflg; <span class="comment">// 操作标志</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <p>它不仅保存了信号量在信号量集合<code>struct sem[]</code>中的索引（<code>sem_num</code>），还有所要进行的操作（<code>sem_op</code>）和一些操作标志（<code>sem_flg</code>）。</p>
-<h6 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h6><p>上面说的进程间通信，都是常规状态下的工作模式。<strong>对于异常情况下的工作模式，就需要用「信号」的方式来通知进程。</strong>在<code>Linux</code>操作系统中， 为了响应各种各样的事件，提供了几十种信号，分别代表不同的意义。我们可以通过<code>kill -l</code>命令，查看所有的信号：</p>
+<h4 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h4><p>上面说的进程间通信，都是常规状态下的工作模式。<strong>对于异常情况下的工作模式，就需要用「信号」的方式来通知进程。</strong>在<code>Linux</code>操作系统中， 为了响应各种各样的事件，提供了几十种信号，分别代表不同的意义。我们可以通过<code>kill -l</code>命令，查看所有的信号：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">kill</span> -l</span></span><br><span class="line"> 1) SIGHUP       2) SIGINT       3) SIGQUIT      4) SIGILL       5) SIGTRAP</span><br><span class="line"> 6) SIGABRT      7) SIGBUS       8) SIGFPE       9) SIGKILL     10) SIGUSR1</span><br><span class="line">11) SIGSEGV     12) SIGUSR2     13) SIGPIPE     14) SIGALRM     15) SIGTERM</span><br><span class="line">16) SIGSTKFLT   17) SIGCHLD     18) SIGCONT     19) SIGSTOP     20) SIGTSTP</span><br><span class="line">21) SIGTTIN     22) SIGTTOU     23) SIGURG      24) SIGXCPU     25) SIGXFSZ</span><br><span class="line">26) SIGVTALRM   27) SIGPROF     28) SIGWINCH    29) SIGIO       30) SIGPWR</span><br><span class="line">31) SIGSYS      34) SIGRTMIN    35) SIGRTMIN+1  36) SIGRTMIN+2  37) SIGRTMIN+3</span><br><span class="line">38) SIGRTMIN+4  39) SIGRTMIN+5  40) SIGRTMIN+6  41) SIGRTMIN+7  42) SIGRTMIN+8</span><br><span class="line">43) SIGRTMIN+9  44) SIGRTMIN+10 45) SIGRTMIN+11 46) SIGRTMIN+12 47) SIGRTMIN+13</span><br><span class="line">48) SIGRTMIN+14 49) SIGRTMIN+15 50) SIGRTMAX-14 51) SIGRTMAX-13 52) SIGRTMAX-12</span><br><span class="line">53) SIGRTMAX-11 54) SIGRTMAX-10 55) SIGRTMAX-9  56) SIGRTMAX-8  57) SIGRTMAX-7</span><br><span class="line">58) SIGRTMAX-6  59) SIGRTMAX-5  60) SIGRTMAX-4  61) SIGRTMAX-3  62) SIGRTMAX-2</span><br><span class="line">63) SIGRTMAX-1  64) SIGRTMAX</span><br></pre></td></tr></table></figure>
 
 <p>运行在<code>shell</code>终端的进程，我们可以通过键盘输入某些组合键的时候，给进程发送信号。例如</p>
@@ -464,7 +463,7 @@
 <li><p><strong>忽略信号</strong>。当我们不希望处理某些信号的时候，就可以忽略该信号，不做任何处理。有两个信号是应用进程无法捕捉和忽略的，即<code>SIGKILL</code>和<code>SEGSTOP</code>，它们用于在任何时候中断或结束某一进程。</p>
 </li>
 </ol>
-<h6 id="本地套接字"><a href="#本地套接字" class="headerlink" title="本地套接字"></a>本地套接字</h6><p>我们先来看看创建<code>socket</code>的系统调用：</p>
+<h4 id="本地套接字"><a href="#本地套接字" class="headerlink" title="本地套接字"></a>本地套接字</h4><p>我们先来看看创建<code>socket</code>的系统调用：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">socket</span><span class="params">(<span class="keyword">int</span> domain, <span class="keyword">int</span> type, <span class="keyword">int</span> protocal)</span></span></span><br></pre></td></tr></table></figure>
 
 <p>三个参数分别代表：</p>
@@ -565,7 +564,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#进程间通信"><span class="nav-number">1.</span> <span class="nav-text">进程间通信</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#背景知识"><span class="nav-number">1.1.</span> <span class="nav-text">背景知识</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#应用场景"><span class="nav-number">1.2.</span> <span class="nav-text">应用场景</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#管道"><span class="nav-number">1.3.</span> <span class="nav-text">管道</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#消息队列"><span class="nav-number">1.4.</span> <span class="nav-text">消息队列</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#共享内存"><span class="nav-number">1.5.</span> <span class="nav-text">共享内存</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#信号量"><span class="nav-number">1.6.</span> <span class="nav-text">信号量</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#信号"><span class="nav-number">1.7.</span> <span class="nav-text">信号</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#本地套接字"><span class="nav-number">1.8.</span> <span class="nav-text">本地套接字</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#进程间通信"><span class="nav-number">1.</span> <span class="nav-text">进程间通信</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景知识"><span class="nav-number">1.1.</span> <span class="nav-text">背景知识</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#应用场景"><span class="nav-number">1.2.</span> <span class="nav-text">应用场景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#管道"><span class="nav-number">1.3.</span> <span class="nav-text">管道</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#消息队列"><span class="nav-number">1.4.</span> <span class="nav-text">消息队列</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#共享内存"><span class="nav-number">1.5.</span> <span class="nav-text">共享内存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#信号量"><span class="nav-number">1.6.</span> <span class="nav-text">信号量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#信号"><span class="nav-number">1.7.</span> <span class="nav-text">信号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#本地套接字"><span class="nav-number">1.8.</span> <span class="nav-text">本地套接字</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

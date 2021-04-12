@@ -256,7 +256,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h5 id="进程间通信"><a href="#进程间通信" class="headerlink" title="进程间通信"></a>进程间通信</h5><h6 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a><strong>背景知识</strong></h6><ul>
+          <h3 id="进程间通信"><a href="#进程间通信" class="headerlink" title="进程间通信"></a>进程间通信</h3><h4 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a>背景知识</h4><ul>
 <li><p><code>IPC</code>对象</p>
 <p>内核中用于进程间通信的数据结构，全局可见，如消息队列的<code>msg_queue</code>结构体、信号量的<code>sem_array</code>结构体，共享内存的<code>shmid_kernel</code>结构体。类似于普通文件是通过文件名（文件描述符）进行读写操作，通过<code>IPC key</code>和<code>IPC</code>标识符进行<code>IPC</code>对象的读写操作。</p>
 </li>
