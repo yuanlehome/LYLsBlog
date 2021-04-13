@@ -23,27 +23,27 @@
   <meta name="description" content="寒江孤影-江湖故人-相逢何必曾相识">
 <meta property="og:type" content="website">
 <meta property="og:title" content="LYL&#39;s Blog">
-<meta property="og:url" content="https://yuanlehome.github.io/page/4/index.html">
+<meta property="og:url" content="https://yuanlehome.github.io/tags/C/index.html">
 <meta property="og:site_name" content="LYL&#39;s Blog">
 <meta property="og:description" content="寒江孤影-江湖故人-相逢何必曾相识">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="Liu Y.L.">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://yuanlehome.github.io/page/4/">
+<link rel="canonical" href="https://yuanlehome.github.io/tags/C/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
+    isHome : false,
     isPost : false,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>LYL's Blog</title>
+  <title>标签: C++ | LYL's Blog</title>
   
 
 
@@ -185,213 +185,237 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content tag">
             
-      
+
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/MeCvwFxjI4asjddf/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Liu Y.L.">
-      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="LYL's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/MeCvwFxjI4asjddf/" class="post-title-link" itemprop="url">Effective C++之构造、析构、赋值运算</a>
+  
+  <div class="post-block">
+    <div class="posts-collapse">
+      <div class="collection-title">
+        <h2 class="collection-header">C++
+          <small>标签</small>
         </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-03-08 21:35:42" itemprop="dateCreated datePublished" datetime="2020-03-08T21:35:42+08:00">2020-03-08</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/Effective-C/" itemprop="url" rel="index"><span itemprop="name">Effective C++</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
+      </div>
 
       
-          <h4 id="第2章：构造、析构、赋值运算"><a href="#第2章：构造、析构、赋值运算" class="headerlink" title="第2章：构造、析构、赋值运算"></a>第<code>2</code>章：构造、析构、赋值运算</h4><h5 id="条款05：了解C-默默编写并调用哪些函数"><a href="#条款05：了解C-默默编写并调用哪些函数" class="headerlink" title="条款05：了解C++默默编写并调用哪些函数"></a>条款<code>05</code>：了解<code>C++</code>默默编写并调用哪些函数</h5><ul>
-<li><p>编译器会暗自为<code>class</code>创建<code>default</code>构造函数、<code>copy</code>构造函数、<code>copy assignment</code>操作符以及析构函数</p>
-</li>
-<li><p>对于<code>class</code>内含<code>reference</code>成员或<code>const</code>成员，编译器拒绝为其生成<code>copy</code>构造函数和<code>copy assignment</code>操作符</p>
-<blockquote>
-<p>因为<code>C++</code>不允许<code>reference</code>改指向不同的对象以及更改<code>const</code>成员。 </p>
-</blockquote>
-</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/MeCvwFxjI4asjddf/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
+    <div class="collection-year">
+      <span class="collection-header">2021</span>
     </div>
 
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2021-02-21T21:35:42+08:00"
+              content="2021-02-21">
+          02-21
+        </time>
+      </div>
+
+      <div class="post-title">
+          <a class="post-title-link" href="/fKh6HJGjVNfldP4P/" itemprop="url">
+            <span itemprop="name">重要知识点详细解读之memcpy、memset、strcpy、strcmp、strlen、string的实现</span>
+          </a>
+      </div>
+
+    </header>
   </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/l4snoL8SUW9lGasI/">
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Liu Y.L.">
-      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
-    </span>
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2021-02-18T21:35:42+08:00"
+              content="2021-02-18">
+          02-18
+        </time>
+      </div>
 
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="LYL's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/l4snoL8SUW9lGasI/" class="post-title-link" itemprop="url">Effective C++之让自己习惯C++</a>
-        </h2>
+      <div class="post-title">
+          <a class="post-title-link" href="/cZUstnNRSXkgncRt/" itemprop="url">
+            <span itemprop="name">重要知识点详细解读之const关键字的实现</span>
+          </a>
+      </div>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+    </header>
+  </article>
 
-              <time title="创建时间：2020-03-01 21:35:42" itemprop="dateCreated datePublished" datetime="2020-03-01T21:35:42+08:00">2020-03-01</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/Effective-C/" itemprop="url" rel="index"><span itemprop="name">Effective C++</span></a>
-                </span>
-            </span>
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
 
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2021-02-10T21:35:42+08:00"
+              content="2021-02-10">
+          02-10
+        </time>
+      </div>
 
-        </div>
-      </header>
+      <div class="post-title">
+          <a class="post-title-link" href="/63ixVU2ANYIUKUrm/" itemprop="url">
+            <span itemprop="name">重要知识点详细解读之右值与移动语义</span>
+          </a>
+      </div>
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h4 id="第1章：让自己习惯C"><a href="#第1章：让自己习惯C" class="headerlink" title="第1章：让自己习惯C++"></a>第<code>1</code>章：让自己习惯<code>C++</code></h4><h5 id="条款01：视C-为一个语言联邦"><a href="#条款01：视C-为一个语言联邦" class="headerlink" title="条款01：视C++为一个语言联邦"></a>条款<code>01</code>：视<code>C++</code>为一个语言联邦</h5><ul>
-<li>将<code>C++</code>视为由<code>4</code>个次语言组成的联邦：<ul>
-<li><code>C</code>：没有模板、没有异常、没有重载…</li>
-<li><code>Object-Oriented C++</code>：类、封装、继承、多态、虚函数、动态绑定等等；</li>
-<li><code>Template C++</code>：泛型编程部分；</li>
-<li><code>STL</code>：是一个<code>Template</code>程序库，容器、迭代器、算法以及函数对象。</li>
-</ul>
-</li>
-</ul>
-<p>从某个此语言切换到另一个时，高效编程守则可能会发生变化。比如，<code>C-like</code>类型（内置类型）<code>pass by value</code>更好；对于<code>Object-Oriented C++</code>而言，<code>pass by reference to-const</code>更好；再切换到<code>STL</code>，由于迭代器和函数对象都是在<code>C</code>指针之上塑造出来的，<code>pass by value</code>守则再次适用。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/l4snoL8SUW9lGasI/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
+    </header>
+  </article>
+    <div class="collection-year">
+      <span class="collection-header">2020</span>
     </div>
 
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
 
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2020-07-18T21:35:42+08:00"
+              content="2020-07-18">
+          07-18
+        </time>
+      </div>
+
+      <div class="post-title">
+          <a class="post-title-link" href="/gMOP9F0b8zMZULMj/" itemprop="url">
+            <span itemprop="name">认识C++内存管理的工具 （三）</span>
+          </a>
+      </div>
+
+    </header>
+  </article>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2020-07-08T21:35:42+08:00"
+              content="2020-07-08">
+          07-08
+        </time>
+      </div>
+
+      <div class="post-title">
+          <a class="post-title-link" href="/vgFO35JETZ2jRu74/" itemprop="url">
+            <span itemprop="name">认识C++内存管理的工具 （二）</span>
+          </a>
+      </div>
+
+    </header>
+  </article>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2020-06-28T21:35:42+08:00"
+              content="2020-06-28">
+          06-28
+        </time>
+      </div>
+
+      <div class="post-title">
+          <a class="post-title-link" href="/kZo0999uFp6r1QI2/" itemprop="url">
+            <span itemprop="name">认识C++内存管理的工具 （一）</span>
+          </a>
+      </div>
+
+    </header>
+  </article>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2020-06-18T21:35:42+08:00"
+              content="2020-06-18">
+          06-18
+        </time>
+      </div>
+
+      <div class="post-title">
+          <a class="post-title-link" href="/plA8MQtWi85PlNcz/" itemprop="url">
+            <span itemprop="name">深度探索C++对象模型之构造、析构、拷贝语意学</span>
+          </a>
+      </div>
+
+    </header>
+  </article>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2020-06-08T21:35:42+08:00"
+              content="2020-06-08">
+          06-08
+        </time>
+      </div>
+
+      <div class="post-title">
+          <a class="post-title-link" href="/rRW3gD4CDal4WhRJ/" itemprop="url">
+            <span itemprop="name">深度探索C++对象模型之function语意学</span>
+          </a>
+      </div>
+
+    </header>
+  </article>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2020-05-28T21:35:42+08:00"
+              content="2020-05-28">
+          05-28
+        </time>
+      </div>
+
+      <div class="post-title">
+          <a class="post-title-link" href="/ShyaVw4WHERlLCqZ/" itemprop="url">
+            <span itemprop="name">深度探索C++对象模型之data语意学</span>
+          </a>
+      </div>
+
+    </header>
+  </article>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2020-05-18T21:35:42+08:00"
+              content="2020-05-18">
+          05-18
+        </time>
+      </div>
+
+      <div class="post-title">
+          <a class="post-title-link" href="/FXn6nXyz1FEw9e8Y/" itemprop="url">
+            <span itemprop="name">深度探索C++对象模型之构造函数语意学</span>
+          </a>
+      </div>
+
+    </header>
+  </article>
+
+    </div>
+  </div>
+  
+  
+  
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span>
+    <span class="page-number current">1</span><a class="page-number" href="/tags/C/page/2/">2</a><a class="extend next" rel="next" href="/tags/C/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 

@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>重要知识点详细解读之僵尸进程和孤儿进程</title>
+      <link href="/rakjPpyIOCsd0MoJ/"/>
+      <url>/rakjPpyIOCsd0MoJ/</url>
+      
+        <content type="html"><![CDATA[<h4 id="僵尸进程和孤儿进程"><a href="#僵尸进程和孤儿进程" class="headerlink" title="僵尸进程和孤儿进程"></a>僵尸进程和孤儿进程</h4><h5 id="什么是僵尸进程？"><a href="#什么是僵尸进程？" class="headerlink" title="什么是僵尸进程？"></a>什么是僵尸进程？</h5><p>简单的说，僵尸进程就是子进程先于父进程退出，并且父进程并没有调用<code>wait</code>系统调用，即使其进程映像中占用的系统资源（比如内存，页表等）都会被释放回收，但这时子进程的进程描述符（<code>PCB</code>）结构仍然存在于系统中得不到释放，就称这样的进程为僵尸进程（<code>Zombie</code>）。</p><a id="more"></a><h5 id="为什么会产生僵尸进程？"><a href="#为什么会产生僵尸进程？" class="headerlink" title="为什么会产生僵尸进程？"></a>为什么会产生僵尸进程？</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">exit</span><span class="params">(<span class="keyword">int</span> status)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">wait</span><span class="params">(<span class="keyword">int</span>* status)</span></span>;</span><br></pre></td></tr></table></figure><p>首先，如果一个进程不成为僵尸进程的话，就要请求内核来回收它最后遗留的<code>PCB</code>。而内核给出了<code>exit</code>和<code>wait</code>系统调用来提供回收进程<code>PCB</code>的途径。进程到最后或者是主动调用<code>exit</code>结束运行，或者是通过<code>return</code>语句使得编译器安插<code>exit</code>调用代码，目的都是向父进程传递一个“退出状态值”（这个状态值就是<code>exit</code>函数的那个参数，或者是<code>return</code>语句后面那个整数），我们就叫它临终遗言吧。这个遗言就保存在进程遗留的<code>PCB</code>中，等待着父进程调用<code>wait</code>系统调用去取它的遗言，也就是内核会把这个遗言放在<code>wait</code>函数的参数所指向的内存，取完之后，内核就会回收这块<code>PCB</code>资源。这些都是在执行系统调用期间发生的，也就是说调用了这两个系统调用，给了内核机会来回收遗留的<code>PCB</code>。</p><p>如果父进程在派生出子进程后并没有调用<code>wait</code>等待接收子进程的返回值，这时某个子进程调用<code>exit</code>退出了，自<br>然没人来接收返回值了。因此其<code>PCB</code>所占的空间不能释放，没人为其“收尸”，自然就成了“僵 尸”。</p><h5 id="僵尸进程有什么危害以及如何处理？"><a href="#僵尸进程有什么危害以及如何处理？" class="headerlink" title="僵尸进程有什么危害以及如何处理？"></a>僵尸进程有什么危害以及如何处理？</h5><p>虽然进程的退出状态未被父进程取出前，除了<code>PCB</code>以外，其他所有资源都可以释放。但由于<code>PCB</code>不释放，它原本的<code>pid</code>也会继续被占用，当僵尸进程数量很大时，系统将无可用<code>pid</code>分配给新进程，从而加载进程失败。</p><p>既然产生了僵尸进程，就说明父进程违背了和内核的约定，不想回收子进程。那么，内核也提供了毫不客气的办法来处理，那就是直接<code>kill</code>掉父进程，在<code>Linux</code>中可以利用<code>ps –ef</code>查看所有任务的<code>pid</code>和<code>ppid</code>，找到状态为<code>Z</code>的进程，查看其<code>ppid</code>，跟着向<code>pid</code>为<code>ppid</code>的进程发送<code>kill -9</code>。</p><h5 id="什么是孤儿进程？"><a href="#什么是孤儿进程？" class="headerlink" title="什么是孤儿进程？"></a>什么是孤儿进程？</h5><p>在子进程提交给父进程返回值的时候，有这样一种情况，当父进程提前退出时，它所有的子进程还在运行，没有一个执行了<code>exit</code>，因为它们的生命周期尚未结束，还在运行中，个个都拥有“全尸”（完整的进程映像）， 这些进程就称为孤儿进程。这时候所有的子进程会被<code>pid</code>为<code>1</code>的<code>init</code>进程收养，<code>init</code>进程会成为这些子进程的新父亲，当子进程退出时会由<code>init</code>负责为其“收尸”。<code>init</code>进程是所有进程的祖先进程，所有进程最初都是通过它派生出来的。</p><p>对系统而言，有了<code>init</code>进程的“收养“，孤儿进程并没有什么危害，<code>init</code>会很好地为其善后，因此并不会额外占用资源，它和普通的进程一样，原理上对系统不会产生不良影响。</p><h5 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h5><p><code>exit</code>是由子进程调用的，表面上功能是使子进程结束运行并传递返回值给内核，本质上是内核在幕后会将进程除<code>PCB</code>以外的所有资源都回收。<code>wait</code>是父进程调用的，表面上功能是使父进程阻塞自己，直到子进程调用<code>exit</code>结束运行，然后获得子进程的返回值，本质上是内核在幕后将子进程的返回值传递给父进程并会唤醒父进程，然后将子进程的<code>PCB</code>回收。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 重要知识点 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 操作系统 </tag>
+            
+            <tag> 重要知识点 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>操作系统之进程间通信（含内核实现）</title>
       <link href="/tRettVqCkfzWbulf/"/>
       <url>/tRettVqCkfzWbulf/</url>
@@ -168,16 +195,14 @@
     
     
     <entry>
-      <title>C++重要知识点详细解读之memcpy、memset、strcpy、strcmp、strlen、string的实现</title>
+      <title>重要知识点详细解读之memcpy、memset、strcpy、strcmp、strlen、string的实现</title>
       <link href="/fKh6HJGjVNfldP4P/"/>
       <url>/fKh6HJGjVNfldP4P/</url>
       
-        <content type="html"><![CDATA[<ol><li><code>memcpy</code></li><li><code>memset</code></li><li><code>strcpy</code></li><li><code>strcmp</code></li><li><code>strlen</code></li><li><code>string</code>的实现</li></ol><a id="more"></a><h4 id="memcpy、memset实现"><a href="#memcpy、memset实现" class="headerlink" title="memcpy、memset实现"></a><code>memcpy</code>、<code>memset</code>实现</h4><h5 id="memcpy实现"><a href="#memcpy实现" class="headerlink" title="memcpy实现"></a><code>memcpy</code>实现</h5><ul><li>此实现并没有考虑<code>dst</code>和<code>src</code>的内存重叠问题</li></ul><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用 const 修饰 src</span></span><br><span class="line"><span class="function"><span class="keyword">void</span>* <span class="title">memcpy</span><span class="params">(<span class="keyword">void</span>* dst, <span class="keyword">const</span> <span class="keyword">void</span>* src, <span class="keyword">size_t</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 验证 dst 和 src 的合法性</span></span><br><span class="line">    assert(dst != <span class="literal">NULL</span>);</span><br><span class="line">    assert(src != <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">void</span>* ret = dst;</span><br><span class="line">    <span class="keyword">while</span>(n--)</span><br><span class="line">    &#123;</span><br><span class="line">        *(<span class="keyword">char</span>*)dst = *(<span class="keyword">char</span>*)src;</span><br><span class="line">        dst = (<span class="keyword">char</span>*)dst + <span class="number">1</span>;</span><br><span class="line">        src = (<span class="keyword">char</span>*)src + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h5 id="memset实现"><a href="#memset实现" class="headerlink" title="memset实现"></a><code>memset</code>实现</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span>* <span class="title">memset</span><span class="params">(<span class="keyword">void</span>* dst, <span class="keyword">int</span> ch, <span class="keyword">size_t</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    assert(dst != <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">void</span>* ret = dst;</span><br><span class="line">    <span class="keyword">while</span>(n--)</span><br><span class="line">    &#123;</span><br><span class="line">        *(<span class="keyword">char</span>*)dst = (<span class="keyword">char</span>)ch;</span><br><span class="line">        dst = (<span class="keyword">char</span>*)dst + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret; <span class="comment">// 返回原 dst 指针</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h4 id="strcpy、strcmp、strlen实现"><a href="#strcpy、strcmp、strlen实现" class="headerlink" title="strcpy、strcmp、strlen实现"></a><code>strcpy</code>、<code>strcmp</code>、<code>strlen</code>实现</h4><h5 id="strcpy实现"><a href="#strcpy实现" class="headerlink" title="strcpy实现"></a><code>strcpy</code>实现</h5><ul><li>此实现并没有考虑<code>dst</code>和<code>src</code>的内存重叠问题</li></ul><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用 const 修饰 src</span></span><br><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">strcpy</span><span class="params">(<span class="keyword">char</span>* dst, <span class="keyword">const</span> <span class="keyword">char</span>* src)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 验证 dst 和 src 的合法性</span></span><br><span class="line">    assert(dst != <span class="literal">NULL</span>);</span><br><span class="line">    assert(src != <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">char</span>* ret = dst;</span><br><span class="line">    <span class="keyword">while</span>((*dst++ = *src++) != <span class="string">'\0'</span>);</span><br><span class="line">    <span class="keyword">return</span> ret; <span class="comment">// 返回原 dst 指针</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h5 id="strcmp实现"><a href="#strcmp实现" class="headerlink" title="strcmp实现"></a><code>strcmp</code>实现</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 注意将两个指针都用 const 修饰</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">strcmp</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* rhs, <span class="keyword">const</span> <span class="keyword">char</span>* lhs)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 判空测试</span></span><br><span class="line">    assert(rhs != <span class="literal">NULL</span>);</span><br><span class="line">    assert(lhs != <span class="literal">NULL</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 注意这里必须是 unsigned char</span></span><br><span class="line">    <span class="comment">// 表示的范围为 0 ~ 255</span></span><br><span class="line">    <span class="comment">// 如果是 char 的话, 范围是 -128 ~ 127, 这个范围用来比较字符串是不对的</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> c1, c2;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        c1 = *rhs++;</span><br><span class="line">        c2 = *lhs++;</span><br><span class="line">        <span class="keyword">if</span>(c1 != c2)</span><br><span class="line">            <span class="keyword">return</span> c1 &lt; c2 ? <span class="number">-1</span> : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span>(c1 == <span class="number">0</span>)</span><br><span class="line">            bresk;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h5 id="strlen实现"><a href="#strlen实现" class="headerlink" title="strlen实现"></a><code>strlen</code>实现</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">size_t</span> <span class="title">strlen</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* str)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(str == <span class="literal">NULL</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span>* pc = str;</span><br><span class="line">    <span class="keyword">while</span>(*pc++ != <span class="string">'\0'</span>);</span><br><span class="line">    <span class="keyword">return</span> pc - str - <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><strong>关于标准库中的实现</strong>：通过减少数据从内存存取到寄存器的次数来提高效率，使用的手段是先字节对齐，然后每次读取一个<code>4/8</code>字节的多字节数据，对多字节数据遍历是否存在<code>\0</code>。</p><h4 id="自己动手实现一个string类"><a href="#自己动手实现一个string类" class="headerlink" title="自己动手实现一个string类"></a>自己动手实现一个<code>string</code>类</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;utility&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstring&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">String</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">char</span> *_data;</span><br><span class="line">    <span class="keyword">size_t</span> _size;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *c_str)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        _data = <span class="keyword">new</span> <span class="keyword">char</span>[_size + <span class="number">1</span>];</span><br><span class="line">        <span class="built_in">strcpy</span>(_data, c_str);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    String() : _data(<span class="literal">nullptr</span>), _size(<span class="number">0</span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    String(<span class="keyword">const</span> <span class="keyword">char</span> *c_str) : _size(<span class="built_in">strlen</span>(c_str))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (c_str)</span><br><span class="line">            init(c_str);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            _data = <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    String(<span class="keyword">const</span> String &amp;str) : _size(str._size)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (str._data)</span><br><span class="line">            init(str._data);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            _data = <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    String(String &amp;&amp;str) <span class="keyword">noexcept</span> : _data(str._data), _size(str._size)</span><br><span class="line">    &#123;</span><br><span class="line">        str._data = <span class="literal">nullptr</span>;</span><br><span class="line">        str._size = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ~String()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (_data)</span><br><span class="line">            <span class="keyword">delete</span> _data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    String &amp;<span class="keyword">operator</span>=(<span class="keyword">const</span> <span class="keyword">char</span> *c_str)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 使用 copy and swap 技术, 可以处理自我赋值情况</span></span><br><span class="line">        String temp(c_str);</span><br><span class="line">        swap(temp);</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    String &amp;<span class="keyword">operator</span>=(<span class="keyword">const</span> String &amp;str)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span> = str._data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    String &amp;<span class="keyword">operator</span>=(String &amp;&amp;str) <span class="keyword">noexcept</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 检测自我赋值情况</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">this</span> == &amp;str) <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (_data)</span><br><span class="line">            <span class="keyword">delete</span> _data;</span><br><span class="line">        _data = <span class="literal">nullptr</span>;</span><br><span class="line">        _size = <span class="number">0</span>;</span><br><span class="line">        swap(str);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">size_t</span> <span class="title">size</span><span class="params">()</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _size;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">char</span> *<span class="title">c_str</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">const</span> <span class="keyword">char</span> *<span class="title">c_str</span><span class="params">()</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">swap</span><span class="params">(String &amp;str)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">using</span> <span class="built_in">std</span>::swap;</span><br><span class="line">        swap(_data, str._data);</span><br><span class="line">        swap(_size, str._size);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">bool</span> <span class="keyword">operator</span>==(<span class="keyword">const</span> <span class="keyword">char</span> *c_str)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">strcmp</span>(_data, c_str) == <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">bool</span> <span class="keyword">operator</span>==(<span class="keyword">const</span> String &amp;str)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span> == str._data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">char</span> &amp;<span class="keyword">operator</span>[](<span class="keyword">size_t</span> i)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> _data[i];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> &amp;<span class="keyword">operator</span>[](<span class="keyword">size_t</span> i) <span class="keyword">const</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> _data[i];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::ostream &amp;<span class="keyword">operator</span>&lt;&lt;(<span class="built_in">std</span>::ostream &amp;os, <span class="keyword">const</span> String str)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> os &lt;&lt; str.c_str();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+        <content type="html"><![CDATA[<ol><li><code>memcpy</code></li><li><code>memset</code></li><li><code>strcpy</code></li><li><code>strcmp</code></li><li><code>strlen</code></li><li>自己动手实现一个<code>string</code>类</li></ol><a id="more"></a><h4 id="memcpy、memset实现"><a href="#memcpy、memset实现" class="headerlink" title="memcpy、memset实现"></a><code>memcpy</code>、<code>memset</code>实现</h4><h5 id="memcpy实现"><a href="#memcpy实现" class="headerlink" title="memcpy实现"></a><code>memcpy</code>实现</h5><ul><li>此实现并没有考虑<code>dst</code>和<code>src</code>的内存重叠问题</li></ul><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用 const 修饰 src</span></span><br><span class="line"><span class="function"><span class="keyword">void</span>* <span class="title">memcpy</span><span class="params">(<span class="keyword">void</span>* dst, <span class="keyword">const</span> <span class="keyword">void</span>* src, <span class="keyword">size_t</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 验证 dst 和 src 的合法性</span></span><br><span class="line">    assert(dst != <span class="literal">NULL</span>);</span><br><span class="line">    assert(src != <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">void</span>* ret = dst;</span><br><span class="line">    <span class="keyword">while</span>(n--)</span><br><span class="line">    &#123;</span><br><span class="line">        *(<span class="keyword">char</span>*)dst = *(<span class="keyword">char</span>*)src;</span><br><span class="line">        dst = (<span class="keyword">char</span>*)dst + <span class="number">1</span>;</span><br><span class="line">        src = (<span class="keyword">char</span>*)src + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h5 id="memset实现"><a href="#memset实现" class="headerlink" title="memset实现"></a><code>memset</code>实现</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span>* <span class="title">memset</span><span class="params">(<span class="keyword">void</span>* dst, <span class="keyword">int</span> ch, <span class="keyword">size_t</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    assert(dst != <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">void</span>* ret = dst;</span><br><span class="line">    <span class="keyword">while</span>(n--)</span><br><span class="line">    &#123;</span><br><span class="line">        *(<span class="keyword">char</span>*)dst = (<span class="keyword">char</span>)ch;</span><br><span class="line">        dst = (<span class="keyword">char</span>*)dst + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret; <span class="comment">// 返回原 dst 指针</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h4 id="strcpy、strcmp、strlen实现"><a href="#strcpy、strcmp、strlen实现" class="headerlink" title="strcpy、strcmp、strlen实现"></a><code>strcpy</code>、<code>strcmp</code>、<code>strlen</code>实现</h4><h5 id="strcpy实现"><a href="#strcpy实现" class="headerlink" title="strcpy实现"></a><code>strcpy</code>实现</h5><ul><li>此实现并没有考虑<code>dst</code>和<code>src</code>的内存重叠问题</li></ul><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用 const 修饰 src</span></span><br><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">strcpy</span><span class="params">(<span class="keyword">char</span>* dst, <span class="keyword">const</span> <span class="keyword">char</span>* src)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 验证 dst 和 src 的合法性</span></span><br><span class="line">    assert(dst != <span class="literal">NULL</span>);</span><br><span class="line">    assert(src != <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">char</span>* ret = dst;</span><br><span class="line">    <span class="keyword">while</span>((*dst++ = *src++) != <span class="string">'\0'</span>);</span><br><span class="line">    <span class="keyword">return</span> ret; <span class="comment">// 返回原 dst 指针</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h5 id="strcmp实现"><a href="#strcmp实现" class="headerlink" title="strcmp实现"></a><code>strcmp</code>实现</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 注意将两个指针都用 const 修饰</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">strcmp</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* rhs, <span class="keyword">const</span> <span class="keyword">char</span>* lhs)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 判空测试</span></span><br><span class="line">    assert(rhs != <span class="literal">NULL</span>);</span><br><span class="line">    assert(lhs != <span class="literal">NULL</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 注意这里必须是 unsigned char</span></span><br><span class="line">    <span class="comment">// 表示的范围为 0 ~ 255</span></span><br><span class="line">    <span class="comment">// 如果是 char 的话, 范围是 -128 ~ 127, 这个范围用来比较字符串是不对的</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> c1, c2;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        c1 = *rhs++;</span><br><span class="line">        c2 = *lhs++;</span><br><span class="line">        <span class="keyword">if</span>(c1 != c2)</span><br><span class="line">            <span class="keyword">return</span> c1 &lt; c2 ? <span class="number">-1</span> : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span>(c1 == <span class="number">0</span>)</span><br><span class="line">            bresk;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h5 id="strlen实现"><a href="#strlen实现" class="headerlink" title="strlen实现"></a><code>strlen</code>实现</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">size_t</span> <span class="title">strlen</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* str)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(str == <span class="literal">NULL</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span>* pc = str;</span><br><span class="line">    <span class="keyword">while</span>(*pc++ != <span class="string">'\0'</span>);</span><br><span class="line">    <span class="keyword">return</span> pc - str - <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><strong>关于标准库中的实现</strong>：通过减少数据从内存存取到寄存器的次数来提高效率，使用的手段是先字节对齐，然后每次读取一个<code>4/8</code>字节的多字节数据，对多字节数据遍历是否存在<code>\0</code>。</p><h4 id="自己动手实现一个string类"><a href="#自己动手实现一个string类" class="headerlink" title="自己动手实现一个string类"></a>自己动手实现一个<code>string</code>类</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;utility&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstring&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">String</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">char</span> *_data;</span><br><span class="line">    <span class="keyword">size_t</span> _size;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *c_str)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        _data = <span class="keyword">new</span> <span class="keyword">char</span>[_size + <span class="number">1</span>];</span><br><span class="line">        <span class="built_in">strcpy</span>(_data, c_str);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    String() : _data(<span class="literal">nullptr</span>), _size(<span class="number">0</span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    String(<span class="keyword">const</span> <span class="keyword">char</span> *c_str) : _size(<span class="built_in">strlen</span>(c_str))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (c_str)</span><br><span class="line">            init(c_str);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            _data = <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    String(<span class="keyword">const</span> String &amp;str) : _size(str._size)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (str._data)</span><br><span class="line">            init(str._data);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            _data = <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    String(String &amp;&amp;str) <span class="keyword">noexcept</span> : _data(str._data), _size(str._size)</span><br><span class="line">    &#123;</span><br><span class="line">        str._data = <span class="literal">nullptr</span>;</span><br><span class="line">        str._size = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ~String()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (_data)</span><br><span class="line">            <span class="keyword">delete</span> _data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    String &amp;<span class="keyword">operator</span>=(<span class="keyword">const</span> <span class="keyword">char</span> *c_str)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 使用 copy and swap 技术, 可以处理自我赋值情况</span></span><br><span class="line">        String temp(c_str);</span><br><span class="line">        swap(temp);</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    String &amp;<span class="keyword">operator</span>=(<span class="keyword">const</span> String &amp;str)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span> = str._data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    String &amp;<span class="keyword">operator</span>=(String &amp;&amp;str) <span class="keyword">noexcept</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 检测自我赋值情况</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">this</span> == &amp;str) <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (_data)</span><br><span class="line">            <span class="keyword">delete</span> _data;</span><br><span class="line">        _data = <span class="literal">nullptr</span>;</span><br><span class="line">        _size = <span class="number">0</span>;</span><br><span class="line">        swap(str);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">size_t</span> <span class="title">size</span><span class="params">()</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _size;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">char</span> *<span class="title">c_str</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">const</span> <span class="keyword">char</span> *<span class="title">c_str</span><span class="params">()</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">swap</span><span class="params">(String &amp;str)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">using</span> <span class="built_in">std</span>::swap;</span><br><span class="line">        swap(_data, str._data);</span><br><span class="line">        swap(_size, str._size);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">bool</span> <span class="keyword">operator</span>==(<span class="keyword">const</span> <span class="keyword">char</span> *c_str)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">strcmp</span>(_data, c_str) == <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">bool</span> <span class="keyword">operator</span>==(<span class="keyword">const</span> String &amp;str)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span> == str._data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">char</span> &amp;<span class="keyword">operator</span>[](<span class="keyword">size_t</span> i)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> _data[i];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> &amp;<span class="keyword">operator</span>[](<span class="keyword">size_t</span> i) <span class="keyword">const</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> _data[i];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::ostream &amp;<span class="keyword">operator</span>&lt;&lt;(<span class="built_in">std</span>::ostream &amp;os, <span class="keyword">const</span> String str)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> os &lt;&lt; str.c_str();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
       
       
       <categories>
-          
-          <category> 读书笔记 </category>
           
           <category> 重要知识点 </category>
           
@@ -185,6 +210,8 @@
       
       
         <tags>
+            
+            <tag> C++ </tag>
             
             <tag> 重要知识点 </tag>
             
@@ -195,7 +222,7 @@
     
     
     <entry>
-      <title>C++重要知识点详细解读之const关键字的实现</title>
+      <title>重要知识点详细解读之const关键字的实现</title>
       <link href="/cZUstnNRSXkgncRt/"/>
       <url>/cZUstnNRSXkgncRt/</url>
       
@@ -204,14 +231,14 @@
       
       <categories>
           
-          <category> 读书笔记 </category>
-          
           <category> 重要知识点 </category>
           
       </categories>
       
       
         <tags>
+            
+            <tag> C++ </tag>
             
             <tag> 重要知识点 </tag>
             
@@ -222,7 +249,7 @@
     
     
     <entry>
-      <title>C++重要知识点详细解读之智能指针</title>
+      <title>重要知识点详细解读之智能指针</title>
       <link href="/DVejmy5owOXx5WKk/"/>
       <url>/DVejmy5owOXx5WKk/</url>
       
@@ -231,8 +258,6 @@
       
       <categories>
           
-          <category> 读书笔记 </category>
-          
           <category> 重要知识点 </category>
           
       </categories>
@@ -242,6 +267,8 @@
             
             <tag> 重要知识点 </tag>
             
+            <tag> 智能指针 </tag>
+            
         </tags>
       
     </entry>
@@ -249,7 +276,7 @@
     
     
     <entry>
-      <title>C++重要知识点详细解读之排序算法实现及效率分析</title>
+      <title>重要知识点详细解读之排序算法实现及效率分析</title>
       <link href="/cuQpjpPOQ0qnpSE2/"/>
       <url>/cuQpjpPOQ0qnpSE2/</url>
       
@@ -258,14 +285,16 @@
       
       <categories>
           
-          <category> 读书笔记 </category>
-          
           <category> 重要知识点 </category>
           
       </categories>
       
       
         <tags>
+            
+            <tag> 算法 </tag>
+            
+            <tag> 数据结构 </tag>
             
             <tag> 重要知识点 </tag>
             
@@ -276,7 +305,7 @@
     
     
     <entry>
-      <title>C++重要知识点详细解读之移动语义</title>
+      <title>重要知识点详细解读之右值与移动语义</title>
       <link href="/63ixVU2ANYIUKUrm/"/>
       <url>/63ixVU2ANYIUKUrm/</url>
       
@@ -285,14 +314,14 @@
       
       <categories>
           
-          <category> 读书笔记 </category>
-          
           <category> 重要知识点 </category>
           
       </categories>
       
       
         <tags>
+            
+            <tag> C++ </tag>
             
             <tag> 重要知识点 </tag>
             
@@ -379,6 +408,8 @@
       
         <tags>
             
+            <tag> C++ </tag>
+            
             <tag> C++内存管理 </tag>
             
         </tags>
@@ -405,6 +436,8 @@
       
       
         <tags>
+            
+            <tag> C++ </tag>
             
             <tag> C++内存管理 </tag>
             
@@ -433,6 +466,8 @@
       
         <tags>
             
+            <tag> C++ </tag>
+            
             <tag> C++内存管理 </tag>
             
         </tags>
@@ -459,6 +494,8 @@
       
       
         <tags>
+            
+            <tag> C++ </tag>
             
             <tag> 深度探索C++对象模型 </tag>
             
@@ -543,6 +580,8 @@
       
         <tags>
             
+            <tag> C++ </tag>
+            
             <tag> 深度探索C++对象模型 </tag>
             
         </tags>
@@ -569,6 +608,8 @@
       
       
         <tags>
+            
+            <tag> C++ </tag>
             
             <tag> 深度探索C++对象模型 </tag>
             
@@ -597,6 +638,8 @@
       
         <tags>
             
+            <tag> C++ </tag>
+            
             <tag> 深度探索C++对象模型 </tag>
             
         </tags>
@@ -623,6 +666,8 @@
       
       
         <tags>
+            
+            <tag> C++ </tag>
             
             <tag> 深度探索C++对象模型 </tag>
             
@@ -653,6 +698,8 @@
             
             <tag> Effective C++ </tag>
             
+            <tag> C++ </tag>
+            
         </tags>
       
     </entry>
@@ -679,6 +726,8 @@
         <tags>
             
             <tag> Effective C++ </tag>
+            
+            <tag> C++ </tag>
             
         </tags>
       
@@ -732,6 +781,8 @@
             
             <tag> Effective C++ </tag>
             
+            <tag> C++ </tag>
+            
         </tags>
       
     </entry>
@@ -758,6 +809,8 @@
         <tags>
             
             <tag> Effective C++ </tag>
+            
+            <tag> C++ </tag>
             
         </tags>
       
@@ -786,6 +839,8 @@
             
             <tag> Effective C++ </tag>
             
+            <tag> C++ </tag>
+            
         </tags>
       
     </entry>
@@ -813,6 +868,8 @@
             
             <tag> Effective C++ </tag>
             
+            <tag> C++ </tag>
+            
         </tags>
       
     </entry>
@@ -839,6 +896,8 @@
         <tags>
             
             <tag> Effective C++ </tag>
+            
+            <tag> C++ </tag>
             
         </tags>
       
