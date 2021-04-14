@@ -252,7 +252,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h4 id="僵尸进程和孤儿进程"><a href="#僵尸进程和孤儿进程" class="headerlink" title="僵尸进程和孤儿进程"></a>僵尸进程和孤儿进程</h4><h5 id="什么是僵尸进程？"><a href="#什么是僵尸进程？" class="headerlink" title="什么是僵尸进程？"></a>什么是僵尸进程？</h5><p>简单的说，僵尸进程就是子进程先于父进程退出，并且父进程并没有调用<code>wait</code>系统调用，即使其进程映像中占用的系统资源（比如内存，页表等）都会被释放回收，但这时子进程的进程描述符（<code>PCB</code>）结构仍然存在于系统中得不到释放，就称这样的进程为僵尸进程（<code>Zombie</code>）。</p>
+          <h5 id="什么是僵尸进程？"><a href="#什么是僵尸进程？" class="headerlink" title="什么是僵尸进程？"></a>什么是僵尸进程？</h5><p>简单的说，僵尸进程就是子进程先于父进程退出，并且父进程并没有调用<code>wait</code>系统调用，即使其进程映像中占用的系统资源（比如内存，页表等）都会被释放回收，但这时子进程的进程描述符（<code>PCB</code>）结构仍然存在于系统中得不到释放，就称这样的进程为僵尸进程（<code>Zombie</code>）。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/rakjPpyIOCsd0MoJ/#more" rel="contents">
@@ -344,7 +344,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h3 id="进程间通信"><a href="#进程间通信" class="headerlink" title="进程间通信"></a>进程间通信</h3><h4 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a>背景知识</h4><ul>
+          <h4 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a>背景知识</h4><ul>
 <li><p><code>IPC</code>对象</p>
 <p>内核中用于进程间通信的数据结构，全局可见，如消息队列的<code>msg_queue</code>结构体、信号量的<code>sem_array</code>结构体，共享内存的<code>shmid_kernel</code>结构体。类似于普通文件是通过文件名（文件描述符）进行读写操作，通过<code>IPC key</code>和<code>IPC</code>标识符进行<code>IPC</code>对象的读写操作。</p>
 </li>
@@ -543,7 +543,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h4 id="malloc、free底层原理"><a href="#malloc、free底层原理" class="headerlink" title="malloc、free底层原理"></a><code>malloc</code>、<code>free</code>底层原理</h4><p>先来了解一些背景知识。</p>
+          <p>先来了解一些背景知识。</p>
 <p><strong>进程地址空间的组成</strong>：</p>
 <ol>
 <li>内核空间：这块区域包含两种数据，一种是对每个进程都一样的数据，如共享的内核代码和全局数据结构。另一种是每个进程都不一样的数据，如页表、内核在进程上下文中执行代码时使用的栈，以及记录该进程虚拟地址空间当前组织状态的各种数据结构。</li>
@@ -718,7 +718,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>5.8k</span>
+              <span>5.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -738,6 +738,7 @@
 
       
           <h5 id="并发的概念"><a href="#并发的概念" class="headerlink" title="并发的概念"></a>并发的概念</h5><p>在单处理器多道程序设计系统中，进程会被交替地执行，因而表现出一种并发执行的外部特征。支持并发进程的基本需求是加强互斥的能力。也就是说，当一个进程被授予互斥能力时，那么在其活动期间，它具有排斥所有其他进程的能力。</p>
+<p>并发包括很多设计问题，其中有进程间通信、资源共享与竞争（如内存、文件、<code>I/O</code>访问)、多个进程活动的同步以及给进程分配处理器时间等。并发问题源于多道程序设计系统的一个基本特性：进程的相对执行速度不可预测，它取决于其他进程的活动、操作系统处理中断的方式以及操作系统的调度策略。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/29s2fW7i8PsxWCiK/#more" rel="contents">
@@ -829,7 +830,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h4 id="进程与线程管理"><a href="#进程与线程管理" class="headerlink" title="进程与线程管理"></a>进程与线程管理</h4><p><strong>任务、线程、进程三者关系</strong></p>
+          <p><strong>任务、线程、进程三者关系</strong></p>
 <p>任务是一个抽象的概念，即指软件完成的一个活动；而线程则是完成任务所需的动作；进程则指的是完成此动作所需资源的统称；关于三者的关系，有一个形象的比喻：</p>
 <ul>
 <li>任务 = 送货</li>
@@ -1107,7 +1108,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h4 id="智能指针详解及源码分析"><a href="#智能指针详解及源码分析" class="headerlink" title="智能指针详解及源码分析"></a>智能指针详解及源码分析</h4><p>关于智能指针的<code>demo</code>，参见<code>C++ primer 12.1</code>。</p>
+          <p>关于智能指针的<code>demo</code>，参见<code>C++ primer 12.1</code>。</p>
 <h5 id="什么是智能指针"><a href="#什么是智能指针" class="headerlink" title="什么是智能指针"></a>什么是智能指针</h5><p>智能指针是使用<code>RAII</code>手法对裸指针进行的一个面向对象封装，即在构造函数中初始化资源地址，在析构函数中释放资源。智能指针保证当资源<strong>应当被释放的时候</strong>一定会释放它，这是利用了<strong>栈上的对象出作用域时自动析构</strong>这个特点。</p>
           <!--noindex-->
             <div class="post-button">

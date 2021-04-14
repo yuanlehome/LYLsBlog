@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"yuanlehome.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="进程间通信背景知识 IPC对象 内核中用于进程间通信的数据结构，全局可见，如消息队列的msg_queue结构体、信号量的sem_array结构体，共享内存的shmid_kernel结构体。类似于普通文件是通过文件名（文件描述符）进行读写操作，通过IPC key和IPC标识符进行IPC对象的读写操作。  IPC标识符ID 类似于文件描述符fd，可以用一个IPC标识符来引用一个IPC对象，是一个32位">
+  <meta name="description" content="背景知识 IPC对象 内核中用于进程间通信的数据结构，全局可见，如消息队列的msg_queue结构体、信号量的sem_array结构体，共享内存的shmid_kernel结构体。类似于普通文件是通过文件名（文件描述符）进行读写操作，通过IPC key和IPC标识符进行IPC对象的读写操作。  IPC标识符ID 类似于文件描述符fd，可以用一个IPC标识符来引用一个IPC对象，是一个32位整数，是I">
 <meta property="og:type" content="article">
 <meta property="og:title" content="操作系统之进程间通信（含内核实现）">
 <meta property="og:url" content="https://yuanlehome.github.io/tRettVqCkfzWbulf/index.html">
 <meta property="og:site_name" content="LYL&#39;s Blog">
-<meta property="og:description" content="进程间通信背景知识 IPC对象 内核中用于进程间通信的数据结构，全局可见，如消息队列的msg_queue结构体、信号量的sem_array结构体，共享内存的shmid_kernel结构体。类似于普通文件是通过文件名（文件描述符）进行读写操作，通过IPC key和IPC标识符进行IPC对象的读写操作。  IPC标识符ID 类似于文件描述符fd，可以用一个IPC标识符来引用一个IPC对象，是一个32位">
+<meta property="og:description" content="背景知识 IPC对象 内核中用于进程间通信的数据结构，全局可见，如消息队列的msg_queue结构体、信号量的sem_array结构体，共享内存的shmid_kernel结构体。类似于普通文件是通过文件名（文件描述符）进行读写操作，通过IPC key和IPC标识符进行IPC对象的读写操作。  IPC标识符ID 类似于文件描述符fd，可以用一个IPC标识符来引用一个IPC对象，是一个32位整数，是I">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://yuanlehome.github.io/tRettVqCkfzWbulf/641.jpg">
 <meta property="og:image" content="https://yuanlehome.github.io/tRettVqCkfzWbulf/dfsgdfg.jpg">
@@ -276,7 +276,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h3 id="进程间通信"><a href="#进程间通信" class="headerlink" title="进程间通信"></a>进程间通信</h3><h4 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a>背景知识</h4><ul>
+        <h4 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a>背景知识</h4><ul>
 <li><p><code>IPC</code>对象</p>
 <p>内核中用于进程间通信的数据结构，全局可见，如消息队列的<code>msg_queue</code>结构体、信号量的<code>sem_array</code>结构体，共享内存的<code>shmid_kernel</code>结构体。类似于普通文件是通过文件名（文件描述符）进行读写操作，通过<code>IPC key</code>和<code>IPC</code>标识符进行<code>IPC</code>对象的读写操作。</p>
 </li>
@@ -567,7 +567,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#进程间通信"><span class="nav-number">1.</span> <span class="nav-text">进程间通信</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景知识"><span class="nav-number">1.1.</span> <span class="nav-text">背景知识</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#应用场景"><span class="nav-number">1.2.</span> <span class="nav-text">应用场景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#管道"><span class="nav-number">1.3.</span> <span class="nav-text">管道</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#消息队列"><span class="nav-number">1.4.</span> <span class="nav-text">消息队列</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#共享内存"><span class="nav-number">1.5.</span> <span class="nav-text">共享内存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#信号量"><span class="nav-number">1.6.</span> <span class="nav-text">信号量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#信号"><span class="nav-number">1.7.</span> <span class="nav-text">信号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#本地套接字"><span class="nav-number">1.8.</span> <span class="nav-text">本地套接字</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景知识"><span class="nav-number">1.</span> <span class="nav-text">背景知识</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#应用场景"><span class="nav-number">2.</span> <span class="nav-text">应用场景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#管道"><span class="nav-number">3.</span> <span class="nav-text">管道</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#消息队列"><span class="nav-number">4.</span> <span class="nav-text">消息队列</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#共享内存"><span class="nav-number">5.</span> <span class="nav-text">共享内存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#信号量"><span class="nav-number">6.</span> <span class="nav-text">信号量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#信号"><span class="nav-number">7.</span> <span class="nav-text">信号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#本地套接字"><span class="nav-number">8.</span> <span class="nav-text">本地套接字</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
