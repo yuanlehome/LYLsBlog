@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#7d574c">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#7d574c">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yuanlehome.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前两天在牛客网做了模拟笔试题，有两道感觉挺有意思的，这里总结一下。其中一道题稍微修改了点条件，进阶一下。 特么的我都不想说，其实这修改的条件是我笔试时没读清题，直接往难了去想的，就没做出来（呜呜呜，哭晕在厕所）。以后做题一定要审清题啊！！！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="牛客2021年4月15号模拟笔试题">
+<meta property="og:url" content="https://yuanlehome.github.io/ZUdtS6UUmrVCKLed/index.html">
+<meta property="og:site_name" content="LYL&#39;s Blog">
+<meta property="og:description" content="前两天在牛客网做了模拟笔试题，有两道感觉挺有意思的，这里总结一下。其中一道题稍微修改了点条件，进阶一下。 特么的我都不想说，其实这修改的条件是我笔试时没读清题，直接往难了去想的，就没做出来（呜呜呜，哭晕在厕所）。以后做题一定要审清题啊！！！">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-17T13:35:42.000Z">
+<meta property="article:modified_time" content="2021-04-17T13:35:42.000Z">
+<meta property="article:author" content="Liu Y.L.">
+<meta property="article:tag" content="leetcode">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="数据结构">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://yuanlehome.github.io/ZUdtS6UUmrVCKLed/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>牛客2021年4月15号模拟笔试题 | LYL's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">LYL's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/ZUdtS6UUmrVCKLed/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          牛客2021年4月15号模拟笔试题
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-17 21:35:42" itemprop="dateCreated datePublished" datetime="2021-04-17T21:35:42+08:00">2021-04-17</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/leetcode/" itemprop="url" rel="index"><span itemprop="name">leetcode</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>前两天在牛客网做了模拟笔试题，有两道感觉挺有意思的，这里总结一下。其中一道题稍微修改了点条件，进阶一下。</p>
+<p>特么的我都不想说，其实这修改的条件是我笔试时没读清题，直接往难了去想的，就没做出来（呜呜呜，哭晕在厕所）。以后做题一定要审清题啊！！！</p>
+<a id="more"></a>
+
+<h5 id="第1题"><a href="#第1题" class="headerlink" title="第1题"></a>第<code>1</code>题</h5><blockquote>
+<p>牛牛和牛妹最近迷上了新版消消看，该游规则如下：</p>
+<p>在一个<code>01</code>串中，每一轮，玩家都可以选择一串连续相同字符进行消除，消除之后，左右两侧剩余的字符自动拼接，重新形成一个字符串。</p>
+<p>例如，在<code>101001</code>中，牛牛选择了第四个和第五个字符，它们连续且都是<code>0</code>，满足消除条件，而当它们消除之后，左侧剩余的<code>101</code>和右侧剩余的<code>1</code>会拼接到起，即，消除后剩余的<code>01</code>串为：<code>1011</code>。</p>
+<p>计分规则如下：消除了几个<code>1</code>就计几分。<strong>允许消除单个字符</strong>，因此，直到消成空串时游戏结束。</p>
+<p>对于给定的<code>01</code>串，由牛妹先手进行消除，两个人都以最优策略且以得分高为目标进行消除，请问最后，哪个人的得分会比较高？返回一个二元数组，分别是先手得分和后者得分。</p>
+<p><strong>进阶：如果不允许只消除单个字符，也就是说，直到消成没有连续的<code>1</code>或<code>0</code>后游戏就结束。</strong></p>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 对于允许消除单个字符的情况</span></span><br><span class="line"><span class="comment">// 1. 先消除 1, 先手必定选择先消除最长的 1 串</span></span><br><span class="line"><span class="comment">// 2. 后手同样如此, 如此交替下去, 直到串中没有 1</span></span><br><span class="line"><span class="comment">// 3. 此时剩下的全为 0, 消除也不得分</span></span><br><span class="line"><span class="comment">// 因此, 只需要统计串中连续 1 的个数组成数组</span></span><br><span class="line"><span class="comment">// 对数组排序, 偶数索引的值累加为先手的得分</span></span><br><span class="line"><span class="comment">// 奇数索引的值累加为后手的得分</span></span><br><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">eliminate_01_series</span><span class="params">(<span class="built_in">string</span> series)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">scores</span><span class="params">(<span class="number">2</span>)</span></span>;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; ones = countOnes(series);</span><br><span class="line">    sort(ones.begin(), ones.end(), greater&lt;<span class="keyword">int</span>&gt;());</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; ones.size(); i += <span class="number">2</span>)</span><br><span class="line">        scores[<span class="number">0</span>] += ones[i];</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; ones.size(); i += <span class="number">2</span>)</span><br><span class="line">        scores[<span class="number">1</span>] += ones[i];</span><br><span class="line">    <span class="keyword">return</span> scores;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">countOnes</span><span class="params">(<span class="built_in">string</span> series)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; ones;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(right &lt; series.size())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(series[right] == <span class="string">'1'</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            left = right;</span><br><span class="line">            <span class="keyword">while</span>(right &lt; series.size() &amp;&amp; series[right] != <span class="string">'0'</span>)</span><br><span class="line">                right++;</span><br><span class="line">            ones.push_back(right - left);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            right++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ones;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">不允许消除单个字符的话，情况就复杂的多了 (也可能是我想复杂了, 如果你有更简单的方法一定告诉我!)。</span></span><br><span class="line"><span class="comment">1. 先按照上题的方案双方先消 1 (消连续 1 的时候有个小技巧, 不实际地把串中连续的 1 擦除, 而把这些    1 反转为 0 即可), 消完 1 之后再开始消连续的 0</span></span><br><span class="line"><span class="comment">2. 这时候要根据上次消 1 时的 1的个数的数组 的奇偶性来判断谁先消 0 (奇数话就是原先的后手先消 0，    偶数的话是原先的先手先消 0)</span></span><br><span class="line"><span class="comment">3. 因为消 0 又不得分. 你消一次 0, 另一方就加 2 分 (为什么是 2 分呢？因为既然开始消 0 了, 说明	    此时的串中的 1 必然被 0 隔开, 且都是单个出现的，中间的连续 0 一旦消掉， 一定会有俩 1 挨着, 	下一次另一方肯定消它得 2 分). 消一次 0, 在串中实际地擦除 0, 得新串，对新串递归调用回到第 1 步</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">下面具体看代码注释</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">eliminate_01_series</span><span class="params">(<span class="built_in">string</span> series)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 得分数组, [先手得分, 后手得分]</span></span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">scores</span><span class="params">(<span class="number">2</span>)</span></span>;</span><br><span class="line">    helper(series, scores, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">return</span> scores;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// series 为当前串</span></span><br><span class="line"><span class="comment">// flag == 0 表示本次先手先消, flag == 1 表示本次后手先消</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">helper</span><span class="params">(<span class="built_in">string</span> series, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &amp;scores, <span class="keyword">int</span> flag)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 首先计算串中 1 的个数数组, 注意返回的是一个 pair 数组</span></span><br><span class="line">    <span class="comment">// pair 中的元素为 &#123;连续 1 的个数, 对应在串中的起始索引&#125;</span></span><br><span class="line">    <span class="built_in">vector</span>&lt;pair&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;&gt; ones = countContinuousChar(series, <span class="string">'1'</span>);</span><br><span class="line">    <span class="comment">// 没有 1 就直接返回, 再消也不得分了</span></span><br><span class="line">    <span class="keyword">if</span>(ones.empty())</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    <span class="comment">// 排序, 从大到小</span></span><br><span class="line">    sort(ones.begin(), ones.end(), greater&lt;pair&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;&gt;());</span><br><span class="line">    <span class="comment">// 如果有多个连续的 1 进入</span></span><br><span class="line">    <span class="comment">// 没有的话说明这时该消 0 了, 跳过下一步</span></span><br><span class="line">    <span class="keyword">if</span>(ones.front().first &gt; <span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 开始消 1</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; ones.size() &amp;&amp; ones[i].first &gt; <span class="number">1</span>; i += <span class="number">2</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 偶数索引元素之和为先手得分</span></span><br><span class="line">            scores[flag] += ones[i].first;</span><br><span class="line">            <span class="comment">// 与此同时“消 1”, 注意这里只根据 pair 定位连续 1 串的位置</span></span><br><span class="line">            <span class="comment">// 将它们都转为 0 即可</span></span><br><span class="line">            <span class="comment">// 因为如果实际擦除的话, 其它 1 串的 pair 都失效了</span></span><br><span class="line">            turnToZeros(series, ones[i].second, ones[i].first);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; ones.size() &amp;&amp; ones[i].first &gt; <span class="number">1</span>; i += <span class="number">2</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 奇数索引元素之和为后手得分</span></span><br><span class="line">            scores[<span class="number">1</span> - flag] += ones[i].first;</span><br><span class="line">            turnToZeros(series, ones[i].second, ones[i].first);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 判断先后手是否转换？</span></span><br><span class="line">        <span class="keyword">if</span>(ones.size() % <span class="number">2</span> == <span class="number">1</span>)</span><br><span class="line">            flag = <span class="number">1</span> - flag;</span><br><span class="line">        <span class="comment">// 递归下去</span></span><br><span class="line">        helper(series, scores, flag);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 到这里说明串中没有连续的 1 了</span></span><br><span class="line">    <span class="comment">// 计算 0 串的个数数组</span></span><br><span class="line">    <span class="built_in">vector</span>&lt;pair&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;&gt; zeros = countContinuousChar(series, <span class="string">'0'</span>);</span><br><span class="line">    <span class="comment">// 如果为空直接返回</span></span><br><span class="line">    <span class="keyword">if</span>(zeros.empty())</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    sort(zeros.begin(), zeros.end(), greater&lt;pair&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;&gt;());</span><br><span class="line">    <span class="comment">// 如果有连续的 0</span></span><br><span class="line">    <span class="keyword">if</span>(zeros.front().first &gt; <span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 这时候其实擦除掉任何一个连续 0 串都一样</span></span><br><span class="line">        <span class="comment">// 我这里就只擦除最多的</span></span><br><span class="line">        series.erase(zeros.front().second, zeros.front().first);</span><br><span class="line">        <span class="comment">// 注意要先后手转换</span></span><br><span class="line">        helper(series, scores, <span class="number">1</span> - flag);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 如果也没有连续的 0, 那就游戏结束</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vector&lt;pair&lt;int, int&gt;&gt; countContinuousChar(string series, char c)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;pair&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;&gt; ones;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(right &lt; series.size())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(series[right] == c)</span><br><span class="line">        &#123;</span><br><span class="line">            left = right;</span><br><span class="line">            <span class="keyword">while</span>(right &lt; series.size() &amp;&amp; series[right] != (<span class="string">'0'</span> + <span class="string">'1'</span> - c))</span><br><span class="line">                right++;</span><br><span class="line">            ones.push_back(&#123;right - left, left&#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            right++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ones;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">turnToZeros</span><span class="params">(<span class="built_in">string</span>&amp; series, <span class="keyword">int</span> pos, <span class="keyword">int</span> len)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++)</span><br><span class="line">        series[pos + i] = <span class="string">'0'</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="第2题"><a href="#第2题" class="headerlink" title="第2题"></a>第<code>2</code>题</h5><blockquote>
+<p>  西部世界有<code>n</code>个赏金猎人，每个赏金猎人都有两个属性战斗里和所拥有金钱。<code>attack[i]</code>和<code>money[i]</code>分别表示第<code>i</code>个赏金猎人的战斗力和所拥有金钱，保证每个赏金猎人的战斗力不相同。每个赏金猎人都只有<code>k</code>发子弹，这意味着他最多可以击败<code>k</code>个战斗力比他小的赏金猎人并获取他们的金钱。输出每一个赏金猎人最多拥有多少金钱。</p>
+<p>  <strong>Constraints:</strong></p>
+<ul>
+<li><p>1 &lt;= n &lt;= 10^5^, 0 &lt;= k &lt;= min(n - 1, 10).</p>
+</li>
+<li><p>1 &lt;= attack[i], money[i] &lt;= 10^9^.</p>
+</li>
+</ul>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">maxMoney</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &amp;attack, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &amp;money, <span class="keyword">int</span> k)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 记录每个赏金猎人的战斗里和他所对应的索引</span></span><br><span class="line">    <span class="comment">// 并利用其自动排序的特性</span></span><br><span class="line">    <span class="comment">// 对赏金猎人的战斗力进行排序</span></span><br><span class="line">    <span class="comment">// 这样在遍历的时候就能保证之前遍历的都是比他战斗力小的</span></span><br><span class="line">    <span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; mapping;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; attack.size(); i++)</span><br><span class="line">        mapping[attack[i]] = i;</span><br><span class="line">    <span class="comment">// 返回金钱数组里初始化为自身拥有的本金</span></span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">res</span><span class="params">(money)</span></span>;</span><br><span class="line">    <span class="comment">// 维护一个最小堆, 堆固定大小为 k</span></span><br><span class="line">    <span class="comment">// 最多存储 k 个比当前赏金猎人的战斗力小的赏金猎人</span></span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; heap;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">auto</span>&amp; p : mapping)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 如果堆不为空的话, 堆里的金钱数就是当前赏金猎人增加的金钱数</span></span><br><span class="line">        <span class="comment">// 因为排序后遍历的原因, 堆里的猎人的战斗力都比他小</span></span><br><span class="line">        <span class="keyword">if</span>(!heap.empty())</span><br><span class="line">            res[p.second] += accumulate(heap.begin(), heap.end(), <span class="number">0</span>);</span><br><span class="line">        <span class="comment">// 定制成最小堆</span></span><br><span class="line">        heap.push_back(money[p.second]);</span><br><span class="line">        push_heap(heap.begin(), heap.end(), greater&lt;<span class="keyword">int</span>&gt;());</span><br><span class="line">        <span class="keyword">if</span>(heap.size() &gt; k)</span><br><span class="line">        &#123;</span><br><span class="line">            pop_heap(heap.begin(), heap.end(), greater&lt;<span class="keyword">int</span>&gt;());</span><br><span class="line">            heap.pop_back();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/leetcode/" rel="tag"># leetcode</a>
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/rakjPpyIOCsd0MoJ/" rel="prev" title="重要知识点详细解读之僵尸进程和孤儿进程">
+      <i class="fa fa-chevron-left"></i> 重要知识点详细解读之僵尸进程和孤儿进程
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC80OTQ0NS8yNTkzNw=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#第1题"><span class="nav-number">1.</span> <span class="nav-text">第1题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#第2题"><span class="nav-number">2.</span> <span class="nav-text">第2题</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Liu Y.L."
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Liu Y.L.</p>
+  <div class="site-description" itemprop="description">寒江孤影-江湖故人-相逢何必曾相识</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yuanlehome" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuanlehome" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yuanlehome@163.com" title="E-Mail → mailto:yuanlehome@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/295413378" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;295413378" rel="noopener" target="_blank"><i class=" fa-fw"></i>Bilibili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://wpa.qq.com/msgrd?v=3&uin=804230989&site=qq&menu=yes" title="QQ → http:&#x2F;&#x2F;wpa.qq.com&#x2F;msgrd?v&#x3D;3&amp;uin&#x3D;804230989&amp;site&#x3D;qq&amp;menu&#x3D;yes" rel="noopener" target="_blank"><i class="fa fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+      <!-- 音乐播放器 -->
+      <div>
+      
+        <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=300 height="400" src="//music.163.com/outchain/player?type=0&id=6679290542&auto=1&height=400"></iframe>
+      
+      </div>
+
+    </div>
+  </aside>
+
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Liu Y.L.</span>
+</div>
+
+<span>我已在此等候你 <span id="showDays"></span></span>
+<script>
+  var seconds = 1000;
+  var minutes = seconds * 60;
+  var hours = minutes * 60;
+  var days = hours * 24;
+  var years = days * 365;
+  var birthDay = Date.UTC(2020,04,04,00,00,00); // 这里设置建站时间
+  setInterval(function() {
+    var today = new Date();
+    var todayYear = today.getFullYear();
+    var todayMonth = today.getMonth()+1;
+    var todayDate = today.getDate();
+    var todayHour = today.getHours();
+    var todayMinute = today.getMinutes();
+    var todaySecond = today.getSeconds();
+    var now = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+    var diff = now - birthDay;
+    var diffYears = Math.floor(diff/years);
+    var diffDays = Math.floor((diff/days)-diffYears*365);
+    var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+    var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+    var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+      document.getElementById('showDays').innerHTML=""+diffYears+" 年 "+diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+  }, 1000);
+</script>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
