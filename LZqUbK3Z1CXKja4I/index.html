@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#7d574c">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#7d574c">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yuanlehome.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="这篇文章是leetcode刷题系列的第3部分——字符串。这里把有代表性的题目发出来，共计21道。字符串的问题杂且难，这一块，面试时碰到字符串问题时只能随机应变，没有固定的套路。 接下来这几个月，计划完成的leetcode刷题系列其组织如下： 1. 数组 2. 链表 3. 字符串 4. 二叉树 5. 队列和栈 6. 动态规划 7. 数据结构设计 预计涉及题目至少300道！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="leetcode刷题系列之字符串">
+<meta property="og:url" content="https://yuanlehome.github.io/LZqUbK3Z1CXKja4I/index.html">
+<meta property="og:site_name" content="LYL&#39;s Blog">
+<meta property="og:description" content="这篇文章是leetcode刷题系列的第3部分——字符串。这里把有代表性的题目发出来，共计21道。字符串的问题杂且难，这一块，面试时碰到字符串问题时只能随机应变，没有固定的套路。 接下来这几个月，计划完成的leetcode刷题系列其组织如下： 1. 数组 2. 链表 3. 字符串 4. 二叉树 5. 队列和栈 6. 动态规划 7. 数据结构设计 预计涉及题目至少300道！">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-10T13:35:42.000Z">
+<meta property="article:modified_time" content="2021-06-10T13:35:42.000Z">
+<meta property="article:author" content="Liu Y.L.">
+<meta property="article:tag" content="leetcode">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="数据结构">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://yuanlehome.github.io/LZqUbK3Z1CXKja4I/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>leetcode刷题系列之字符串 | LYL's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">LYL's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/LZqUbK3Z1CXKja4I/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          leetcode刷题系列之字符串
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-10 21:35:42" itemprop="dateCreated datePublished" datetime="2021-06-10T21:35:42+08:00">2021-06-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/leetcode/" itemprop="url" rel="index"><span itemprop="name">leetcode</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>32k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>29 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>这篇文章是<code>leetcode</code>刷题系列的第<code>3</code>部分——字符串。这里把有代表性的题目发出来，共计<code>21</code>道。字符串的问题杂且难，这一块，面试时碰到字符串问题时只能随机应变，没有固定的套路。</p>
+<p>接下来这几个月，计划完成的<code>leetcode</code>刷题系列其组织如下：</p>
+<p><code>1</code>. <a href="https://yuanlehome.github.io/qD0F57Dbj7HjnZou/">数组</a></p>
+<p><code>2</code>. <a href="https://yuanlehome.github.io/S07PSuYxoZ6CPova/">链表</a></p>
+<p><code>3</code>. <a href="https://yuanlehome.github.io/LZqUbK3Z1CXKja4I/">字符串</a></p>
+<p><code>4</code>. <a href="https://yuanlehome.github.io/B90hHtDrYEYJD3xv/">二叉树</a></p>
+<p><code>5</code>. <a href="https://yuanlehome.github.io/fhQPnKWa9qDDelG3/">队列和栈</a></p>
+<p><code>6</code>. <a href="https://yuanlehome.github.io/RT66rbCYdVwFEsD8/">动态规划</a></p>
+<p><code>7</code>. 数据结构设计</p>
+<p>预计涉及题目至少<code>300</code>道！</p>
+<a id="more"></a>
+
+<h5 id="880-Decoded-String-at-Index"><a href="#880-Decoded-String-at-Index" class="headerlink" title="880. Decoded String at Index"></a><a href="https://leetcode.com/problems/decoded-string-at-index/" target="_blank" rel="noopener">880. Decoded String at Index</a></h5><blockquote>
+<p>  给定一个编码字符串<code>S</code>。请你找出解码字符串并将其写入磁带。解码时，从编码字符串中每次读取一个字符 ，并采取以下步骤：</p>
+<ul>
+<li>如果所读的字符是字母，则将该字母写在磁带上。</li>
+<li>如果所读的字符是数字（例如<code>d</code>），则整个当前磁带总共会被重复写<code>d - 1</code>次。</li>
+<li>现在，对于给定的编码字符串<code>S</code>和索引<code>K</code>，查找并返回解码字符串中的第<code>K</code>个字母。</li>
+</ul>
+<p>  <strong>Constraints:</strong></p>
+<ul>
+<li><code>2 &lt;= S.length &lt;= 100</code></li>
+<li><code>S</code> will only contain lowercase letters and digits <code>2</code> through <code>9</code>.</li>
+<li><code>S</code> starts with a letter.</li>
+<li><code>1 &lt;= K &lt;= 10^9</code></li>
+<li>It’s guaranteed that <code>K</code> is less than or equal to the length of the decoded string.</li>
+<li>The decoded string is guaranteed to have less than <code>2^63</code> letters.</li>
+</ul>
+<p>  <strong>Example 1:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Input: S &#x3D; &quot;leet2code3&quot;, K &#x3D; 10</span><br><span class="line">Output: &quot;o&quot;</span><br><span class="line">Explanation: </span><br><span class="line">The decoded string is &quot;leetleetcodeleetleetcodeleetleetcode&quot;.</span><br><span class="line">The 10th letter in the string is &quot;o&quot;.</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Example 2:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Input: S &#x3D; &quot;ha22&quot;, K &#x3D; 5</span><br><span class="line">Output: &quot;h&quot;</span><br><span class="line">Explanation: </span><br><span class="line">The decoded string is &quot;hahahaha&quot;.  The 5th letter is &quot;h&quot;.</span><br></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 一般来说, 当解码的字符串等于某个长度为 size 的单词重复一定次数</span></span><br><span class="line"><span class="comment">// 例如 apple(size = 5) 组合重复 6 次时</span></span><br><span class="line"><span class="comment">// 第 k == 24 个的结果与第 k % size == 4 个的结果相同</span></span><br><span class="line"><span class="comment">// 根据这个思路来求解问题</span></span><br><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">decodeAtIndex</span><span class="params">(<span class="built_in">string</span> s, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = s.size();</span><br><span class="line">    <span class="keyword">long</span> sz = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 先计算解码后的总字符串的长度</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">isalpha</span>(s[i])) &#123;</span><br><span class="line">            sz++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            sz *= s[i] - <span class="string">'0'</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 从后向前做逆向搜索</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = n - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        <span class="comment">// 如果当前字符是字母, 那么它必然在解码后的最后位置</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">isalpha</span>(s[i])) &#123;</span><br><span class="line">            <span class="comment">// 如果这时就是第 k 个字符的话, 直接返回答案</span></span><br><span class="line">            <span class="keyword">if</span>(k % sz == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="built_in">string</span>(<span class="number">1</span>, s[i]);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 解码字符串的长度减 1</span></span><br><span class="line">            sz--;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 如果当前字符是数字</span></span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 此字符之前的解码字符串的长度就可以计算出来</span></span><br><span class="line">            sz /= s[i] - <span class="string">'0'</span>;</span><br><span class="line">            k %= sz;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="87-Scramble-String"><a href="#87-Scramble-String" class="headerlink" title="87. Scramble String"></a><a href="https://leetcode.com/problems/scramble-string/" target="_blank" rel="noopener">87. Scramble String</a></h5><blockquote>
+<p>  使用下面描述的算法可以扰乱字符串<code>s</code>得到字符串<code>t</code>：</p>
+<ol>
+<li><p>如果字符串的长度为<code>1</code>，算法停止</p>
+</li>
+<li><p>如果字符串的长度<code>&gt; 1</code>，执行下述步骤：</p>
+<ul>
+<li>在一个随机下标处将字符串分割成两个非空的子字符串。即，如果已知字符串<code>s</code>，则可以将其分成两个子字符串<code>x</code>和<code>y</code>，且满足<code>s = x + y</code>。</li>
+<li>随机决定是要「交换两个子字符串」还是要「保持这两个子字符串的顺序不变」。即，在执行这一步骤之后，<code>s</code>可能是<code>s = x + y</code>或者<code>s = y + x</code>。</li>
+<li>在<code>x</code>和<code>y</code>这两个子字符串上继续从步骤<code>1</code>开始递归执行此算法。</li>
+</ul>
+<p>给你两个长度相等的字符串<code>s1</code>和<code>s2</code>，判断<code>s2</code>是否是<code>s1</code>的扰乱字符串。如果是，返回<code>true</code>；否则，返回<code>false</code>。</p>
+</li>
+</ol>
+<p>  <strong>示例</strong>：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">输入：s1 &#x3D; &quot;great&quot;, s2 &#x3D; &quot;rgeat&quot;</span><br><span class="line">输出：true</span><br><span class="line">解释：s1 上可能发生的一种情形是：</span><br><span class="line">&quot;great&quot; --&gt; &quot;gr&#x2F;eat&quot; 在一个随机下标处分割得到两个子字符串</span><br><span class="line">&quot;gr&#x2F;eat&quot; --&gt; &quot;gr&#x2F;eat&quot; 随机决定：「保持这两个子字符串的顺序不变」</span><br><span class="line">&quot;gr&#x2F;eat&quot; --&gt; &quot;g&#x2F;r &#x2F; e&#x2F;at&quot; 在子字符串上递归执行此算法。两个子字符串分别在随机下标处进行一轮分割</span><br><span class="line">&quot;g&#x2F;r &#x2F; e&#x2F;at&quot; --&gt; &quot;r&#x2F;g &#x2F; e&#x2F;at&quot; 随机决定：第一组「交换两个子字符串」，第二组「保持这两个子字符串的顺序不变」</span><br><span class="line">&quot;r&#x2F;g &#x2F; e&#x2F;at&quot; --&gt; &quot;r&#x2F;g &#x2F; e&#x2F; a&#x2F;t&quot; 继续递归执行此算法，将 &quot;at&quot; 分割得到 &quot;a&#x2F;t&quot;</span><br><span class="line">&quot;r&#x2F;g &#x2F; e&#x2F; a&#x2F;t&quot; --&gt; &quot;r&#x2F;g &#x2F; e&#x2F; a&#x2F;t&quot; 随机决定：「保持这两个子字符串的顺序不变」</span><br><span class="line">算法终止，结果字符串和 s2 相同，都是 &quot;rgeat&quot;</span><br><span class="line">这是一种能够扰乱 s1 得到 s2 的情形，可以认为 s2 是 s1 的扰乱字符串，返回 true</span><br></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 由于递归过程中会出现许多的重复参数</span></span><br><span class="line"><span class="comment">// 使用一个哈希集合来记忆化递归过程</span></span><br><span class="line"><span class="comment">// 由于函数参数是两个字符串, 可将它们拼接在一起做为 key</span></span><br><span class="line"><span class="built_in">unordered_set</span>&lt;<span class="built_in">string</span>&gt; memo;</span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">isScramble</span><span class="params">(<span class="built_in">string</span> s1, <span class="built_in">string</span> s2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(memo.count(s1 + s2)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(s1 == s2) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(s1.size() == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 判断字符对应个数是否相等</span></span><br><span class="line">    <span class="comment">// 先排序再判断</span></span><br><span class="line">    <span class="built_in">string</span> s1Copy = s1, s2Copy = s2;</span><br><span class="line">    sort(s1Copy.begin(), s1Copy.end());</span><br><span class="line">    sort(s2Copy.begin(), s2Copy.end());</span><br><span class="line">    <span class="keyword">if</span>(s1Copy != s2Copy) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> sz = s1.size();</span><br><span class="line">    <span class="comment">// s1 = L(s1) + R(s1), s2 = L(s2) + R(s2)</span></span><br><span class="line">    <span class="comment">// 两种情况, 看 L(s1) 是否可以转化为 L(s2) 以及 R(s1) 是否可以转化为 R(s2)</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; sz; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span>(isScramble(s1.substr(<span class="number">0</span>, i), s2.substr(<span class="number">0</span>, i)) &amp;&amp; isScramble(s1.substr(i, sz - i), s2.substr(i, sz - i)))</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">if</span>(isScramble(s1.substr(i, sz - i), s2.substr(<span class="number">0</span>, sz - i)) &amp;&amp; isScramble(s1.substr(<span class="number">0</span>, i), s2.substr(sz - i, i)))</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 记录结果</span></span><br><span class="line">    memo.insert(s1 + s2);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="28-Implement-strStr"><a href="#28-Implement-strStr" class="headerlink" title="28. Implement strStr()"></a><a href="https://leetcode.com/problems/implement-strstr/" target="_blank" rel="noopener">28. Implement strStr()</a></h5><blockquote>
+<p>  实现<code>strStr()</code>函数。给你两个字符串<code>haystack</code>和<code>needle</code>，请你在<code>haystack</code>字符串中找出<code>needle</code>字符串出现的第一个位置（下标从<code>0</code>开始）。如果不存在，则返回<code>-1</code> 。当<code>needle</code>是空字符串时，返回<code>0</code>。</p>
+<p>  <strong>Example 1:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: haystack &#x3D; &quot;hello&quot;, needle &#x3D; &quot;ll&quot;</span><br><span class="line">Output: 2</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Example 2:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: haystack &#x3D; &quot;aaaaa&quot;, needle &#x3D; &quot;bba&quot;</span><br><span class="line">Output: -1</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Example 3:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: haystack &#x3D; &quot;&quot;, needle &#x3D; &quot;&quot;</span><br><span class="line">Output: 0</span><br></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// kmp 算法</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">strStr</span><span class="params">(<span class="built_in">string</span> haystack, <span class="built_in">string</span> needle)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = haystack.size();</span><br><span class="line">    <span class="keyword">int</span> m = needle.size();</span><br><span class="line">    <span class="keyword">if</span>(m == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; <span class="title">dfa</span><span class="params">(m, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;(<span class="number">128</span>))</span></span>;</span><br><span class="line">    buildStateTransition(needle, dfa);</span><br><span class="line">    <span class="keyword">int</span> j = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">        j = dfa[j][haystack[i]];</span><br><span class="line">        <span class="keyword">if</span>(j == m) &#123;</span><br><span class="line">            <span class="keyword">return</span> i + <span class="number">1</span> - m;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">buildStateTransition</span><span class="params">(<span class="built_in">string</span>&amp; needle, <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt;&amp; dfa)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// base case</span></span><br><span class="line">    dfa[<span class="number">0</span>][needle[<span class="number">0</span>]] = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> x = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; needle.size(); i++) &#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> c = <span class="number">0</span>; c &lt; <span class="number">128</span>; c++) &#123;</span><br><span class="line">            dfa[i][c] = dfa[x][c];</span><br><span class="line">        &#125;</span><br><span class="line">        dfa[i][needle[i]] = i + <span class="number">1</span>;</span><br><span class="line">        x = dfa[x][needle[i]];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// sunday 算法</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">strStr</span><span class="params">(<span class="built_in">string</span> haystack, <span class="built_in">string</span> needle)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = haystack.size();</span><br><span class="line">    <span class="keyword">int</span> m = needle.size();</span><br><span class="line">    <span class="keyword">if</span>(m == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>, <span class="keyword">int</span>&gt; shift;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; m; i++) &#123;</span><br><span class="line">        shift[needle[i]] = m - i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> pos_n = <span class="number">0</span>, pos_m = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(pos_n &lt;= n - m) &#123;</span><br><span class="line">        pos_m = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(haystack[pos_n + pos_m] == needle[pos_m]) &#123;</span><br><span class="line">            pos_m++;</span><br><span class="line">            <span class="keyword">if</span>(pos_m == m) &#123;</span><br><span class="line">                <span class="keyword">return</span> pos_n;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(shift.count(haystack[pos_n + m])) &#123;</span><br><span class="line">            pos_n += shift[haystack[pos_n + m]];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            pos_n += m + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="187-Repeated-DNA-Sequences"><a href="#187-Repeated-DNA-Sequences" class="headerlink" title="187. Repeated DNA Sequences"></a><a href="https://leetcode.com/problems/repeated-dna-sequences/" target="_blank" rel="noopener">187. Repeated DNA Sequences</a></h5><blockquote>
+<p>  所有<code>DNA</code>都由一系列缩写为<code>&#39;A&#39;</code>，<code>&#39;C&#39;</code>，<code>&#39;G&#39;</code>和<code>&#39;T&#39;</code>的核苷酸组成，例如：<code>&quot;ACGAATTCCG&quot;</code>。在研究<code>DNA</code>时，识别<code>DNA</code>中的重复序列有时会对研究非常有帮助。</p>
+<p>  编写一个函数来找出所有目标子串，目标子串的长度为<code>10</code>，且在<code>DNA</code>字符串<code>s</code>中出现次数超过一次。</p>
+<p>  <strong>Example 1:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: s &#x3D; &quot;AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT&quot;</span><br><span class="line">Output: [&quot;AAAAACCCCC&quot;,&quot;CCCCCAAAAA&quot;]</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Example 2:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: s &#x3D; &quot;AAAAAAAAAAAAA&quot;</span><br><span class="line">Output: [&quot;AAAAAAAAAA&quot;]</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Constraints:</strong></p>
+<ul>
+<li><code>1 &lt;= s.length &lt;= 105</code></li>
+<li><code>s[i]</code> is either <code>&#39;A&#39;</code>, <code>&#39;C&#39;</code>, <code>&#39;G&#39;</code>, or <code>&#39;T&#39;</code></li>
+</ul>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 滑动窗口切片 + 哈希集合 切片复杂度为 O(k)</span></span><br><span class="line"><span class="comment">// 总 O(k(n - k))</span></span><br><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; <span class="title">findRepeatedDnaSequences</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> size = s.size();</span><br><span class="line">    <span class="keyword">if</span>(size &lt;= <span class="number">10</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">unordered_set</span>&lt;<span class="built_in">string</span>&gt; visited;</span><br><span class="line">    <span class="built_in">unordered_set</span>&lt;<span class="built_in">string</span>&gt; output;</span><br><span class="line">    <span class="keyword">int</span> k = <span class="number">10</span>;</span><br><span class="line">    <span class="built_in">string</span> subStr;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= size - k; i++) &#123;</span><br><span class="line">        subStr = s.substr(i, k);</span><br><span class="line">        <span class="keyword">if</span>(visited.count(subStr)) &#123;</span><br><span class="line">            output.insert(subStr);</span><br><span class="line">        &#125;</span><br><span class="line">        visited.insert(subStr);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; res;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">auto</span> str : output) &#123;</span><br><span class="line">        res.push_back(str);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">Rabin-Karp 字符串编码介绍</span></span><br><span class="line"><span class="comment">由于我们需要频繁判断两个字串是否相同, 直接切片比较的话, 复杂度和子串的长度成正比</span></span><br><span class="line"><span class="comment">这样, 我们将字符串中的字符(全小写)映射到 0-25 的数字</span></span><br><span class="line"><span class="comment">给定窗口长度为 k 的字符串, 窗口内的字符序列可以表示成一个 base = 26 进制的数字序列</span></span><br><span class="line"><span class="comment">比如 将 k = 4 的字符串 c1c2c3c4 转换为数字串 a1a2a3a4, 它对应的十进制值为</span></span><br><span class="line"><span class="comment">key = a1*26^3 + a2*26^2 + a3*26^1 + a4*26</span></span><br><span class="line"><span class="comment">	= a1*base^(k-1) + a2*base^(k-2) + a3*base^(k-3) + a4*base</span></span><br><span class="line"><span class="comment">然后将 key 做哈希表的键, 这样我们比较 是否有相同的 key 就可以判断出是否有相同的串</span></span><br><span class="line"><span class="comment">为什么说这样快呢? 对于窗口 a1a2a3a4 -&gt; a2a3a4a5</span></span><br><span class="line"><span class="comment">key = ((a1*base^(k-1) + a2*base^(k-2) + a3*base^(k-3) + a4*base) - a1*base^(k-1))*base + a5*base</span></span><br><span class="line"><span class="comment">	= (key - a1*base^(k-1))*base + a5*base</span></span><br><span class="line"><span class="comment">	= key*base - a1*base^k + a5*base</span></span><br><span class="line"><span class="comment">可以在 O(1) 时间算出新窗口的 key, 如果直接从字符串中切片的话需要 O(k) 时间</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 滑动窗口切片 + Rabin-Karp 字符串编码使得切片复杂度为 O(1)</span></span><br><span class="line"><span class="comment">// 总 O(n - k)</span></span><br><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; <span class="title">findRepeatedDnaSequences</span><span class="params">(<span class="built_in">string</span> s)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> size = s.size();</span><br><span class="line">    <span class="keyword">if</span>(size &lt;= <span class="number">10</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>, <span class="keyword">int</span>&gt; encode;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 将这四个字符分别映射为 0 1 2 3, 所以 base 为 4</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">char</span> c : &#123;<span class="string">'A'</span>, <span class="string">'C'</span>, <span class="string">'G'</span>, <span class="string">'T'</span>&#125;) &#123;</span><br><span class="line">        encode[c] = i++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">nums</span><span class="params">(s.size())</span></span>;</span><br><span class="line">    <span class="comment">// 将原字符串中的字符装成数字序列</span></span><br><span class="line">    <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; nums.size(); i++) &#123;</span><br><span class="line">        nums[i] = encode[s[i]];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> base = <span class="number">4</span>, k = <span class="number">10</span>;</span><br><span class="line">    <span class="keyword">int</span> baseK = <span class="built_in">pow</span>(base, k);</span><br><span class="line">    <span class="keyword">int</span> key = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 计算第一个窗口的 key</span></span><br><span class="line">    <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; k; i++) &#123;</span><br><span class="line">        key = key * base + nums[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">unordered_set</span>&lt;<span class="keyword">int</span>&gt; visited;</span><br><span class="line">    <span class="built_in">unordered_set</span>&lt;<span class="built_in">string</span>&gt; output;</span><br><span class="line">    <span class="comment">// 将第一个窗口的 key 先放进去表示已经访问</span></span><br><span class="line">    visited.insert(key);</span><br><span class="line">    <span class="comment">// 下面开始滑动窗口</span></span><br><span class="line">    <span class="comment">// i = 10;</span></span><br><span class="line">    <span class="keyword">while</span>(i &lt; size) &#123;</span><br><span class="line">        <span class="comment">// 计算新窗口的 key</span></span><br><span class="line">        key = key * base - nums[i - k] * baseK + nums[i];</span><br><span class="line">        <span class="comment">// 如果已经存在, 表示有重复的串</span></span><br><span class="line">        <span class="comment">// 将串取出</span></span><br><span class="line">        <span class="keyword">if</span>(visited.count(key)) &#123;</span><br><span class="line">            output.insert(s.substr(i - k + <span class="number">1</span>, k));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 新窗口也已访问</span></span><br><span class="line">        visited.insert(key);</span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; res;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">auto</span> str : output) &#123;</span><br><span class="line">        res.push_back(str);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="1044-Longest-Duplicate-Substring"><a href="#1044-Longest-Duplicate-Substring" class="headerlink" title="1044. Longest Duplicate Substring"></a><a href="https://leetcode.com/problems/longest-duplicate-substring/" target="_blank" rel="noopener">1044. Longest Duplicate Substring</a></h5><blockquote>
+<p>  给出一个字符串<code>S</code>，考虑其所有重复子串（<code>S</code>的连续子串，出现两次或多次，可能会有重叠）。</p>
+<p>  返回任何具有最长可能长度的重复子串。（如果<code>S</code>不含重复子串，那么答案为<code>&quot;&quot;</code>。）</p>
+<p>  <strong>Example 1:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: s &#x3D; &quot;banana&quot;</span><br><span class="line">Output: &quot;ana&quot;</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Example 2:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: s &#x3D; &quot;abcd&quot;</span><br><span class="line">Output: &quot;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Constraints:</strong></p>
+<ul>
+<li><code>2 &lt;= s.length &lt;= 3 * 104</code></li>
+<li><code>s</code> consists of lowercase English letters.</li>
+</ul>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 滑动窗口切片 + Rabin-Karp 字符串编码使得切片复杂度为 O(1)</span></span><br><span class="line"><span class="comment">// 由于我们希望找到一个最长的重复串, 最长莫不过 s.size()</span></span><br><span class="line"><span class="comment">// 所以我们每次固定窗口的大小为 k, k 范围时[0, s.size())</span></span><br><span class="line"><span class="comment">// 在这个区间可以使用 二分搜索 提高效率</span></span><br><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">longestDupSubstring</span><span class="params">(<span class="built_in">string</span> s)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>, <span class="keyword">int</span>&gt; digit;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">char</span> c = <span class="string">'a'</span>; c &lt;= <span class="string">'z'</span>; c++)</span><br><span class="line">        digit[c] = c - <span class="string">'a'</span>;</span><br><span class="line">    <span class="built_in">string</span> res;</span><br><span class="line">    <span class="comment">// 外循环二分搜索, 内循环滑动窗口</span></span><br><span class="line">    <span class="keyword">int</span> minK = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> maxK = (<span class="keyword">int</span>)s.size();</span><br><span class="line">    <span class="keyword">while</span>(minK &lt; maxK)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">string</span> subStr;</span><br><span class="line">        <span class="built_in">unordered_set</span>&lt;<span class="keyword">long</span>&gt; visited;</span><br><span class="line">        <span class="keyword">int</span> k = minK + (maxK - minK &gt;&gt; <span class="number">1</span>); <span class="comment">// 窗口大小</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">/* Rabin-Karp 编码算法 */</span></span><br><span class="line">        <span class="keyword">int</span> base = <span class="number">26</span>;</span><br><span class="line">        <span class="keyword">long</span> baseK = <span class="built_in">pow</span>(base, k);</span><br><span class="line">        <span class="keyword">long</span> key = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">// 计算第一个窗口的 key</span></span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(; i &lt; k; i++)</span><br><span class="line">            key = key * base + digit[s[i]];</span><br><span class="line">        visited.insert(key);</span><br><span class="line">        <span class="keyword">while</span>(i &lt; s.size())</span><br><span class="line">        &#123;</span><br><span class="line">            key = key * base - (digit[s[i - k]] * baseK) + digit[s[i]];</span><br><span class="line">            <span class="keyword">if</span>(visited.count(key))</span><br><span class="line">            &#123;</span><br><span class="line">                subStr = s.substr(i - k + <span class="number">1</span>, k);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            visited.insert(key);</span><br><span class="line">            i++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/* Rabin-Karp 编码算法 */</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>(!subStr.empty())</span><br><span class="line">        &#123;</span><br><span class="line">            minK = k + <span class="number">1</span>;</span><br><span class="line">            res = subStr;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            maxK = k;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="316-Remove-Duplicate-Letters"><a href="#316-Remove-Duplicate-Letters" class="headerlink" title="316. Remove Duplicate Letters"></a><a href="https://leetcode.com/problems/remove-duplicate-letters/" target="_blank" rel="noopener">316. Remove Duplicate Letters</a></h5><blockquote>
+<p>  给你一个字符串<code>s</code>，请你去除字符串中重复的字母，使得每个字母只出现一次。需保证<strong>返回结果的字典序最小</strong>（要求不能打乱其他字符的相对位置）。</p>
+<p>  <strong>Example 1:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: s &#x3D; &quot;bcabc&quot;</span><br><span class="line">Output: &quot;abc&quot;</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Example 2:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: s &#x3D; &quot;cbacdcbc&quot;</span><br><span class="line">Output: &quot;acdb&quot;</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Constraints:</strong></p>
+<ul>
+<li><code>1 &lt;= s.length &lt;= 104</code></li>
+<li><code>s</code> consists of lowercase English letters.</li>
+</ul>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 类似单调栈的技巧</span></span><br><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">removeDuplicateLetters</span><span class="params">(<span class="built_in">string</span> s)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>, <span class="keyword">int</span>&gt; counter;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">char</span> c : s) counter[c]++;</span><br><span class="line">    <span class="comment">// 记录已经在栈中的字符, 栈中的字符唯一</span></span><br><span class="line">    <span class="built_in">unordered_set</span>&lt;<span class="keyword">char</span>&gt; existed;</span><br><span class="line">    <span class="comment">// 把字符串当栈使用</span></span><br><span class="line">    <span class="built_in">string</span> res;</span><br><span class="line">    <span class="comment">// 顺序访问字符</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">char</span> c : s)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 每访问一个字符, 相应数量减一</span></span><br><span class="line">        counter[c]--;</span><br><span class="line">        <span class="comment">// 如果该字符已经在栈中了, 直接删除即可</span></span><br><span class="line">        <span class="keyword">if</span>(existed.count(c)) <span class="keyword">continue</span>;</span><br><span class="line">        <span class="comment">// 否则, 如果字典序比栈顶元素小并且在后边还有栈顶的字符, 删除栈顶字符</span></span><br><span class="line">        <span class="comment">// 因为反正后面还会遇到的嘛</span></span><br><span class="line">        <span class="keyword">while</span>(!res.empty() &amp;&amp; res.back() &gt; c &amp;&amp; counter[res.back()] &gt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            existed.erase(res.back());</span><br><span class="line">            res.pop_back();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 将当前字符入栈</span></span><br><span class="line">        res.push_back(c);</span><br><span class="line">        existed.insert(c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="1839-Longest-Substring-Of-All-Vowels-in-Order"><a href="#1839-Longest-Substring-Of-All-Vowels-in-Order" class="headerlink" title="1839. Longest Substring Of All Vowels in Order"></a><a href="https://leetcode.com/problems/longest-substring-of-all-vowels-in-order/" target="_blank" rel="noopener">1839. Longest Substring Of All Vowels in Order</a></h5><blockquote>
+<p>  当一个字符串满足如下条件时，我们称它是美丽的 ：</p>
+<p>  所有<code>5</code>个英文元音字母（<code>&#39;a&#39;</code>，<code>&#39;e&#39;</code>，<code>&#39;i&#39;</code>，<code>&#39;o&#39;</code>，<code>&#39;u&#39;</code>）都必须至少出现一次。<br>  这些元音字母的顺序都必须按照字典序升序排布（也就是说所有的<code>&#39;a&#39;</code>都在<code>&#39;e&#39;</code>前面，所有的<code>&#39;e&#39;</code>都在<code>&#39;i&#39;</code>前面，以此类推）<br>  比方说，字符串<code>&quot;aeiou&quot;</code>和<code>&quot;aaaaaaeiiiioou&quot;</code>都是美丽的，但是<code>&quot;uaeio&quot;</code> ，<code>&quot;aeoiu&quot;</code>和<code>&quot;aaaeeeooo&quot;</code>不是美丽的。</p>
+<p>  给你一个只包含英文元音字母的字符串<code>word</code>，请你返回<code>word</code>中最长美丽子字符串的长度。如果不存在这样的子字符串，请返回<code>0</code>。</p>
+<p>  子字符串是字符串中一个连续的字符序列。</p>
+<p>  <strong>示例 1：</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入：word &#x3D; &quot;aeiaaioaaaaeiiiiouuuooaauuaeiu&quot;</span><br><span class="line">输出：13</span><br><span class="line">解释：最长子字符串是 &quot;aaaaeiiiiouuu&quot;, 长度为 13</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>示例 2：</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入：word &#x3D; &quot;aeeeiiiioooauuuaeiou&quot;</span><br><span class="line">输出：5</span><br><span class="line">解释：最长子字符串是 &quot;aeiou&quot;, 长度为 5</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>提示：</strong></p>
+<ul>
+<li>1 &lt;= <code>word.length</code> &lt;= 5 * 10^5</li>
+<li><code>word</code>只包含字符<code>&#39;a&#39;</code>，<code>&#39;e&#39;</code>，<code>&#39;i&#39;</code>，<code>&#39;o&#39;</code> 和<code>&#39;u&#39;</code>。</li>
+</ul>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">longestBeautifulSubstring</span><span class="params">(<span class="built_in">string</span> word)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">unordered_set</span>&lt;<span class="keyword">char</span>&gt; setting;</span><br><span class="line">    <span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>, <span class="built_in">unordered_set</span>&lt;<span class="keyword">char</span>&gt;&gt; mapping;</span><br><span class="line">    mapping[<span class="string">'a'</span>].insert(&#123;<span class="string">'a'</span>, <span class="string">'e'</span>&#125;);</span><br><span class="line">    mapping[<span class="string">'e'</span>].insert(&#123;<span class="string">'e'</span>, <span class="string">'i'</span>&#125;);</span><br><span class="line">    mapping[<span class="string">'i'</span>].insert(&#123;<span class="string">'i'</span>, <span class="string">'o'</span>&#125;);</span><br><span class="line">    mapping[<span class="string">'o'</span>].insert(&#123;<span class="string">'o'</span>, <span class="string">'u'</span>&#125;);</span><br><span class="line">    mapping[<span class="string">'u'</span>].insert(<span class="string">'u'</span>);</span><br><span class="line">    <span class="keyword">int</span> res = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(right &lt; word.size())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">char</span> a = word[right];</span><br><span class="line">        <span class="keyword">if</span>(right &gt; left &amp;&amp; !mapping[word[right - <span class="number">1</span>]].count(a))</span><br><span class="line">        &#123;</span><br><span class="line">            window.clear();</span><br><span class="line">            left = right;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        right++;</span><br><span class="line">        setting.insert(a);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(setting.size() == <span class="number">5</span>)</span><br><span class="line">            res = max(res, right - left);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">longestBeautifulSubstring</span><span class="params">(<span class="built_in">string</span> word)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> res = <span class="number">0</span>, types = <span class="number">1</span>, len = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; word.length(); i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 更新当前字符串长度</span></span><br><span class="line">        <span class="keyword">if</span>(word[i] &gt;= word[i - <span class="number">1</span>]) len++;</span><br><span class="line">        <span class="comment">// 更新当前字符种类</span></span><br><span class="line">        <span class="keyword">if</span>(word[i] &gt; word[i - <span class="number">1</span>]) types++;</span><br><span class="line">        <span class="comment">// 当前字符串不美丽，从当前字符重新开始</span></span><br><span class="line">        <span class="keyword">if</span>(word[i] &lt; word[i - <span class="number">1</span>])</span><br><span class="line">        &#123;</span><br><span class="line">            types = <span class="number">1</span>;</span><br><span class="line">            len = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 更新最大字符串</span></span><br><span class="line">        <span class="keyword">if</span>(types == <span class="number">5</span>) res = max(res, len);</span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-Longest-Palindromic-Substring"><a href="#5-Longest-Palindromic-Substring" class="headerlink" title="5. Longest Palindromic Substring"></a><a href="https://leetcode.com/problems/longest-palindromic-substring/" target="_blank" rel="noopener">5. Longest Palindromic Substring</a></h5><blockquote>
+<p>  给你一个字符串<code>s</code>，找到<code>s</code>中最长的回文子串。</p>
+<p>  <strong>Example 1:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: s &#x3D; &quot;babad&quot;</span><br><span class="line">Output: &quot;bab&quot;</span><br><span class="line">Note: &quot;aba&quot; is also a valid answer.</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Example 2:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: s &#x3D; &quot;cbbd&quot;</span><br><span class="line">Output: &quot;bb&quot;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 中心开花, 时间复杂度为 O(n2), 空间复杂度为 O(1)</span></span><br><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">longestPalindrome</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = s.size();</span><br><span class="line">    <span class="keyword">auto</span> palindrome = [&amp;](<span class="keyword">int</span> left, <span class="keyword">int</span> right) &#123;</span><br><span class="line">        <span class="keyword">while</span>(left &gt;= <span class="number">0</span> &amp;&amp; right &lt; n &amp;&amp; s[left] == s[right]) &#123;</span><br><span class="line">            left--;</span><br><span class="line">            right++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> make_pair(left + <span class="number">1</span>, right - left - <span class="number">1</span>);</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">int</span> start = <span class="number">0</span>, len = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">        <span class="keyword">auto</span> [start1, len1] = palindrome(i, i);</span><br><span class="line">        <span class="keyword">auto</span> [start2, len2] = palindrome(i, i + <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">if</span>(len &lt; len1) &#123;</span><br><span class="line">            start = start1;</span><br><span class="line">            len = len1;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(len &lt; len2) &#123;</span><br><span class="line">            start = start2;</span><br><span class="line">            len = len2;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> s.substr(start, len);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="76-Minimum-Window-Substring"><a href="#76-Minimum-Window-Substring" class="headerlink" title="76. Minimum Window Substring"></a><a href="https://leetcode.com/problems/minimum-window-substring/" target="_blank" rel="noopener">76. Minimum Window Substring</a></h5><blockquote>
+<p>  给你一个字符串<code>s</code>和一个字符串<code>t</code>。返回<code>s</code>中涵盖<code>t</code>所有字符的最小子串。如果<code>s</code>中不存在涵盖<code>t</code>所有字符的子串，则返回空字符串<code>&quot;&quot;</code>。</p>
+<p>  注意：如果<code>s</code>中存在这样的子串，我们保证它是唯一的答案。</p>
+<p>  <strong>Example 1:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: s &#x3D; &quot;ADOBECODEBANC&quot;, t &#x3D; &quot;ABC&quot;</span><br><span class="line">Output: &quot;BANC&quot;</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Example 2:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: s &#x3D; &quot;a&quot;, t &#x3D; &quot;a&quot;</span><br><span class="line">Output: &quot;a&quot;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">minWindow</span><span class="params">(<span class="built_in">string</span> s, <span class="built_in">string</span> t)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>, <span class="keyword">int</span>&gt; window, need;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">char</span> c : t) &#123;</span><br><span class="line">        need[c]++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">size_t</span> valid = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> start = <span class="number">0</span>, len = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(right &lt; s.size()) &#123;</span><br><span class="line">        <span class="keyword">char</span> a = s[right++];</span><br><span class="line">        <span class="keyword">if</span>(need.count(a)) &#123;</span><br><span class="line">            window[a]++;</span><br><span class="line">            <span class="keyword">if</span>(window[a] == need[a]) &#123;</span><br><span class="line">                valid++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span>(valid == need.size()) &#123;</span><br><span class="line">            <span class="keyword">if</span>(len == <span class="number">0</span> || right - left &lt; len) &#123;</span><br><span class="line">                start = left;</span><br><span class="line">                len = right - left;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">char</span> d = s[left++];</span><br><span class="line">            <span class="keyword">if</span>(need.count(d)) &#123;</span><br><span class="line">                <span class="keyword">if</span>(window[d] == need[d]) &#123;</span><br><span class="line">                    valid--;</span><br><span class="line">                &#125;</span><br><span class="line">                window[d]--;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> s.substr(start, len);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="567-Permutation-in-String"><a href="#567-Permutation-in-String" class="headerlink" title="567. Permutation in String"></a><a href="https://leetcode.com/problems/permutation-in-string/" target="_blank" rel="noopener">567. Permutation in String</a></h5><blockquote>
+<p>  给定两个字符串<code>s1</code>和<code>s2</code>，写一个函数来判断<code>s2</code>是否包含<code>s1</code>的排列。</p>
+<p>  换句话说，第一个字符串的排列之一是第二个字符串的<strong>子串</strong>。</p>
+<p>  <strong>Example 1:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: s1 &#x3D; &quot;ab&quot;, s2 &#x3D; &quot;eidbaooo&quot;</span><br><span class="line">Output: true</span><br><span class="line">Explanation: s2 contains one permutation of s1 (&quot;ba&quot;).</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Example 2:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: s1 &#x3D; &quot;ab&quot;, s2 &#x3D; &quot;eidboaoo&quot;</span><br><span class="line">Output: false</span><br></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">checkInclusion</span><span class="params">(<span class="built_in">string</span> s1, <span class="built_in">string</span> s2)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>, <span class="keyword">int</span>&gt; window, need;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">char</span> c : s1) &#123;</span><br><span class="line">        need[c]++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = <span class="number">0</span>, n = s2.size(), m = s1.size();</span><br><span class="line">    <span class="keyword">size_t</span> valid = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(right &lt; n) &#123;</span><br><span class="line">        <span class="keyword">char</span> a = s2[right++];</span><br><span class="line">        <span class="keyword">if</span>(need.count(a)) &#123;</span><br><span class="line">            window[a]++;</span><br><span class="line">            <span class="keyword">if</span>(window[a] == need[a]) &#123;</span><br><span class="line">                valid++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span>(valid == need.size()) &#123;</span><br><span class="line">            <span class="keyword">if</span>(right - left == m) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">char</span> d = s2[left++];</span><br><span class="line">            <span class="keyword">if</span>(need.count(d)) &#123;</span><br><span class="line">                <span class="keyword">if</span>(window[d] == need[d]) &#123;</span><br><span class="line">                    valid--;</span><br><span class="line">                &#125;</span><br><span class="line">                window[d]--;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-Longest-Substring-Without-Repeating-Characters"><a href="#3-Longest-Substring-Without-Repeating-Characters" class="headerlink" title="3. Longest Substring Without Repeating Characters"></a><a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/" target="_blank" rel="noopener">3. Longest Substring Without Repeating Characters</a></h5><blockquote>
+<p>  给定一个字符串，请你找出其中不含有重复字符的<strong>最长子串</strong>的长度。</p>
+<p>  <strong>Example 1:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: s &#x3D; &quot;abcabcbb&quot;</span><br><span class="line">Output: 3</span><br><span class="line">Explanation: The answer is &quot;abc&quot;, with the length of 3.</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Example 2:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: s &#x3D; &quot;bbbbb&quot;</span><br><span class="line">Output: 1</span><br><span class="line">Explanation: The answer is &quot;b&quot;, with the length of 1.</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Example 3:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Input: s &#x3D; &quot;pwwkew&quot;</span><br><span class="line">Output: 3</span><br><span class="line">Explanation: The answer is &quot;wke&quot;, with the length of 3.</span><br><span class="line">Notice that the answer must be a substring, &quot;pwke&quot; is a subsequence and not a substring.</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Example 4:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: s &#x3D; &quot;&quot;</span><br><span class="line">Output: 0</span><br></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLongestSubstring</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>, <span class="keyword">int</span>&gt; window;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = <span class="number">0</span>, res = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(right &lt; s.size()) &#123;</span><br><span class="line">        <span class="keyword">char</span> a = s[right++];</span><br><span class="line">        window[a]++;</span><br><span class="line">        <span class="keyword">while</span>(window[a] &gt; <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">char</span> d = s[left++];</span><br><span class="line">            window[d]--;</span><br><span class="line">        &#125;</span><br><span class="line">        res = max(res, right - left);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLongestSubstring</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">bool</span>&gt; <span class="title">visited</span><span class="params">(<span class="number">128</span>)</span></span>;</span><br><span class="line">    <span class="keyword">int</span> lo = <span class="number">0</span>, hi = <span class="number">0</span>, len = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> n = s.size();</span><br><span class="line">    <span class="keyword">while</span>(hi &lt; n) &#123;</span><br><span class="line">        <span class="keyword">while</span>(visited[s[hi]]) &#123;</span><br><span class="line">            visited[s[lo++]] = <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        visited[s[hi++]] = <span class="literal">true</span>;</span><br><span class="line">        len = max(len, hi - lo);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> len;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="438-Find-All-Anagrams-in-a-String"><a href="#438-Find-All-Anagrams-in-a-String" class="headerlink" title="438. Find All Anagrams in a String"></a><a href="https://leetcode.com/problems/find-all-anagrams-in-a-string/" target="_blank" rel="noopener">438. Find All Anagrams in a String</a></h5><blockquote>
+<p>  给定一个字符串<code>s</code>和一个非空字符串<code>p</code>，找到<code>s</code>中所有是<code>p</code>的字母异位词的子串，返回这些子串的起始索引。字符串只包含小写英文字母，并且字符串<code>s</code>和<code>p</code>的长度都不超过<code>20100</code>。</p>
+<p>  说明：</p>
+<ul>
+<li>字母异位词指字母相同，但排列不同的字符串。</li>
+<li>不考虑答案输出的顺序。</li>
+</ul>
+<p>  <strong>Example 1:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Input: s &#x3D; &quot;cbaebabacd&quot;, p &#x3D; &quot;abc&quot;</span><br><span class="line">Output: [0,6]</span><br><span class="line">Explanation:</span><br><span class="line">The substring with start index &#x3D; 0 is &quot;cba&quot;, which is an anagram of &quot;abc&quot;.</span><br><span class="line">The substring with start index &#x3D; 6 is &quot;bac&quot;, which is an anagram of &quot;abc&quot;.</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Example 2:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Input: s &#x3D; &quot;abab&quot;, p &#x3D; &quot;ab&quot;</span><br><span class="line">Output: [0,1,2]</span><br><span class="line">Explanation:</span><br><span class="line">The substring with start index &#x3D; 0 is &quot;ab&quot;, which is an anagram of &quot;ab&quot;.</span><br><span class="line">The substring with start index &#x3D; 1 is &quot;ba&quot;, which is an anagram of &quot;ab&quot;.</span><br><span class="line">The substring with start index &#x3D; 2 is &quot;ab&quot;, which is an anagram of &quot;ab&quot;.</span><br></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">findAnagrams</span><span class="params">(<span class="built_in">string</span> s, <span class="built_in">string</span> p)</span> </span>&#123;</span><br><span class="line">    vector&lt;int&gt; window(26), need(26);</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">char</span> c : p) &#123;</span><br><span class="line">        need[c - <span class="string">'a'</span>]++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 表示窗口内字符种类和所需要的字符种类数目的差距</span></span><br><span class="line">    <span class="keyword">int</span> diff = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> cnt : need) &#123;</span><br><span class="line">        <span class="keyword">if</span>(cnt &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            diff++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; res;</span><br><span class="line">    <span class="keyword">int</span> n = s.size(), m = p.size();</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(right &lt; n) &#123;</span><br><span class="line">        <span class="keyword">char</span> a = s[right++] - <span class="string">'a'</span>;</span><br><span class="line">        <span class="keyword">if</span>(need[a] &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            window[a]++;</span><br><span class="line">            <span class="keyword">if</span>(window[a] == need[a]) &#123;</span><br><span class="line">                diff--;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 对每个窗口内数据都判断一下</span></span><br><span class="line">        <span class="keyword">if</span>(right - left == m) &#123;</span><br><span class="line">            <span class="keyword">if</span>(diff == <span class="number">0</span>) &#123;</span><br><span class="line">                res.push_back(left);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">char</span> d = s[left++] - <span class="string">'a'</span>;</span><br><span class="line">            <span class="keyword">if</span>(need[d] &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span>(window[d] == need[d]) &#123;</span><br><span class="line">                    diff++;</span><br><span class="line">                &#125;</span><br><span class="line">                window[d]--;</span><br><span class="line">        	&#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="395-Longest-Substring-with-At-Least-K-Repeating-Characters"><a href="#395-Longest-Substring-with-At-Least-K-Repeating-Characters" class="headerlink" title="395. Longest Substring with At Least K Repeating Characters"></a><a href="https://leetcode.com/problems/longest-substring-with-at-least-k-repeating-characters/" target="_blank" rel="noopener">395. Longest Substring with At Least K Repeating Characters</a></h5><blockquote>
+<p>  给你一个字符串<code>s</code>和一个整数<code>k</code>，请你找出<code>s</code>中的最长子串， 要求该子串中的每一字符出现次数都不少于<code>k</code>。返回这一子串的长度。</p>
+<p>  <strong>Example 1:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: s &#x3D; &quot;aaabb&quot;, k &#x3D; 3</span><br><span class="line">Output: 3</span><br><span class="line">Explanation: The longest substring is &quot;aaa&quot;, as &#39;a&#39; is repeated 3 times.</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Example 2:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: s &#x3D; &quot;ababbc&quot;, k &#x3D; 2</span><br><span class="line">Output: 5</span><br><span class="line">Explanation: The longest substring is &quot;ababb&quot;, as &#39;a&#39; is repeated 2 times and &#39;b&#39; is repeated 3 times.</span><br></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这题有一个点很关键</span></span><br><span class="line"><span class="comment">// 有一些字符的出现次数小于 k</span></span><br><span class="line"><span class="comment">// 如果窗口内包含这些字符的话, 肯定是不符合要求的</span></span><br><span class="line"><span class="comment">// 常规的滑动窗口思路需要做些改动</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">longestSubstring</span><span class="params">(<span class="built_in">string</span> s, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = s.size();</span><br><span class="line">    <span class="comment">// 总字符数量小于 k 肯定不符合条件</span></span><br><span class="line">    <span class="keyword">if</span>(n &lt; k) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>, <span class="keyword">int</span>&gt; char2cnt;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">char</span> c : s) &#123;</span><br><span class="line">        char2cnt[c]++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="built_in">unordered_set</span>&lt;<span class="keyword">int</span>&gt; <span class="title">uniqueString</span><span class="params">(s.begin(), s.end())</span></span>;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; afterSplit;</span><br><span class="line">    <span class="keyword">auto</span> split = [&amp;](<span class="keyword">const</span> <span class="keyword">char</span> sep) &#123;</span><br><span class="line">        <span class="comment">// 清空数组</span></span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;().swap(afterSplit);</span><br><span class="line">        <span class="function"><span class="built_in">istringstream</span> <span class="title">iss</span><span class="params">(s)</span></span>;</span><br><span class="line">        <span class="built_in">string</span> str;</span><br><span class="line">        <span class="keyword">while</span>(getline(iss, str, sep)) &#123;</span><br><span class="line">            afterSplit.emplace_back(str);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">char</span> c : uniqueString) &#123;</span><br><span class="line">        <span class="keyword">if</span>(char2cnt[c] &lt; k) &#123;</span><br><span class="line">            split(c);</span><br><span class="line">            <span class="keyword">int</span> len = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">auto</span>&amp;&amp; str : afterSplit) &#123;</span><br><span class="line">                len = max(len, longestSubstring(str, k));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> len;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> s.size();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="402-Remove-K-Digits"><a href="#402-Remove-K-Digits" class="headerlink" title="402. Remove K Digits"></a><a href="https://leetcode.com/problems/remove-k-digits/" target="_blank" rel="noopener">402. Remove K Digits</a></h5><blockquote>
+<p>  给定一个以字符串表示的非负整数<code>num</code>，移除这个数中的<code>k</code>位数字，使得剩下的数字最小。</p>
+<p>  注意：</p>
+<ul>
+<li><code>num</code>的长度小于<code>10002</code>且<code>≥ k</code>。</li>
+<li><code>num</code>不会包含任何前导零。</li>
+</ul>
+<p>  <strong>Example 1:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: num &#x3D; &quot;1432219&quot;, k &#x3D; 3</span><br><span class="line">Output: &quot;1219&quot;</span><br><span class="line">Explanation: Remove the three digits 4, 3, and 2 to form the new number 1219 which is the smallest.</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Example 2:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: num &#x3D; &quot;10200&quot;, k &#x3D; 1</span><br><span class="line">Output: &quot;200&quot;</span><br><span class="line">Explanation: Remove the leading 1 and the number is 200. Note that the output must not contain leading zeroes.</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Example 3:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: num &#x3D; &quot;10&quot;, k &#x3D; 2</span><br><span class="line">Output: &quot;0&quot;</span><br><span class="line">Explanation: Remove all the digits from the number and it is left with nothing which is 0.</span><br></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 贪心思想 + 单调栈</span></span><br><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">removeKdigits</span><span class="params">(<span class="built_in">string</span> num, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = num.size();</span><br><span class="line">    <span class="keyword">if</span>(n &lt;= k) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"0"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> remain = n - k;</span><br><span class="line">    <span class="built_in">string</span> s;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">char</span> c : num) &#123;</span><br><span class="line">        <span class="keyword">while</span>(k &gt; <span class="number">0</span> &amp;&amp; !s.empty() &amp;&amp; s.back() &gt; c) &#123;</span><br><span class="line">            s.pop_back();</span><br><span class="line">            k--;</span><br><span class="line">        &#125;</span><br><span class="line">        s += c;</span><br><span class="line">    &#125;</span><br><span class="line">    s = s.substr(<span class="number">0</span>, remain);</span><br><span class="line">    /删除前导零</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(i &lt; remain &amp;&amp; s[i] == <span class="string">'0'</span>) &#123;</span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> i == remain ? <span class="string">"0"</span> : s.substr(i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="321-Create-Maximum-Number"><a href="#321-Create-Maximum-Number" class="headerlink" title="321. Create Maximum Number"></a><a href="https://leetcode.com/problems/create-maximum-number/" target="_blank" rel="noopener">321. Create Maximum Number</a></h5><blockquote>
+<p>  给定长度分别为<code>m</code>和<code>n</code>的两个数组，其元素由<code>0-9</code>构成，表示两个自然数各位上的数字。现在从这两个数组中选出<code>k (k &lt;= m + n)</code>个数字拼接成一个新的数，要求从同一个数组中取出的数字保持其在原数组中的相对顺序。</p>
+<p>  求满足该条件的最大数。结果返回一个表示该最大数的长度为<code>k</code>的数组。</p>
+<p>  说明：请尽可能地优化你算法的时间和空间复杂度。</p>
+<p>  <strong>Example 1:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: nums1 &#x3D; [3,4,6,5], nums2 &#x3D; [9,1,2,5,8,3], k &#x3D; 5</span><br><span class="line">Output: [9,8,6,5,3]</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Example 2:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: nums1 &#x3D; [6,7], nums2 &#x3D; [6,0,4], k &#x3D; 5</span><br><span class="line">Output: [6,7,6,0,4]</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Example 3:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: nums1 &#x3D; [3,9], nums2 &#x3D; [8,9], k &#x3D; 3</span><br><span class="line">Output: [9,8,9]</span><br></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这题是上一题 402 的超级进阶</span></span><br><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">maxNumber</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums1, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums2, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> m = nums1.size(), n = nums2.size();</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; res;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= k; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span>(i &lt;= m &amp;&amp; k - i &lt;= n) &#123;</span><br><span class="line">            res = max(res, merge(maxNumber(nums1, i), maxNumber(nums2, k - i)));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 从 nums 中取出能够拼接得到最大的 k 个数</span></span><br><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">maxNumber</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; s;</span><br><span class="line">    <span class="keyword">int</span> del = nums.size() - k;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> num : nums) &#123;</span><br><span class="line">        <span class="keyword">while</span>(del &gt; <span class="number">0</span> &amp;&amp; !s.empty() &amp;&amp; s.back() &lt; num) &#123;</span><br><span class="line">            s.pop_back();</span><br><span class="line">            del--;</span><br><span class="line">        &#125;</span><br><span class="line">        s.push_back(num);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span>(s.size() &gt; k) &#123;</span><br><span class="line">        s.pop_back();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> s;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 合并两个数组, 其中比较大小的规则比较特殊</span></span><br><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">merge</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; nums1, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; nums2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> m = nums1.size(), n = nums2.size();</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">merged</span><span class="params">(m + n)</span></span>;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>, j = <span class="number">0</span>, k = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(i &lt; m &amp;&amp; j &lt; n) &#123;</span><br><span class="line">        <span class="keyword">if</span>(compare(nums1, i, nums2, j)) &#123;</span><br><span class="line">            merged[k++] = nums1[i++];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            merged[k++] = nums2[j++];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span>(i &lt; m) &#123;</span><br><span class="line">        merged[k++] = nums1[i++];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span>(j &lt; n) &#123;</span><br><span class="line">        merged[k++] = nums2[j++];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> merged;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 合并数组时特殊的比较规则, 主要是处理两个数相等的情况, 这时要看后面数字的大小</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">compare</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums1, <span class="keyword">int</span> i, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums2, <span class="keyword">int</span> j)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(i &gt;= nums1.size()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(j &gt;= nums2.size()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(nums1[i] &gt; nums2[j]) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(nums1[i] &lt; nums2[j]) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> compare(nums1, i + <span class="number">1</span>, nums2, j + <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="1754-Largest-Merge-Of-Two-Strings"><a href="#1754-Largest-Merge-Of-Two-Strings" class="headerlink" title="1754. Largest Merge Of Two Strings"></a><a href="https://leetcode.com/problems/largest-merge-of-two-strings/" target="_blank" rel="noopener">1754. Largest Merge Of Two Strings</a></h5><blockquote>
+<p>  给你两个字符串<code>word1</code>和<code>word2</code>。你需要按下述方式构造一个新字符串<code>merge</code>：如果<code>word1</code>或<code>word2</code>非空，选择下面选项之一继续操作：</p>
+<ul>
+<li><p>如果<code>word1</code>非空，将<code>word1</code>中的第一个字符附加到<code>merge</code>的末尾，并将其从<code>word1</code>中移除。<br>例如，<code>word1 = &quot;abc&quot;</code>且<code>merge = &quot;dv&quot;</code>，在执行此选项操作之后，<code>word1 = &quot;bc&quot;</code>，同时<code>merge = &quot;dva&quot;</code>。</p>
+</li>
+<li><p>如果<code>word2</code>非空，将<code>word2</code>中的第一个字符附加到<code>merge</code>的末尾，并将其从<code>word2</code>中移除。<br>例如，<code>word2 = &quot;abc&quot;</code>且<code>merge = &quot;&quot;</code>，在执行此选项操作之后，<code>word2 = &quot;bc&quot;</code>，同时<code>merge = &quot;a&quot;</code>。</p>
+<p>返回你可以构造的字典序最大的合并字符串<code>merge</code>。</p>
+</li>
+</ul>
+<p>  <strong>Example 1:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Input: word1 &#x3D; &quot;cabaa&quot;, word2 &#x3D; &quot;bcaaa&quot;</span><br><span class="line">Output: &quot;cbcabaaaaa&quot;</span><br><span class="line">Explanation: One way to get the lexicographically largest merge is:</span><br><span class="line">- Take from word1: merge &#x3D; &quot;c&quot;, word1 &#x3D; &quot;abaa&quot;, word2 &#x3D; &quot;bcaaa&quot;</span><br><span class="line">- Take from word2: merge &#x3D; &quot;cb&quot;, word1 &#x3D; &quot;abaa&quot;, word2 &#x3D; &quot;caaa&quot;</span><br><span class="line">- Take from word2: merge &#x3D; &quot;cbc&quot;, word1 &#x3D; &quot;abaa&quot;, word2 &#x3D; &quot;aaa&quot;</span><br><span class="line">- Take from word1: merge &#x3D; &quot;cbca&quot;, word1 &#x3D; &quot;baa&quot;, word2 &#x3D; &quot;aaa&quot;</span><br><span class="line">- Take from word1: merge &#x3D; &quot;cbcab&quot;, word1 &#x3D; &quot;aa&quot;, word2 &#x3D; &quot;aaa&quot;</span><br><span class="line">- Append the remaining 5 a&#39;s from word1 and word2 at the end of merge.</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Example 2:</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: word1 &#x3D; &quot;abcabc&quot;, word2 &#x3D; &quot;abdcaba&quot;</span><br><span class="line">Output: &quot;abdcabcabcaba&quot;</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>Constraints:</strong></p>
+<ul>
+<li><code>1 &lt;= word1.length, word2.length &lt;= 3000</code></li>
+<li><code>word1</code> and <code>word2</code> consist only of lowercase English letters.</li>
+</ul>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这题就是用到上一题 321 的合并思路</span></span><br><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">largestMerge</span><span class="params">(<span class="built_in">string</span> word1, <span class="built_in">string</span> word2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> m = word1.size(), n = word2.size();</span><br><span class="line">    <span class="function"><span class="built_in">string</span> <span class="title">merged</span><span class="params">(m + n)</span></span>;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>, j = <span class="number">0</span>, k = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(i &lt; m &amp;&amp; j &lt; n) &#123;</span><br><span class="line">        <span class="keyword">if</span>(compare(word1, i, word2, j)) &#123;</span><br><span class="line">            merged[k++] = word1[i++];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            merged[k++] = word2[j++];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span>(i &lt; m) &#123;</span><br><span class="line">        merged[k++] = word1[i++];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span>(j &lt; n) &#123;</span><br><span class="line">        merged[k++] = word2[j++];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> merged;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">compare</span><span class="params">(<span class="built_in">string</span>&amp; word1, <span class="keyword">int</span> i, <span class="built_in">string</span>&amp; word2, <span class="keyword">int</span> j)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(i &gt;= word1.size()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(j &gt;= word2.size()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(word1[i] &lt; word2[j]) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(word1[i] &gt; word2[j]) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> compare(word1, i + <span class="number">1</span>, word2, j + <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 因为这题是处理字符串, 比较函数可以不用单独写</span></span><br><span class="line"><span class="comment">// 但是效率会降低很多</span></span><br><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">largestMerge</span><span class="params">(<span class="built_in">string</span> word1, <span class="built_in">string</span> word2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> m = word1.size(), n = word2.size();</span><br><span class="line">    <span class="built_in">string</span> merged;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>, j = <span class="number">0</span>, k = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(i &lt; m &amp;&amp; j &lt; n) &#123;</span><br><span class="line">        <span class="keyword">if</span>(word1.substr(i) &gt; word2.substr(j)) &#123;</span><br><span class="line">            merged += word1[i++];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            merged += word2[j++];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 直接切片就行了</span></span><br><span class="line">    <span class="keyword">if</span>(i &lt; m) &#123;</span><br><span class="line">        merged += word1.substr(i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(j &lt; n) &#123;</span><br><span class="line">        merged += word2.substr(j);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> merged;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="8-字符串转换整数-atoi"><a href="#8-字符串转换整数-atoi" class="headerlink" title="8. 字符串转换整数 (atoi)"></a><a href="https://leetcode-cn.com/problems/string-to-integer-atoi/" target="_blank" rel="noopener">8. 字符串转换整数 (atoi)</a></h5><blockquote>
+<p>  请你来实现一个<code>myAtoi(string s)</code>函数，使其能将字符串转换成一个<code>32</code>位有符号整数（类似<code>C/C++</code>中的<code>atoi</code>函数）。</p>
+<p>  函数<code>myAtoi(string s)</code>的算法如下：</p>
+<ul>
+<li><p>读入字符串并丢弃无用的前导空格</p>
+</li>
+<li><p>检查下一个字符（假设还未到字符末尾）为正还是负号，读取该字符（如果有）。 确定最终结果是负数还是正数。 如果两者都不存在，则假定结果为正。</p>
+</li>
+<li><p>读入下一个字符，直到到达下一个非数字字符或到达输入的结尾。字符串的其余部分将被忽略。</p>
+</li>
+<li><p>将前面步骤读入的这些数字转换为整数（即，<code>&quot;123&quot;</code>-&gt; <code>123</code>，<code>&quot;0032&quot;</code> -&gt; <code>32</code>）。如果没有读入数字，则整数为<code>0</code>。必要时更改符号（从步骤<code>2</code>开始）。</p>
+</li>
+<li><p>如果整数数超过<code>32</code>位有符号整数范围<code>[−2^31, 2^31 − 1]</code>，需要截断这个整数，使其保持在这个范围内。具体来说，小于<code>−2^31</code>的整数应该被固定为<code>−2^31</code>，大于<code>2^31−1</code>的整数应该被固定为<code>2^31−1</code> 。</p>
+</li>
+<li><p>返回整数作为最终结果。</p>
+<p>注意：</p>
+</li>
+<li><p>本题中的空白字符只包括空格字符<code>&#39; &#39;</code>。</p>
+</li>
+<li><p>除前导空格或数字后的其余字符串外，请勿忽略任何其他字符。</p>
+</li>
+</ul>
+<p>  <strong>题解</strong>：<a href="https://leetcode-cn.com/problems/string-to-integer-atoi/solution/jin-liang-bu-shi-yong-ku-han-shu-nai-xin-diao-shi-/" target="_blank" rel="noopener">尽量不使用库函数、一次遍历（Java） - 字符串转换整数 (atoi) - 力扣（LeetCode）</a></p>
+<p>  <strong>示例 1</strong>：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">输入：s &#x3D; &quot;42&quot;</span><br><span class="line">输出：42</span><br><span class="line">解释：加粗的字符串为已经读入的字符，插入符号是当前读取的字符。</span><br><span class="line">第 1 步：&quot;42&quot;（当前没有读入字符，因为没有前导空格）</span><br><span class="line">         ^</span><br><span class="line">第 2 步：&quot;42&quot;（当前没有读入字符，因为这里不存在 &#39;-&#39; 或者 &#39;+&#39;）</span><br><span class="line">         ^</span><br><span class="line">第 3 步：&quot;42&quot;（读入 &quot;42&quot;）</span><br><span class="line">           ^</span><br><span class="line">解析得到整数 42</span><br><span class="line">由于 &quot;42&quot; 在范围 [-231, 231 - 1] 内，最终结果为 42</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>示例 2</strong>：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">输入：s &#x3D; &quot;   -42&quot;</span><br><span class="line">输出：-42</span><br><span class="line">解释：</span><br><span class="line">第 1 步：&quot;   -42&quot;（读入前导空格，但忽视掉）</span><br><span class="line">            ^</span><br><span class="line">第 2 步：&quot;   -42&quot;（读入 &#39;-&#39; 字符，所以结果应该是负数）</span><br><span class="line">             ^</span><br><span class="line">第 3 步：&quot;   -42&quot;（读入 &quot;42&quot;）</span><br><span class="line">               ^</span><br><span class="line">解析得到整数 -42 。</span><br><span class="line">由于 &quot;-42&quot; 在范围 [-231, 231 - 1] 内，最终结果为 -42</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>示例 3</strong>：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">输入：s &#x3D; &quot;4193 with words&quot;</span><br><span class="line">输出：4193</span><br><span class="line">解释：</span><br><span class="line">第 1 步：&quot;4193 with words&quot;（当前没有读入字符，因为没有前导空格）</span><br><span class="line">         ^</span><br><span class="line">第 2 步：&quot;4193 with words&quot;（当前没有读入字符，因为这里不存在 &#39;-&#39; 或者 &#39;+&#39;）</span><br><span class="line">         ^</span><br><span class="line">第 3 步：&quot;4193 with words&quot;（读入 &quot;4193&quot;；由于下一个字符不是一个数字，所以读入停止）</span><br><span class="line">             ^</span><br><span class="line">解析得到整数 4193</span><br><span class="line">由于 &quot;4193&quot; 在范围 [-231, 231 - 1] 内，最终结果为 4193</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>示例 4</strong>：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">输入：s &#x3D; &quot;words and 987&quot;</span><br><span class="line">输出：0</span><br><span class="line">解释：</span><br><span class="line">第 1 步：&quot;words and 987&quot;（当前没有读入字符，因为没有前导空格）</span><br><span class="line">         ^</span><br><span class="line">第 2 步：&quot;words and 987&quot;（当前没有读入字符，因为这里不存在 &#39;-&#39; 或者 &#39;+&#39;）</span><br><span class="line">         ^</span><br><span class="line">第 3 步：&quot;words and 987&quot;（由于当前字符 &#39;w&#39; 不是一个数字，所以读入停止）</span><br><span class="line">         ^</span><br><span class="line">解析得到整数 0，因为没有读入任何数字。</span><br><span class="line">由于 0 在范围 [-231, 231 - 1] 内，最终结果为 0</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>示例 5</strong>：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">输入：s &#x3D; &quot;-91283472332&quot;</span><br><span class="line">输出：-2147483648</span><br><span class="line">解释：</span><br><span class="line">第 1 步：&quot;-91283472332&quot;（当前没有读入字符，因为没有前导空格）</span><br><span class="line">         ^</span><br><span class="line">第 2 步：&quot;-91283472332&quot;（读入 &#39;-&#39; 字符，所以结果应该是负数）</span><br><span class="line">          ^</span><br><span class="line">第 3 步：&quot;-91283472332&quot;（读入 &quot;91283472332&quot;）</span><br><span class="line">                     ^</span><br><span class="line">解析得到整数 -91283472332</span><br><span class="line">由于 -91283472332 小于范围 [-231, 231 - 1] 的下界，最终结果被截断为 -2^31 &#x3D; -2147483648</span><br></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 根据示例 1, 需要去掉前导空格</span></span><br><span class="line"><span class="comment">// 根据示例 2, 需要判断第 1 个字符为 + 和 - 的情况</span></span><br><span class="line"><span class="comment">// 因此, 可以设计一个变量 sign, 初始化的时候为 1, 如果遇到 -, 将 sign 修正为 -1</span></span><br><span class="line"><span class="comment">// 判断是否是数字, 可以使用字符的 ASCII 码数值进行比较, 即 0 &lt;= c &lt;= '9'</span></span><br><span class="line"><span class="comment">// 根据示例 3 和示例 4, 在遇到第 1 个不是数字的字符的情况下, 转换停止, 退出循环</span></span><br><span class="line"><span class="comment">// 根据示例 5, 如果转换以后的数字超过了 int 类型的范围, 需要截取</span></span><br><span class="line"><span class="comment">// 这里不能将结果 res 变量设计为 long 类型</span></span><br><span class="line"><span class="comment">// 注意: 由于输入的字符串转换以后也有可能超过 long 类型</span></span><br><span class="line"><span class="comment">// 因此需要在循环内部就判断是否越界, 只要越界就退出循环, 这样也可以减少不必要的计算</span></span><br><span class="line"><span class="comment">// 由于涉及下标访问, 因此全程需要考虑数组下标是否越界的情况</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">myAtoi</span><span class="params">(<span class="built_in">string</span> str)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = str.size();</span><br><span class="line">    <span class="keyword">int</span> idx = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 去除前导空格</span></span><br><span class="line">    <span class="keyword">while</span>(idx &lt; n &amp;&amp; str[idx] == <span class="string">' '</span>) &#123;</span><br><span class="line">        idx++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(idx == n) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> sign = <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 处理第 1 个非空字符为正负符号, 这两个判断需要写在一起</span></span><br><span class="line">    <span class="keyword">if</span>(str[idx] == <span class="string">'+'</span>) &#123;</span><br><span class="line">        idx++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(str[idx] == <span class="string">'-'</span>) &#123;</span><br><span class="line">        sign = <span class="number">-1</span>;</span><br><span class="line">        idx++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> number = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(idx &lt; n) &#123;</span><br><span class="line">        <span class="keyword">char</span> c = str[idx];</span><br><span class="line">        <span class="keyword">if</span>(c &lt; <span class="string">'0'</span> || c &gt; <span class="string">'9'</span>) &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> num = c - <span class="string">'0'</span>;</span><br><span class="line">        <span class="comment">// 溢出处理</span></span><br><span class="line">        <span class="keyword">if</span>(number &gt; INT_MAX / <span class="number">10</span> || (number == INT_MAX / <span class="number">10</span> &amp;&amp; num &gt; INT_MAX % <span class="number">10</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> INT_MAX;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(number &lt; INT_MIN / <span class="number">10</span> || (number == INT_MIN / <span class="number">10</span> &amp;&amp; num &gt; -(INT_MIN % <span class="number">10</span>))) &#123;</span><br><span class="line">            <span class="keyword">return</span> INT_MIN;</span><br><span class="line">        &#125;</span><br><span class="line">        number = number * <span class="number">10</span> + sign * num;</span><br><span class="line">        idx++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> number;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="43-Multiply-Strings"><a href="#43-Multiply-Strings" class="headerlink" title="43. Multiply Strings"></a><a href="https://leetcode.com/problems/multiply-strings/" target="_blank" rel="noopener">43. Multiply Strings</a></h5><blockquote>
+<p>  给定两个以字符串形式表示的非负整数<code>num1</code>和<code>num2</code>，返回<code>num1</code>和<code>num2</code>的乘积，它们的乘积也表示为字符串形式。</p>
+<p>  <strong>参考题解</strong>：<a href="https://leetcode-cn.com/problems/multiply-strings/solution/you-hua-ban-shu-shi-da-bai-994-by-breezean/" target="_blank" rel="noopener">优化版竖式(打败99.4%) - 字符串相乘 - 力扣（LeetCode）</a></p>
+<p>  <strong>示例 1</strong>:</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入: num1 &#x3D; &quot;2&quot;, num2 &#x3D; &quot;3&quot;</span><br><span class="line">输出: &quot;6&quot;</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>示例 2</strong>:</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入: num1 &#x3D; &quot;123&quot;, num2 &#x3D; &quot;456&quot;</span><br><span class="line">输出: &quot;56088&quot;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 模拟普通竖式乘法</span></span><br><span class="line"><span class="comment">// 将每一步的乘法结果相加即可</span></span><br><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">multiply</span><span class="params">(<span class="built_in">string</span> num1, <span class="built_in">string</span> num2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(num1 == <span class="string">"0"</span> || num2 == <span class="string">"0"</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"0"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">string</span> res;</span><br><span class="line">    <span class="keyword">int</span> m = num1.size();</span><br><span class="line">    <span class="keyword">int</span> n = num2.size();</span><br><span class="line">    <span class="keyword">int</span> times = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = m - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        <span class="built_in">string</span> num;</span><br><span class="line">        <span class="keyword">int</span> carry = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j = n - <span class="number">1</span>; j &gt;= <span class="number">0</span>; j--) &#123;</span><br><span class="line">            <span class="keyword">int</span> temp = (num1[i] - <span class="string">'0'</span>) * (num2[j] - <span class="string">'0'</span>) + carry;</span><br><span class="line">            carry = temp / <span class="number">10</span>;</span><br><span class="line">            num += to_string(temp % <span class="number">10</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(carry != <span class="number">0</span>) &#123;</span><br><span class="line">            num += to_string(carry);</span><br><span class="line">        &#125;</span><br><span class="line">        reverse(num.begin(), num.end());</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; times; k++) &#123;</span><br><span class="line">            num += <span class="string">'0'</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        times++;</span><br><span class="line">        res = stringPlus(res, num);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 字符串数字相加</span></span><br><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">stringPlus</span><span class="params">(<span class="keyword">const</span> <span class="built_in">string</span>&amp; num1, <span class="keyword">const</span> <span class="built_in">string</span>&amp; num2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> m = num1.size();</span><br><span class="line">    <span class="keyword">if</span>(m == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> num2;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> n = num2.size();</span><br><span class="line">    <span class="keyword">if</span>(n == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> num1;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">string</span> res;</span><br><span class="line">    <span class="keyword">int</span> i = m - <span class="number">1</span>, j = n - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> carry = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(i &gt;= <span class="number">0</span> || j &gt;= <span class="number">0</span> || carry &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 这里的一个技巧就是短的字符串前面以 0 补齐</span></span><br><span class="line">        <span class="keyword">int</span> x = i &lt; <span class="number">0</span> ? <span class="number">0</span> : num1[i] - <span class="string">'0'</span>;</span><br><span class="line">        <span class="keyword">int</span> y = j &lt; <span class="number">0</span> ? <span class="number">0</span> : num2[j] - <span class="string">'0'</span>;</span><br><span class="line">        <span class="keyword">int</span> temp = x + y + carry;</span><br><span class="line">        res += to_string(temp % <span class="number">10</span>);</span><br><span class="line">        carry = temp / <span class="number">10</span>;</span><br><span class="line">        i--;</span><br><span class="line">        j--;</span><br><span class="line">    &#125;</span><br><span class="line">    reverse(res.begin(), res.end());</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="93-复原-IP-地址"><a href="#93-复原-IP-地址" class="headerlink" title="93. 复原 IP 地址"></a><a href="https://leetcode-cn.com/problems/restore-ip-addresses/" target="_blank" rel="noopener">93. 复原 IP 地址</a></h5><blockquote>
+<p>  给定一个只包含数字的字符串，用以表示一个<code>IP</code>地址，返回所有可能从<code>s</code>获得的有效<code>IP</code>地址 。你可以按任何顺序返回答案。</p>
+<p>  有效<code>IP</code>地址 正好由四个整数（每个整数位于<code>0</code>到<code>255</code>之间组成，且不能含有前导<code>0</code>），整数之间用<code>&#39;.&#39;</code>分隔。</p>
+<p>  例如：”0.1.2.201”和”192.168.1.1”是有效<code>IP</code>地址，但是”0.011.255.245”、”192.168.1.312”和”<a href="mailto:192.168@1.1">192.168@1.1</a>“是无效<code>IP</code>地址。</p>
+<p>  <strong>示例 1：</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：s &#x3D; &quot;25525511135&quot;</span><br><span class="line">输出：[&quot;255.255.11.135&quot;,&quot;255.255.111.35&quot;]</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>示例 2：</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：s &#x3D; &quot;0000&quot;</span><br><span class="line">输出：[&quot;0.0.0.0&quot;]</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>示例 3：</strong></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：s &#x3D; &quot;010010&quot;</span><br><span class="line">输出：[&quot;0.10.0.10&quot;,&quot;0.100.1.0&quot;]</span><br></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 回溯</span></span><br><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; <span class="title">restoreIpAddresses</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; res;</span><br><span class="line">    <span class="keyword">auto</span> dfs = [&amp;](<span class="keyword">auto</span>&amp;&amp; dfs, <span class="keyword">int</span> cnt, <span class="keyword">int</span> idx, <span class="built_in">string</span>&amp;&amp; str) &#123;</span><br><span class="line">        <span class="keyword">if</span>(cnt &gt;= <span class="number">4</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span>(idx == s.size()) &#123;</span><br><span class="line">                <span class="comment">// 需要将最前面的 '.' 删掉</span></span><br><span class="line">                res.emplace_back(str.substr(<span class="number">1</span>));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 重要的剪枝, 前导符为 0 时, 这一段只能为 0</span></span><br><span class="line">        <span class="keyword">if</span>(s[idx] == <span class="string">'0'</span>) &#123;</span><br><span class="line">            dfs(dfs, cnt + <span class="number">1</span>, idx + <span class="number">1</span>, str + <span class="string">".0"</span>);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">string</span> temp;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = idx; i &lt; s.size(); i++) &#123;</span><br><span class="line">            temp += s[i];</span><br><span class="line">            <span class="keyword">if</span>(stoi(temp) &lt;= <span class="number">255</span>) &#123;</span><br><span class="line">                dfs(dfs, cnt + <span class="number">1</span>, i + <span class="number">1</span>, str + <span class="string">"."</span> + temp);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    dfs(dfs, <span class="number">0</span>, <span class="number">0</span>, <span class="string">""</span>);</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="468-验证IP地址"><a href="#468-验证IP地址" class="headerlink" title="468. 验证IP地址"></a><a href="https://leetcode-cn.com/problems/validate-ip-address/" target="_blank" rel="noopener">468. 验证IP地址</a></h5><blockquote>
+<p>  编写一个函数来验证输入的字符串是否是有效的<code>IPv4</code>或<code>IPv6</code>地址。</p>
+<ul>
+<li><p>如果是有效的<code>IPv4</code>地址，返回<code>&quot;IPv4&quot;</code>；</p>
+</li>
+<li><p>如果是有效的<code>IPv6</code>地址，返回<code>&quot;IPv6&quot;</code>；</p>
+</li>
+<li><p>如果不是上述类型的<code>IP</code>地址，返回<code>&quot;Neither&quot;</code>。</p>
+<p><code>IPv4</code>地址由十进制数和点来表示，每个地址包含<code>4</code>个十进制数，其范围为<code>0 - 255</code>， 用<code>(&quot;.&quot;)</code>分割。比如，<code>172.16.254.1</code>；同时，<code>IPv4</code>地址内的数不会以<code>0</code>开头。比如，地址<code>172.16.254.01</code>是不合法的。</p>
+<p><code>IPv6</code>地址由<code>8</code>组<code>16</code>进制的数字来表示，每组表示<code>16</code>比特。这些组数字通过<code>(&quot;:&quot;)</code>分割。比如， <code>2001:0db8:85a3:0000:0000:8a2e:0370:7334</code>是一个有效的地址。而且，我们可以加入一些以<code>0</code>开头的数字，字母可以使用大写，也可以是小写。所以，<code>2001:db8:85a3:0:0:8A2E:0370:7334</code>也是一个有效的<code>IPv6 address</code>地址 (即，忽略<code>0</code>开头，忽略大小写）。</p>
+<p>然而，我们不能因为某个组的值为<code>0</code>，而使用一个空的组，以至于出现<code>(::)</code>的情况。 比如，<code>2001:0db8:85a3::8A2E:0370:7334</code>是无效的<code>IPv6</code>地址。</p>
+<p>同时，在<code>IPv6</code>地址中，多余的<code>0</code>也是不被允许的。比如，<code>02001:0db8:85a3:0000:0000:8a2e:0370:7334</code>是无效的。</p>
+</li>
+</ul>
+<p>  <strong>示例 1</strong>：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入：IP &#x3D; &quot;172.16.254.1&quot;</span><br><span class="line">输出：&quot;IPv4&quot;</span><br><span class="line">解释：有效的 IPv4 地址，返回 &quot;IPv4&quot;</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>示例 2</strong>：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入：IP &#x3D; &quot;2001:0db8:85a3:0:0:8A2E:0370:7334&quot;</span><br><span class="line">输出：&quot;IPv6&quot;</span><br><span class="line">解释：有效的 IPv6 地址，返回 &quot;IPv6&quot;</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>示例 3</strong>：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入：IP &#x3D; &quot;256.256.256.256&quot;</span><br><span class="line">输出：&quot;Neither&quot;</span><br><span class="line">解释：既不是 IPv4 地址，又不是 IPv6 地址</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>示例 4</strong>：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：IP &#x3D; &quot;2001:0db8:85a3:0:0:8A2E:0370:7334:&quot;</span><br><span class="line">输出：&quot;Neither&quot;</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>示例 5</strong>：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：IP &#x3D; &quot;1e1.4.5.6&quot;</span><br><span class="line">输出：&quot;Neither&quot;</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>提示</strong>：</p>
+<ul>
+<li><code>IP</code>仅由英文字母，数字，字符<code>&#39;.&#39;</code>和<code>&#39;:&#39;</code>组成。</li>
+</ul>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="built_in">string</span> <span class="title">validIPAddress</span><span class="params">(<span class="built_in">string</span> IP)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(validIPv4Address(IP)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"IPv4"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(validIPv6Address(IP)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"IPv6"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Neither"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">validIPv4Address</span><span class="params">(<span class="keyword">const</span> <span class="built_in">string</span>&amp; IPv4)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; ip;</span><br><span class="line">        split(IPv4, ip, <span class="string">'.'</span>);</span><br><span class="line">        <span class="keyword">if</span>(ip.size() != <span class="number">4</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span>&amp;&amp; elem : ip) &#123;</span><br><span class="line">            <span class="keyword">if</span>(elem.empty() || elem.size() &gt; <span class="number">3</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 处理前导符为 0 的情况</span></span><br><span class="line">            <span class="keyword">if</span>(elem.size() &gt; <span class="number">1</span> &amp;&amp; elem[<span class="number">0</span>] == <span class="string">'0'</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 处理非法字符的情况，如 1e1等</span></span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">char</span> c : elem) &#123;</span><br><span class="line">                <span class="keyword">if</span>(c &lt; <span class="string">'0'</span> || c &gt; <span class="string">'9'</span>) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(stoi(elem) &gt; <span class="number">255</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">validIPv6Address</span><span class="params">(<span class="keyword">const</span> <span class="built_in">string</span>&amp; IPv6)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; ip;</span><br><span class="line">        split(IPv6, ip, <span class="string">':'</span>);</span><br><span class="line">        <span class="keyword">if</span>(ip.size() != <span class="number">8</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// unordered_set&lt;char&gt; hexs&#123;'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F'&#125;;</span></span><br><span class="line">        <span class="built_in">string</span> hexs&#123;<span class="string">"0123456789abcdefABCDEF"</span>&#125;;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span>&amp;&amp; elem : ip) &#123;</span><br><span class="line">            <span class="keyword">if</span>(elem.empty() || elem.size() &gt; <span class="number">4</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// for(char c : elem) &#123;</span></span><br><span class="line">            <span class="comment">//     if(hexs.count(c) == 0) &#123;</span></span><br><span class="line">            <span class="comment">//         return false;</span></span><br><span class="line">            <span class="comment">//     &#125;</span></span><br><span class="line">            <span class="comment">// &#125;</span></span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">char</span> c : elem) &#123;</span><br><span class="line">                <span class="keyword">if</span>(hexs.find(c) == <span class="built_in">string</span>::npos) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">split</span><span class="params">(<span class="keyword">const</span> <span class="built_in">string</span>&amp; IP, <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&amp; ip, <span class="keyword">char</span> delim)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(IP.empty()) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">ss</span><span class="params">(IP)</span></span>;</span><br><span class="line">        <span class="built_in">string</span> temp;</span><br><span class="line">        <span class="keyword">while</span>(getline(ss, temp, delim)) &#123;</span><br><span class="line">            ip.emplace_back(move(temp));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 处理 IP 地址末尾有一个 '.' 或 ':' 的情况</span></span><br><span class="line">        <span class="keyword">if</span>(IP.back() == <span class="string">':'</span> || IP.back() == <span class="string">'.'</span>) &#123;</span><br><span class="line">            ip.push_back(<span class="string">""</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h5 id="647-回文子串"><a href="#647-回文子串" class="headerlink" title="647. 回文子串"></a><a href="https://leetcode-cn.com/problems/palindromic-substrings/" target="_blank" rel="noopener">647. 回文子串</a></h5><blockquote>
+<p>给定一个字符串，你的任务是计算这个字符串中有多少个回文子串。</p>
+<p>具有不同开始位置或结束位置的子串，即使是由相同的字符组成，也会被视作不同的子串。</p>
+<p><strong>示例 1</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;输入：&quot;abc&quot;</span><br><span class="line">&gt;输出：3</span><br><span class="line">&gt;解释：三个回文子串: &quot;a&quot;, &quot;b&quot;, &quot;c&quot;</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 2</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;输入：&quot;aaa&quot;</span><br><span class="line">&gt;输出：6</span><br><span class="line">&gt;解释：6个回文子串: &quot;a&quot;, &quot;a&quot;, &quot;a&quot;, &quot;aa&quot;, &quot;aa&quot;, &quot;aaa&quot;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 中心开花</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">countSubstrings</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = s.size();</span><br><span class="line">    <span class="keyword">int</span> cnt = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">auto</span> palindrome = [&amp;](<span class="keyword">int</span> left, <span class="keyword">int</span> right) &#123;</span><br><span class="line">        <span class="keyword">while</span>(left &gt;= <span class="number">0</span> &amp;&amp; right &lt; n &amp;&amp; s[left] == s[right]) &#123;</span><br><span class="line">            left--;</span><br><span class="line">            right++;</span><br><span class="line">            cnt++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">        palindrome(i, i);</span><br><span class="line">        palindrome(i, i + <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> cnt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/leetcode/" rel="tag"># leetcode</a>
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/GRrK24ZqnqkWXLK0/" rel="prev" title="leetcode刷题系列之数据结构设计">
+      <i class="fa fa-chevron-left"></i> leetcode刷题系列之数据结构设计
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC80OTQ0NS8yNTkzNw=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#880-Decoded-String-at-Index"><span class="nav-number">1.</span> <span class="nav-text">880. Decoded String at Index</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#87-Scramble-String"><span class="nav-number">2.</span> <span class="nav-text">87. Scramble String</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#28-Implement-strStr"><span class="nav-number">3.</span> <span class="nav-text">28. Implement strStr()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#187-Repeated-DNA-Sequences"><span class="nav-number">4.</span> <span class="nav-text">187. Repeated DNA Sequences</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1044-Longest-Duplicate-Substring"><span class="nav-number">5.</span> <span class="nav-text">1044. Longest Duplicate Substring</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#316-Remove-Duplicate-Letters"><span class="nav-number">6.</span> <span class="nav-text">316. Remove Duplicate Letters</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1839-Longest-Substring-Of-All-Vowels-in-Order"><span class="nav-number">7.</span> <span class="nav-text">1839. Longest Substring Of All Vowels in Order</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-Longest-Palindromic-Substring"><span class="nav-number">8.</span> <span class="nav-text">5. Longest Palindromic Substring</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#76-Minimum-Window-Substring"><span class="nav-number">9.</span> <span class="nav-text">76. Minimum Window Substring</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#567-Permutation-in-String"><span class="nav-number">10.</span> <span class="nav-text">567. Permutation in String</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-Longest-Substring-Without-Repeating-Characters"><span class="nav-number">11.</span> <span class="nav-text">3. Longest Substring Without Repeating Characters</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#438-Find-All-Anagrams-in-a-String"><span class="nav-number">12.</span> <span class="nav-text">438. Find All Anagrams in a String</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#395-Longest-Substring-with-At-Least-K-Repeating-Characters"><span class="nav-number">13.</span> <span class="nav-text">395. Longest Substring with At Least K Repeating Characters</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#402-Remove-K-Digits"><span class="nav-number">14.</span> <span class="nav-text">402. Remove K Digits</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#321-Create-Maximum-Number"><span class="nav-number">15.</span> <span class="nav-text">321. Create Maximum Number</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1754-Largest-Merge-Of-Two-Strings"><span class="nav-number">16.</span> <span class="nav-text">1754. Largest Merge Of Two Strings</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#8-字符串转换整数-atoi"><span class="nav-number">17.</span> <span class="nav-text">8. 字符串转换整数 (atoi)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#43-Multiply-Strings"><span class="nav-number">18.</span> <span class="nav-text">43. Multiply Strings</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#93-复原-IP-地址"><span class="nav-number">19.</span> <span class="nav-text">93. 复原 IP 地址</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#468-验证IP地址"><span class="nav-number">20.</span> <span class="nav-text">468. 验证IP地址</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#647-回文子串"><span class="nav-number">21.</span> <span class="nav-text">647. 回文子串</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Liu Y.L."
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Liu Y.L.</p>
+  <div class="site-description" itemprop="description">寒江孤影-江湖故人-相逢何必曾相识</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">37</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yuanlehome" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuanlehome" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yuanlehome@163.com" title="E-Mail → mailto:yuanlehome@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/295413378" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;295413378" rel="noopener" target="_blank"><i class=" fa-fw"></i>Bilibili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://wpa.qq.com/msgrd?v=3&uin=804230989&site=qq&menu=yes" title="QQ → http:&#x2F;&#x2F;wpa.qq.com&#x2F;msgrd?v&#x3D;3&amp;uin&#x3D;804230989&amp;site&#x3D;qq&amp;menu&#x3D;yes" rel="noopener" target="_blank"><i class="fa fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Liu Y.L.</span>
+</div>
+
+<span>我已在此等候你 <span id="showDays"></span></span>
+<script>
+  var seconds = 1000;
+  var minutes = seconds * 60;
+  var hours = minutes * 60;
+  var days = hours * 24;
+  var years = days * 365;
+  var birthDay = Date.UTC(2020,04,04,00,00,00); // 这里设置建站时间
+  setInterval(function() {
+    var today = new Date();
+    var todayYear = today.getFullYear();
+    var todayMonth = today.getMonth()+1;
+    var todayDate = today.getDate();
+    var todayHour = today.getHours();
+    var todayMinute = today.getMinutes();
+    var todaySecond = today.getSeconds();
+    var now = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+    var diff = now - birthDay;
+    var diffYears = Math.floor(diff/years);
+    var diffDays = Math.floor((diff/days)-diffYears*365);
+    var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+    var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+    var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+      document.getElementById('showDays').innerHTML=""+diffYears+" 年 "+diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+  }, 1000);
+</script>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
