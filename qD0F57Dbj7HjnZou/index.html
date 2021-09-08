@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"yuanlehome.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="这篇文章是leetcode刷题系列的第1部分——数组。这里把有代表性的题目发出来，共计82道。主要涉及滑动窗口、哈希表、堆、二分搜索、扫描线、区间相关、拓扑排序、树状数组等算法。 接下来这几个月，计划完成的leetcode刷题系列其组织如下： 1. 数组 2. 链表 3. 字符串 4. 二叉树 5. 队列和栈 6. 动态规划 7. 数据结构设计 预计涉及题目至少300道！">
+  <meta name="description" content="这篇文章是leetcode刷题系列的第1部分——数组。这里把有代表性的题目发出来，共计82道。主要涉及滑动窗口、哈希表、堆、二分搜索、扫描线、区间相关、拓扑排序、树状数组等算法。 leetcode刷题系列其它文章组织如下： 1. 数组 2. 链表 3. 字符串 4. 二叉树 5. 队列和栈 6. 动态规划 7. 数据结构设计 8. 刷题小知识点">
 <meta property="og:type" content="article">
 <meta property="og:title" content="leetcode刷题系列之数组">
 <meta property="og:url" content="https://yuanlehome.github.io/qD0F57Dbj7HjnZou/index.html">
 <meta property="og:site_name" content="LYL&#39;s Blog">
-<meta property="og:description" content="这篇文章是leetcode刷题系列的第1部分——数组。这里把有代表性的题目发出来，共计82道。主要涉及滑动窗口、哈希表、堆、二分搜索、扫描线、区间相关、拓扑排序、树状数组等算法。 接下来这几个月，计划完成的leetcode刷题系列其组织如下： 1. 数组 2. 链表 3. 字符串 4. 二叉树 5. 队列和栈 6. 动态规划 7. 数据结构设计 预计涉及题目至少300道！">
+<meta property="og:description" content="这篇文章是leetcode刷题系列的第1部分——数组。这里把有代表性的题目发出来，共计82道。主要涉及滑动窗口、哈希表、堆、二分搜索、扫描线、区间相关、拓扑排序、树状数组等算法。 leetcode刷题系列其它文章组织如下： 1. 数组 2. 链表 3. 字符串 4. 二叉树 5. 队列和栈 6. 动态规划 7. 数据结构设计 8. 刷题小知识点">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://yuanlehome.github.io/qD0F57Dbj7HjnZou/hint_valid_mountain_array.png">
 <meta property="og:image" content="https://yuanlehome.github.io/qD0F57Dbj7HjnZou/question_11.jpg">
@@ -286,7 +286,7 @@
 
       
         <p>这篇文章是<code>leetcode</code>刷题系列的第<code>1</code>部分——数组。这里把有代表性的题目发出来，共计<code>82</code>道。主要涉及滑动窗口、哈希表、堆、二分搜索、扫描线、区间相关、拓扑排序、树状数组等算法。</p>
-<p>接下来这几个月，计划完成的<code>leetcode</code>刷题系列其组织如下：</p>
+<p><code>leetcode</code>刷题系列其它文章组织如下：</p>
 <p><code>1</code>. <a href="https://yuanlehome.github.io/qD0F57Dbj7HjnZou/">数组</a></p>
 <p><code>2</code>. <a href="https://yuanlehome.github.io/S07PSuYxoZ6CPova/">链表</a></p>
 <p><code>3</code>. <a href="https://yuanlehome.github.io/LZqUbK3Z1CXKja4I/">字符串</a></p>
@@ -294,7 +294,7 @@
 <p><code>5</code>. <a href="https://yuanlehome.github.io/fhQPnKWa9qDDelG3/">队列和栈</a></p>
 <p><code>6</code>. <a href="https://yuanlehome.github.io/RT66rbCYdVwFEsD8/">动态规划</a></p>
 <p><code>7</code>. <a href="https://yuanlehome.github.io/GRrK24ZqnqkWXLK0/">数据结构设计</a></p>
-<p>预计涉及题目至少<code>300</code>道！</p>
+<p><code>8</code>. <a href="https://yuanlehome.github.io/MK80vfKBcuYfGiyp/">刷题小知识点</a></p>
 <a id="more"></a>
 
 <h5 id="167-两数之和-II-输入有序数组"><a href="#167-两数之和-II-输入有序数组" class="headerlink" title="167. 两数之和 II - 输入有序数组"></a><a href="https://leetcode-cn.com/problems/two-sum-ii-input-array-is-sorted/" target="_blank" rel="noopener">167. 两数之和 II - 输入有序数组</a></h5><blockquote>
@@ -1618,7 +1618,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">37</span>
+          <span class="site-state-item-count">38</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
