@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#7d574c">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#7d574c">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yuanlehome.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一、动机在软件系统中，经常面临着创建对象的工作；由于需求的变化，需要创建的对象的具体类型经常变化。如何应对这种变化？如何绕过常规的对象创建方法（new），提供一种”封装机制“来避免客户程序和这种”具体对象创建工作“的紧耦合？ 二、解决方案工厂方法模式是一种创建型设计模式，其在父类中提供一个创建对象的方法，允许子类决定实例化对象的类型。用于隔离类对象的使用者和具体类型之间的耦合关系。面对一个经常变化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式之工厂模式（Factory）">
+<meta property="og:url" content="https://yuanlehome.github.io/TVfZuYKzcvGyIWWM/index.html">
+<meta property="og:site_name" content="LYL&#39;s Blog">
+<meta property="og:description" content="一、动机在软件系统中，经常面临着创建对象的工作；由于需求的变化，需要创建的对象的具体类型经常变化。如何应对这种变化？如何绕过常规的对象创建方法（new），提供一种”封装机制“来避免客户程序和这种”具体对象创建工作“的紧耦合？ 二、解决方案工厂方法模式是一种创建型设计模式，其在父类中提供一个创建对象的方法，允许子类决定实例化对象的类型。用于隔离类对象的使用者和具体类型之间的耦合关系。面对一个经常变化">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yuanlehome.github.io/TVfZuYKzcvGyIWWM/structure_of_Factory.png">
+<meta property="article:published_time" content="2021-09-07T13:35:42.000Z">
+<meta property="article:modified_time" content="2021-09-07T13:35:42.000Z">
+<meta property="article:author" content="Liu Y.L.">
+<meta property="article:tag" content="设计模式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yuanlehome.github.io/TVfZuYKzcvGyIWWM/structure_of_Factory.png">
+
+<link rel="canonical" href="https://yuanlehome.github.io/TVfZuYKzcvGyIWWM/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>设计模式之工厂模式（Factory） | LYL's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">LYL's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/TVfZuYKzcvGyIWWM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          设计模式之工厂模式（Factory）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-09-07 21:35:42" itemprop="dateCreated datePublished" datetime="2021-09-07T21:35:42+08:00">2021-09-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h5 id="一、动机"><a href="#一、动机" class="headerlink" title="一、动机"></a>一、动机</h5><p>在软件系统中，经常面临着创建对象的工作；由于需求的变化，需要创建的对象的具体类型经常变化。如何应对这种变化？如何绕过常规的对象创建方法（<code>new</code>），提供一种”封装机制“来避免客户程序和这种”具体对象创建工作“的紧耦合？</p>
+<h5 id="二、解决方案"><a href="#二、解决方案" class="headerlink" title="二、解决方案"></a>二、解决方案</h5><p>工厂方法模式是一种创建型设计模式，其在父类中提供一个创建对象的方法，允许子类决定实例化对象的类型。用于隔离类对象的使用者和具体类型之间的耦合关系。面对一个经常变化的具体类型，紧耦合关系（<code>new</code>）会导致软件的脆弱。</p>
+<p><code>FactoryMethod</code>模式通过面向对象的方式，将所要创建的具体对象工作延迟到子类，从而实现一种扩展(而非更改)的策略，较好的解决了这种紧耦合关系。</p>
+<h5 id="三、工厂模式的结构"><a href="#三、工厂模式的结构" class="headerlink" title="三、工厂模式的结构"></a>三、工厂模式的结构</h5><p><img src="structure_of_Factory.png" alt="structure of Factory"></p>
+<ol>
+<li><strong>产品</strong>（<code>Product</code>）将会对接口进行声明。对于所有由创建者及其子类构建的对象，这些接口都是通用的。</li>
+<li><strong>具体产品</strong>（<code>Concrete Products</code>）是产品接口的不同实现。</li>
+<li><strong>创建者</strong>（<code>Creator</code>）类声明返回产品对象的工厂方法。该方法的返回对象类型必须与产品接口相匹配。</li>
+</ol>
+<blockquote>
+<p>你可以将工厂方法声明为抽象方法，强制要求每个子类以不同方式实现该方法。或者，你也可以在基础工厂方法中返回默认产品类型。</p>
+<p>注意，尽管它的名字是创建者，但它最主要的职责并不是创建产品。一般来说，创建者类包含一些与产品相关的核心业务逻辑。工厂方法将这些逻辑处理从具体产品类中分离出来。打个比方，大型软件开发公司拥有程序员培训部门。但是，这些公司的主要工作还是编写代码，而非生产程序员。</p>
+</blockquote>
+<ol start="4">
+<li><strong>具体创建者</strong>（<code>Concrete Creators</code>）将会重写基础工厂方法，使其返回不同类型的产品。</li>
+</ol>
+<blockquote>
+<p>注意，并不一定每次调用工厂方法都会创建新的实例。工厂方法也可以返回缓存、 对象池或其他来源的已有对象。</p>
+</blockquote>
+<h3 id="四、Factory代码示例"><a href="#四、Factory代码示例" class="headerlink" title="四、Factory代码示例"></a>四、<code>Factory</code>代码示例</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 运输基类</span></span><br><span class="line"><span class="comment">// 提供抽象运输接口的声明，具体的运输类都需要给出具体实现</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Transportation</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Transportation() &#123;&#125;</span><br><span class="line">    <span class="keyword">virtual</span> ~Transportation() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 抽象物流类声明的抽象运输接口</span></span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">deliver</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 陆路卡车运输</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TruckTransportation</span> :</span> <span class="keyword">public</span> Transportation &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    TruckTransportation() &#123;&#125;</span><br><span class="line">    ~TruckTransportation() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">deliver</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"I'm TruckTransportation."</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 陆路火车运输</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TrainTransportation</span> :</span> <span class="keyword">public</span> Transportation &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    TrainTransportation() &#123;&#125;</span><br><span class="line">    ~TrainTransportation() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">deliver</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"I'm TrainTransportation."</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 海上轮船运输</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ShipTransportation</span> :</span> <span class="keyword">public</span> Transportation &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    ShipTransportation() &#123;&#125;</span><br><span class="line">    ~ShipTransportation() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">deliver</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"I'm ShipTransportation."</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 物流工厂基类</span></span><br><span class="line"><span class="comment">// 必须声明一个返回具体运输工具的抽象方法</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LogisticsFactory</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    LogisticsFactory() &#123;&#125;</span><br><span class="line">    <span class="keyword">virtual</span> ~LogisticsFactory() &#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 返回具体运输工具的抽象方法</span></span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> Transportation *<span class="title">createTranportation</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 这里需要注意，工厂的职责除了是创建具体的运输工具</span></span><br><span class="line">    <span class="comment">// 同时还要负责一些其它啊的核心业务</span></span><br><span class="line">    <span class="comment">// 这些业务依赖与抽象方法返回的运输工具对象</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">startTransportation</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 调用抽象方法创建的一个运输工具对象</span></span><br><span class="line">        Transportation *tranportation = createTranportation();</span><br><span class="line">        <span class="comment">// 现在使用该运输工具</span></span><br><span class="line">        tranportation-&gt;deliver();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 陆路运输工厂</span></span><br><span class="line"><span class="comment">// 需要重写工厂的抽象方法以创建具体的运输工具</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RoadFactory</span> :</span> <span class="keyword">public</span> LogisticsFactory &#123;</span><br><span class="line">    <span class="keyword">bool</span> m_trainEnabled;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    RoadFactory(<span class="keyword">bool</span> trainEnabled) : m_trainEnabled(trainEnabled) &#123;&#125;</span><br><span class="line">    ~RoadFactory() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">Transportation *<span class="title">createTranportation</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 默认采用卡车运输</span></span><br><span class="line">        Transportation *ts = <span class="keyword">new</span> TruckTransportation;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 如果火车运输可以用，则改用火车运输</span></span><br><span class="line">        <span class="keyword">if</span>(m_trainEnabled) &#123;</span><br><span class="line">            <span class="keyword">delete</span> ts;</span><br><span class="line">            ts = <span class="keyword">new</span> TrainTransportation;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ts;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 海上运输工厂</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MarineFactory</span> :</span> <span class="keyword">public</span> LogisticsFactory &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    MarineFactory() &#123;&#125;</span><br><span class="line">    ~MarineFactory() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">Transportation *<span class="title">createTranportation</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ShipTransportation;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 客户端代码</span></span><br><span class="line"><span class="comment">// 无需了解不同子类返回实际运输对象之间的差别，不关心其具体实现方式。</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">clientCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 客户端程序根据当前配置或环境选择具体的运输类型</span></span><br><span class="line">    LogisticsFactory *<span class="built_in">log</span> = <span class="keyword">new</span> MarineFactory;</span><br><span class="line">    <span class="comment">// log = new RoadFactory(false);</span></span><br><span class="line">    <span class="comment">// log = new RoadFactory(true);</span></span><br><span class="line">    </span><br><span class="line">    <span class="built_in">log</span>-&gt;startTransportation();</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">delete</span> <span class="built_in">log</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    clientCode();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Execution result:</span><br><span class="line">    I<span class="number">'</span>m ShipTransportation.</span><br></pre></td></tr></table></figure>
+
+<h3 id="五、使用场景"><a href="#五、使用场景" class="headerlink" title="五、使用场景"></a>五、使用场景</h3><ul>
+<li><p>当你在编写代码的过程中，如果无法预知对象确切类别及其依赖关系时，可使用工厂方法。</p>
+<blockquote>
+<p>工厂方法将创建产品的代码与实际使用产品的代码分离，从而能在不影响其他代码的情况下扩展产品创建部分代码。</p>
+<p>例如，如果需要向应用中添加一种新产品，你只需要开发新的创建者子类，然后重写其工厂方法即可。</p>
+</blockquote>
+</li>
+<li><p>如果你希望用户能扩展你软件库或框架的内部组件，可使用工厂方法。</p>
+<blockquote>
+<p>继承可能是扩展软件库或框架默认行为的最简单方法。但是当你使用子类替代标准组件时，框架如何辨识出该子类？</p>
+<p>解决方案是将各框架中构造组件的代码集中到单个工厂方法中，并在继承该组件之外允许任何人对该方法进行重写。</p>
+<p>让我们看看具体是如何实现的。假设你使用开源 <code>UI</code> 框架编写自己的应用。你希望在应用中使用圆形按钮，但是原框架仅支持矩形按钮。你可以使用 <code>圆形按钮Round­Button</code>子类来继承标准的 <code>按钮Button</code>类。但是，你需要告诉 <code>UI框架UIFramework</code>类使用新的子类按钮代替默认按钮。</p>
+<p>为了实现这个功能，你可以根据基础框架类开发子类 <code>圆形按钮 UI UIWith­Round­Buttons</code> ，并且重写其 <code>create­Button</code>创建按钮方法。基类中的该方法返回 <code>按钮</code>对象，而你开发的子类返回 <code>圆形按钮</code>对象。现在，你就可以使用 <code>圆形按钮 UI</code>类代替 <code>UI框架</code>类。就是这么简单！</p>
+</blockquote>
+</li>
+<li><p>如果你希望复用现有对象来节省系统资源， 而不是每次都重新创建对象，可使用工厂方法。</p>
+<blockquote>
+<p>在处理大型资源密集型对象（比如数据库连接、文件系统和网络资源）时，你会经常碰到这种资源需求。</p>
+<p>让我们思考复用现有对象的方法：</p>
+<ol>
+<li><p>首先，你需要创建存储空间来存放所有已经创建的对象。</p>
+</li>
+<li><p>当他人请求一个对象时，程序将在对象池中搜索可用对象。</p>
+</li>
+<li><p>…然后将其返回给客户端代码。</p>
+</li>
+<li><p>如果没有可用对象，程序则创建一个新对象（并将其添加到对象池中）。</p>
+</li>
+</ol>
+<p>这些代码可不少！而且它们必须位于同一处，这样才能确保重复代码不会污染程序。</p>
+<p>可能最显而易见，也是最方便的方式，就是将这些代码放置在我们试图重用的对象类的构造函数中。但是从定义上来讲，构造函数始终返回的是新对象，其无法返回现有实例。</p>
+<p>因此，你需要有一个既能够创建新对象，又可以重用现有对象的普通方法。这听上去和工厂方法非常相像。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="六、优缺点"><a href="#六、优缺点" class="headerlink" title="六、优缺点"></a>六、优缺点</h3><ul>
+<li>你可以避免创建者和具体产品之间的紧密耦合。</li>
+<li><em>单一职责原则</em>。你可以将产品创建代码放在程序的单一位置，从而使得代码更容易维护。</li>
+<li><em>开闭原则</em>。无需更改现有客户端代码，你就可以在程序中引入新的产品类型。</li>
+<li><del>应用工厂方法模式需要引入许多新的子类，代码可能会因此变得更复杂。最好的情况是将该模式引入创建者类的现有层次结构中。</del></li>
+</ul>
+<h3 id="七、与其它模式的关系"><a href="#七、与其它模式的关系" class="headerlink" title="七、与其它模式的关系"></a>七、与其它模式的关系</h3><ul>
+<li>在许多设计工作的初期都会使用<strong>工厂方法</strong>模式（较为简单，而且可以更方便地通过子类进行定制），随后演化为使用<strong>抽象工厂模式</strong>、<strong>原型模式</strong>或<strong>生成器模式</strong>（更灵活但更加复杂）。</li>
+<li><strong>抽象工厂模式</strong>通常基于一组工厂方法，但你也可以使用<strong>原型模式</strong>来生成这些类的方法。</li>
+<li>你可以同时使用<strong>工厂方法</strong>和<strong>迭代器模式</strong>来让子类集合返回不同类型的迭代器，并使得迭代器与集合相匹配。</li>
+<li><strong>原型</strong>并不基于继承，因此没有继承的缺点。另一方面，<strong>原型</strong>需要对被复制对象进行复杂的初始化。<strong>工厂方法</strong>基于继承，但是它不需要初始化步骤。</li>
+<li><strong>工厂方法</strong>是模板方法模式的一种特殊形式。同时，<strong>工厂方法</strong>可以作为一个大型<strong>模板方法</strong>中的一个步骤。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag"># 设计模式</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/MK80vfKBcuYfGiyp/" rel="prev" title="leetcode刷题系列之小知识点">
+      <i class="fa fa-chevron-left"></i> leetcode刷题系列之小知识点
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/m7YQnSFO4l7CY8G6/" rel="next" title="设计模式之抽象工厂模式（Abstract Factory）">
+      设计模式之抽象工厂模式（Abstract Factory） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC80OTQ0NS8yNTkzNw=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#一、动机"><span class="nav-number">1.</span> <span class="nav-text">一、动机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#二、解决方案"><span class="nav-number">2.</span> <span class="nav-text">二、解决方案</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#三、工厂模式的结构"><span class="nav-number">3.</span> <span class="nav-text">三、工厂模式的结构</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四、Factory代码示例"><span class="nav-number"></span> <span class="nav-text">四、Factory代码示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#五、使用场景"><span class="nav-number"></span> <span class="nav-text">五、使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#六、优缺点"><span class="nav-number"></span> <span class="nav-text">六、优缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#七、与其它模式的关系"><span class="nav-number"></span> <span class="nav-text">七、与其它模式的关系</span></a></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Liu Y.L."
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Liu Y.L.</p>
+  <div class="site-description" itemprop="description">寒江孤影-江湖故人-相逢何必曾相识</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yuanlehome" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuanlehome" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yuanlehome@163.com" title="E-Mail → mailto:yuanlehome@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/295413378" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;295413378" rel="noopener" target="_blank"><i class=" fa-fw"></i>Bilibili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://wpa.qq.com/msgrd?v=3&uin=804230989&site=qq&menu=yes" title="QQ → http:&#x2F;&#x2F;wpa.qq.com&#x2F;msgrd?v&#x3D;3&amp;uin&#x3D;804230989&amp;site&#x3D;qq&amp;menu&#x3D;yes" rel="noopener" target="_blank"><i class="fa fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Liu Y.L.</span>
+</div>
+
+<span>我已在此等候你 <span id="showDays"></span></span>
+<script>
+  var seconds = 1000;
+  var minutes = seconds * 60;
+  var hours = minutes * 60;
+  var days = hours * 24;
+  var years = days * 365;
+  var birthDay = Date.UTC(2020,04,04,00,00,00); // 这里设置建站时间
+  setInterval(function() {
+    var today = new Date();
+    var todayYear = today.getFullYear();
+    var todayMonth = today.getMonth()+1;
+    var todayDate = today.getDate();
+    var todayHour = today.getHours();
+    var todayMinute = today.getMinutes();
+    var todaySecond = today.getSeconds();
+    var now = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+    var diff = now - birthDay;
+    var diffYears = Math.floor(diff/years);
+    var diffDays = Math.floor((diff/days)-diffYears*365);
+    var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+    var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+    var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+      document.getElementById('showDays').innerHTML=""+diffYears+" 年 "+diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+  }, 1000);
+</script>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

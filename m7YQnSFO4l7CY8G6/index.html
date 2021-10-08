@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#7d574c">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#7d574c">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yuanlehome.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一、动机在软件系统中，经常面临”一系列相互依赖的对象“的建构工作，同时，由于需求的变化，往往存在更多系列对象的创建工作。如何应对这种变化? 如何绕过常规的对象创建方法（new），提供一种”封装机制“来避免客户程序和这种”多系列具体对象创建工作“的紧耦合？ 抽象工厂模式是一种创建型设计模式，它能创建一系列相关的对象，而无需指定其具体类。 二、解决方案首先，抽象工厂模式建议为系列中的每件产品明确声明接">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式之抽象工厂模式（Abstract Factory）">
+<meta property="og:url" content="https://yuanlehome.github.io/m7YQnSFO4l7CY8G6/index.html">
+<meta property="og:site_name" content="LYL&#39;s Blog">
+<meta property="og:description" content="一、动机在软件系统中，经常面临”一系列相互依赖的对象“的建构工作，同时，由于需求的变化，往往存在更多系列对象的创建工作。如何应对这种变化? 如何绕过常规的对象创建方法（new），提供一种”封装机制“来避免客户程序和这种”多系列具体对象创建工作“的紧耦合？ 抽象工厂模式是一种创建型设计模式，它能创建一系列相关的对象，而无需指定其具体类。 二、解决方案首先，抽象工厂模式建议为系列中的每件产品明确声明接">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yuanlehome.github.io/m7YQnSFO4l7CY8G6/structure_of_Abstract_Factory.png">
+<meta property="og:image" content="https://yuanlehome.github.io/m7YQnSFO4l7CY8G6/Product_families_and_their_variants.png">
+<meta property="article:published_time" content="2021-09-15T13:35:42.000Z">
+<meta property="article:modified_time" content="2021-09-15T13:35:42.000Z">
+<meta property="article:author" content="Liu Y.L.">
+<meta property="article:tag" content="设计模式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yuanlehome.github.io/m7YQnSFO4l7CY8G6/structure_of_Abstract_Factory.png">
+
+<link rel="canonical" href="https://yuanlehome.github.io/m7YQnSFO4l7CY8G6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>设计模式之抽象工厂模式（Abstract Factory） | LYL's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">LYL's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/m7YQnSFO4l7CY8G6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          设计模式之抽象工厂模式（Abstract Factory）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-09-15 21:35:42" itemprop="dateCreated datePublished" datetime="2021-09-15T21:35:42+08:00">2021-09-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h5 id="一、动机"><a href="#一、动机" class="headerlink" title="一、动机"></a>一、动机</h5><p>在软件系统中，经常面临”一系列相互依赖的对象“的建构工作，同时，由于需求的变化，往往存在更多系列对象的创建工作。如何应对这种变化? 如何绕过常规的对象创建方法（<code>new</code>），提供一种”封装机制“来避免客户程序和这种”多系列具体对象创建工作“的紧耦合？</p>
+<p>抽象工厂模式是一种创建型设计模式，它能创建一系列相关的对象，而无需指定其具体类。</p>
+<h5 id="二、解决方案"><a href="#二、解决方案" class="headerlink" title="二、解决方案"></a>二、解决方案</h5><p>首先，抽象工厂模式建议为系列中的每件产品明确声明接口 。然后，确保所有产品变体都继承这些接口。接下来，我们需要声明<em>抽象工厂</em>——包含系列中所有产品构造方法的接口。</p>
+<p>那么该如何处理产品变体呢？对于系列产品的每个变体，我们都将基于<code>抽象工厂</code>接口创建不同的工厂类。每个工厂类都只能返回特定类别的产品。</p>
+<p>假设客户端想要工厂创建一把椅子。客户端无需了解工厂类，也不用管工厂类创建出的椅子类型。 无论是现代风格，还是维多利亚风格的椅子，对于客户端来说没有分别，它只需调用抽象<code>椅子</code>接口就可以了。这样一来，客户端只需知道椅子以某种方式实现了<code>sit­</code>坐下方法就足够了。此外，无论工厂返回的是何种椅子变体，它都会和由同一工厂对象创建的沙发风格一致。</p>
+<p>如果客户端仅接触抽象接口，那么谁来创建实际的工厂对象呢？ 一般情况下，应用程序会在初始化阶段创建具体工厂对象。而在此之前，应用程序必须根据配置文件或环境设定选择工厂类别。</p>
+<p>如果没有应对”多系列对象构建“的需求变化，则没有必要使用<code>Abstract Factory</code>模式，这时候使用简单的工厂模式完全可以。”系列对象“指的是在某一特定系列下的对象之间有相互依赖，或作用的关系。不同系列的对象之间不能互相依赖。<code>Abstract Factory</code>模式主要在于应对”新系列“的需求变动。其缺点在于难以应对“新对象”的需求变动。</p>
+<h5 id="三、模板模式的结构"><a href="#三、模板模式的结构" class="headerlink" title="三、模板模式的结构"></a>三、模板模式的结构</h5><p><img src="structure_of_Abstract_Factory.png" alt="structure_of_Abstract_Factory"></p>
+<ol>
+<li><strong>抽象产品</strong>（<code>Abstract Product</code>）为构成系列产品的一组不同但相关的产品声明接口。</li>
+<li><strong>具体产品</strong>（<code>Concrete Product</code>）是抽象产品的多种不同类型实现。所有变体（维多利亚/现代）都必须实现相应的抽象产品（椅子/沙发）。</li>
+<li><strong>抽象工厂</strong>（<code>Abstract Factory</code>）接口声明了一组创建各种抽象产品的方法。</li>
+<li><strong>具体工厂</strong>（<code>Concrete Factory</code>）实现抽象工厂的构建方法。每个具体工厂都对应特定产品变体，且仅创建此种产品变体。</li>
+<li>尽管具体工厂会对具体产品进行初始化，其构建方法签名必须返回相应的<em>抽象</em>产品。这样，使用工厂类的客户端代码就不会与工厂创建的特定产品变体耦合。<strong>客户端</strong>（<code>Client</code>）只需通过抽象接口调用工厂和产品对象，就能与任何具体工厂/产品变体交互。</li>
+</ol>
+<h5 id="四、Abstract-Factory代码示例"><a href="#四、Abstract-Factory代码示例" class="headerlink" title="四、Abstract Factory代码示例"></a>四、<code>Abstract Factory</code>代码示例</h5><p>假设你正在开发一款家具商店模拟器。你的代码中包括一些类，用于表示：</p>
+<ol>
+<li>一系列相关产品，例如<code>椅子Chair</code>、<code>沙发Sofa</code>。</li>
+<li>系列产品的不同变体。例如，你可以使用<code>现代Modern</code>、<code>维多利亚Victorian</code>、<code>装饰风艺术Art­Deco</code>等风格生成<code>椅子</code>、<code>沙发</code>。</li>
+</ol>
+<p><img src="Product_families_and_their_variants.png" alt="Product_families_and_their_variants"></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 椅子基类</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Chair</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">virtual</span> ~Chair() &#123;&#125;</span><br><span class="line">    <span class="comment">// 声明 坐下 的抽象方法</span></span><br><span class="line">    <span class="comment">// 椅子系列的每个不同椅子都应具有的基本接口。所有椅子的变体必须实现此接口。</span></span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">sit</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 装饰风艺术风格的椅子</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ArtDecoChair</span> :</span> <span class="keyword">public</span> Chair &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">sit</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"ArtDecoChair::sit()"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 现代风格的椅子</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ModernChair</span> :</span> <span class="keyword">public</span> Chair &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">sit</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"ModernChair::sit()"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 维多利亚风格的椅子</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">VictorianChair</span> :</span> <span class="keyword">public</span> Chair &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">sit</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"VictorianChair::sit()"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 沙发基类</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Sofa</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">virtual</span> ~Sofa() &#123;&#125;</span><br><span class="line">    <span class="comment">// 声明 躺下 的抽象方法</span></span><br><span class="line">    <span class="comment">// 沙发系列的每个不同椅子都应具有的基本接口。所有沙发的变体必须实现此接口。</span></span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">lie</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 装饰风艺术风格的沙发</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ArtDecoSofa</span> :</span> <span class="keyword">public</span> Sofa &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lie</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"ArtDecoSofa::lie()"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 现代风格的沙发</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ModernSofa</span> :</span> <span class="keyword">public</span> Sofa &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lie</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"ModernSofa::lie()"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 维多利亚风格的沙发</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">VictorianSofa</span> :</span> <span class="keyword">public</span> Sofa &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lie</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"VictorianSofa::lie()"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 抽象工厂接口声明了一组能返回不同抽象产品的方法。这些产品属于同一个系列</span></span><br><span class="line"><span class="comment">// 且在高层主题或概念上具有相关性。同系列的产品通常能相互搭配使用。</span></span><br><span class="line"><span class="comment">// 系列产品可有多个变体，但不同变体的产品不能搭配使用。</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AbstractFactory</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">virtual</span> ~AbstractFactory() &#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> Chair *<span class="title">createChair</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> Sofa *<span class="title">createSofa</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 装饰风艺术风格产品工厂</span></span><br><span class="line"><span class="comment">// 具体工厂可生成属于同一变体的系列产品。工厂会确保其创建的产品能相互搭配</span></span><br><span class="line"><span class="comment">// 使用。具体工厂方法声明会返回一个抽象产品，但在方法内部则会对具体产品进</span></span><br><span class="line"><span class="comment">// 行实例化。</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ArtDecoFactory</span> :</span> <span class="keyword">public</span> AbstractFactory &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">Chair *<span class="title">createChair</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"ArtDecoChair created."</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ArtDecoChair;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">Sofa *<span class="title">createSofa</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"ArtDecoSofa created."</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ArtDecoSofa;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 现代风格产品工厂、</span></span><br><span class="line"><span class="comment">// 每个具体工厂中都会包含一个相应的产品变体。</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ModernFactory</span> :</span> <span class="keyword">public</span> AbstractFactory &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">Chair *<span class="title">createChair</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"ModernChair created."</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ModernChair;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">Sofa *<span class="title">createSofa</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"ModernSofa created."</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ModernSofa;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 维多利亚风格产品工厂</span></span><br><span class="line"><span class="comment">// 每个具体工厂中都会包含一个相应的产品变体。</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">VictorianFactory</span> :</span> <span class="keyword">public</span> AbstractFactory &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">Chair *<span class="title">createChair</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"VictorianChair created."</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> VictorianChair;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">Sofa *<span class="title">createSofa</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"VictorianSofa created."</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> VictorianSofa;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 客户端代码仅通过抽象类型（AbstractFactory、Chair 和 Sofa）使用工厂</span></span><br><span class="line"><span class="comment">// 和产品。这让你无需修改任何工厂或产品子类就能将其传递给客户端代码。</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ClientCode</span><span class="params">(AbstractFactory &amp;factory)</span> </span>&#123;</span><br><span class="line">    Chair *chair = factory.createChair();</span><br><span class="line">    Sofa *sofa = factory.createSofa();</span><br><span class="line">    chair-&gt;sit();</span><br><span class="line">    sofa-&gt;lie();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">delete</span> chair;</span><br><span class="line">    <span class="keyword">delete</span> sofa;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 程序会根据当前配置或环境设定选择工厂类型</span></span><br><span class="line">    <span class="comment">// 并在运行时创建工厂（通常在初始化阶段）。</span></span><br><span class="line">    ModernFactory *mf = <span class="keyword">new</span> ModernFactory;</span><br><span class="line">    ClientCode(*mf);</span><br><span class="line">    <span class="keyword">delete</span> mf;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; std::endl;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// VictorianFactory *vf = new VictorianFactory;</span></span><br><span class="line">    <span class="comment">// ClientCode(*vf);</span></span><br><span class="line">    <span class="comment">// delete vf;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Execution result:</span><br><span class="line">    ModernChair created.</span><br><span class="line">    ModernSofa created.</span><br><span class="line">    ModernChair::sit()</span><br><span class="line">    ModernSofa::lie()</span><br></pre></td></tr></table></figure>
+
+<h5 id="五、使用场景"><a href="#五、使用场景" class="headerlink" title="五、使用场景"></a>五、使用场景</h5><ul>
+<li>如果代码需要与多个不同系列的相关产品交互，但是由于无法提前获取相关信息，或者出于对未来扩展性的考虑，你不希望代码基于产品的具体类进行构建，在这种情况下，你可以使用抽象工厂。</li>
+</ul>
+<blockquote>
+<p>抽象工厂为你提供了一个接口， 可用于创建每个系列产品的对象。只要代码通过该接口创建对象，那么你就不会生成与应用程序已生成的产品类型不一致的产品。</p>
+</blockquote>
+<ul>
+<li>如果你有一个基于一组抽象方法的类，且其主要功能因此变得不明确，那么在这种情况下可以考虑使用抽象工厂模式。</li>
+</ul>
+<blockquote>
+<p>在设计良好的程序中，每个类仅负责一件事。如果一个类与多种类型产品交互，就可以考虑将工厂方法抽取到独立的工厂类或具备完整功能的抽象工厂类中。</p>
+</blockquote>
+<h5 id="六、优缺点"><a href="#六、优缺点" class="headerlink" title="六、优缺点"></a>六、优缺点</h5><ul>
+<li>你可以确保同一工厂生成的产品相互匹配。</li>
+<li>你可以避免客户端和具体产品代码的耦合。</li>
+<li><em>单一职责原则</em>。你可以将产品生成代码抽取到同一位置，使得代码易于维护。</li>
+<li><em>开闭原则</em>。向应用程序中引入新产品变体时，你无需修改客户端代码。</li>
+<li><del>由于采用该模式需要向应用中引入众多接口和类， 代码可能会比之前更加复杂。</del></li>
+</ul>
+<h5 id="七、与其它模式的关系"><a href="#七、与其它模式的关系" class="headerlink" title="七、与其它模式的关系"></a>七、与其它模式的关系</h5><ul>
+<li>在许多设计工作的初期都会使用<strong>工厂方法模式</strong>（较为简单，而且可以更方便地通过子类进行定制），随后演化为使用<strong>抽象工厂模式</strong>、<strong>原型模式</strong>或<strong>生成器模式</strong>（更灵活但更加复杂）。</li>
+<li><strong>生成器</strong>重点关注如何分步生成复杂对象。<strong>抽象工厂</strong>专门用于生产一系列相关对象。<strong>抽象工厂</strong>会马上返回产品，<strong>生成器</strong>则允许你在获取产品前执行一些额外构造步骤。</li>
+<li><strong>抽象工厂模式</strong>通常基于一组工厂方法，但你也可以使用<strong>原型模式</strong>来生成这些类的方法。</li>
+<li>你可以将<strong>抽象工厂</strong>和<strong>桥接模式</strong>搭配使用。如果由桥接定义的抽象只能与特定实现合作，这一模式搭配就非常有用。在这种情况下，<strong>抽象工厂</strong>可以对这些关系进行封装，并且对客户端代码隐藏其复杂性。</li>
+<li><strong>抽象工厂</strong>、<strong>生成器</strong>和<strong>原型</strong>都可以用<strong>单例模式</strong>来实现。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag"># 设计模式</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/TVfZuYKzcvGyIWWM/" rel="prev" title="设计模式之工厂模式（Factory）">
+      <i class="fa fa-chevron-left"></i> 设计模式之工厂模式（Factory）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/VVdoIBHqQwF0bZRE/" rel="next" title="设计模式之单例模式（Singleton）">
+      设计模式之单例模式（Singleton） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC80OTQ0NS8yNTkzNw=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#一、动机"><span class="nav-number">1.</span> <span class="nav-text">一、动机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#二、解决方案"><span class="nav-number">2.</span> <span class="nav-text">二、解决方案</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#三、模板模式的结构"><span class="nav-number">3.</span> <span class="nav-text">三、模板模式的结构</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#四、Abstract-Factory代码示例"><span class="nav-number">4.</span> <span class="nav-text">四、Abstract Factory代码示例</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#五、使用场景"><span class="nav-number">5.</span> <span class="nav-text">五、使用场景</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#六、优缺点"><span class="nav-number">6.</span> <span class="nav-text">六、优缺点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#七、与其它模式的关系"><span class="nav-number">7.</span> <span class="nav-text">七、与其它模式的关系</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Liu Y.L."
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Liu Y.L.</p>
+  <div class="site-description" itemprop="description">寒江孤影-江湖故人-相逢何必曾相识</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yuanlehome" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuanlehome" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yuanlehome@163.com" title="E-Mail → mailto:yuanlehome@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/295413378" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;295413378" rel="noopener" target="_blank"><i class=" fa-fw"></i>Bilibili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://wpa.qq.com/msgrd?v=3&uin=804230989&site=qq&menu=yes" title="QQ → http:&#x2F;&#x2F;wpa.qq.com&#x2F;msgrd?v&#x3D;3&amp;uin&#x3D;804230989&amp;site&#x3D;qq&amp;menu&#x3D;yes" rel="noopener" target="_blank"><i class="fa fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Liu Y.L.</span>
+</div>
+
+<span>我已在此等候你 <span id="showDays"></span></span>
+<script>
+  var seconds = 1000;
+  var minutes = seconds * 60;
+  var hours = minutes * 60;
+  var days = hours * 24;
+  var years = days * 365;
+  var birthDay = Date.UTC(2020,04,04,00,00,00); // 这里设置建站时间
+  setInterval(function() {
+    var today = new Date();
+    var todayYear = today.getFullYear();
+    var todayMonth = today.getMonth()+1;
+    var todayDate = today.getDate();
+    var todayHour = today.getHours();
+    var todayMinute = today.getMinutes();
+    var todaySecond = today.getSeconds();
+    var now = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+    var diff = now - birthDay;
+    var diffYears = Math.floor(diff/years);
+    var diffDays = Math.floor((diff/days)-diffYears*365);
+    var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+    var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+    var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+      document.getElementById('showDays').innerHTML=""+diffYears+" 年 "+diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+  }, 1000);
+</script>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

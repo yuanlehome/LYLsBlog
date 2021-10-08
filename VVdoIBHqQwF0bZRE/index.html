@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#7d574c">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#7d574c">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yuanlehome.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一、动机在软件系统中，经常有这样一种特殊的类，必须保障它们在系统内中存在一个实例，才能确保它们的逻辑正确性，以及良好的效率。如何绕过常规的构建器，提供一个机制来保证一个类只有一个实例。比如Windows的任务管理器就是很典型的例子，你不能同时打开两个不同的任务管理器。 二、解决方案单例模式是一种创建型设计模式，让你能够保证一个类只有一个实例，并提供一个访问该实例的全局节点。单例模式可以：   保证">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式之单例模式（Singleton）">
+<meta property="og:url" content="https://yuanlehome.github.io/VVdoIBHqQwF0bZRE/index.html">
+<meta property="og:site_name" content="LYL&#39;s Blog">
+<meta property="og:description" content="一、动机在软件系统中，经常有这样一种特殊的类，必须保障它们在系统内中存在一个实例，才能确保它们的逻辑正确性，以及良好的效率。如何绕过常规的构建器，提供一个机制来保证一个类只有一个实例。比如Windows的任务管理器就是很典型的例子，你不能同时打开两个不同的任务管理器。 二、解决方案单例模式是一种创建型设计模式，让你能够保证一个类只有一个实例，并提供一个访问该实例的全局节点。单例模式可以：   保证">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yuanlehome.github.io/VVdoIBHqQwF0bZRE/structure_of_Singleton.png">
+<meta property="article:published_time" content="2021-09-19T13:35:42.000Z">
+<meta property="article:modified_time" content="2021-09-19T13:35:42.000Z">
+<meta property="article:author" content="Liu Y.L.">
+<meta property="article:tag" content="设计模式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yuanlehome.github.io/VVdoIBHqQwF0bZRE/structure_of_Singleton.png">
+
+<link rel="canonical" href="https://yuanlehome.github.io/VVdoIBHqQwF0bZRE/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>设计模式之单例模式（Singleton） | LYL's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">LYL's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/VVdoIBHqQwF0bZRE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          设计模式之单例模式（Singleton）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-09-19 21:35:42" itemprop="dateCreated datePublished" datetime="2021-09-19T21:35:42+08:00">2021-09-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h5 id="一、动机"><a href="#一、动机" class="headerlink" title="一、动机"></a>一、动机</h5><p>在软件系统中，经常有这样一种特殊的类，必须保障它们在系统内中存在一个实例，才能确保它们的逻辑正确性，以及良好的效率。如何绕过常规的构建器，提供一个机制来保证一个类只有一个实例。比如<code>Windows</code>的任务管理器就是很典型的例子，你不能同时打开两个不同的任务管理器。</p>
+<h5 id="二、解决方案"><a href="#二、解决方案" class="headerlink" title="二、解决方案"></a>二、解决方案</h5><p>单例模式是一种创建型设计模式，让你能够保证一个类只有一个实例，并提供一个访问该实例的全局节点。单例模式可以：</p>
+<blockquote>
+<ul>
+<li><p>保证一个类只有一个实例。</p>
+</li>
+<li><p>为该实例提供一个全局访问节点。</p>
+</li>
+</ul>
+</blockquote>
+<p>它的运作方式是这样的：如果你创建了一个对象，同时过一会儿后你决定再创建一个新对象，此时你会获得之前已创建的对象，而不是一个新对象。注意，普通构造函数无法实现上述行为，因为构造函数的设计决定了它必须总是返回一个新对象。<code>Singleton</code>模式中的实例构造器可以设置为<code>protected</code>以允许子类派生。如何实现多线程环境下安全的<code>Singleton</code>？注意对双检查锁的正确实现。</p>
+<p>所有单例的实现都包含以下两个相同的步骤：</p>
+<blockquote>
+<ul>
+<li>将默认构造函数设为私有，防止其他对象使用单例类的<code>new</code>运算符。</li>
+<li>新建一个静态构建方法作为构造函数。该函数会“偷偷”调用私有构造函数来创建对象，并将其保存在一个静态成员变量中。此后所有对于该函数的调用都将返回这一缓存对象。</li>
+</ul>
+</blockquote>
+<p>如果你的代码能够访问单例类，那它就能调用单例类的静态方法。无论何时调用该方法，它总是会返回相同的对象。</p>
+<h5 id="三、模板模式的结构"><a href="#三、模板模式的结构" class="headerlink" title="三、模板模式的结构"></a>三、模板模式的结构</h5><p><img src="structure_of_Singleton.png" alt="structure_of_Singleton"></p>
+<p><strong>单例</strong><code>Singleton</code>类声明了一个名为<code>get­Instance</code>获取实例的静态方法来返回其所属类的一个相同实例。单例的构造函数必须对客户端<code>Client</code>代码隐藏。 调用<code>获取实例</code>方法必须是获取单例对象的唯一方式。</p>
+<h5 id="四、Singleton代码示例"><a href="#四、Singleton代码示例" class="headerlink" title="四、Singleton代码示例"></a>四、<code>Singleton</code>代码示例</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;thread&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 线程安全版本单例实现</span></span><br><span class="line"><span class="comment">// 使用 static local 变量既能保证线程安全性，又能保证对象唯一</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> &#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int</span> _value;</span><br><span class="line">    <span class="comment">// 将实际使用的构造函数设置为私有</span></span><br><span class="line">    Singleton(<span class="keyword">int</span> value) : _value(value) &#123;&#125;</span><br><span class="line">    ~Singleton() &#123;&#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// 将默认构造函数，拷贝构造函数和拷贝赋值运算符都 delete 掉或者设置为私有</span></span><br><span class="line">    Singleton() = <span class="keyword">delete</span>;</span><br><span class="line">    Singleton(<span class="keyword">const</span> Singleton&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">    Singleton&amp; <span class="keyword">operator</span>=(<span class="keyword">const</span> Singleton&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 只提供一个静态的获取实例的方法，用来调用</span></span><br><span class="line">    <span class="comment">// 内部调用 protected 区的唯一一个构造函数来实例化对象</span></span><br><span class="line">    <span class="function"><span class="keyword">static</span> Singleton *<span class="title">GetInstance</span><span class="params">(<span class="keyword">int</span> value)</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> Singleton <span class="title">instance</span><span class="params">(value)</span></span>;</span><br><span class="line">        <span class="keyword">return</span> &amp;instance;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">value</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123; <span class="keyword">return</span> _value; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ThreadFoo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Following code emulates slow initialization.</span></span><br><span class="line">    <span class="built_in">std</span>::this_thread::sleep_for(<span class="built_in">std</span>::chrono::milliseconds(<span class="number">500</span>));</span><br><span class="line">    Singleton *singleton = Singleton::GetInstance(<span class="number">12</span>);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; singleton-&gt;value() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ThreadBar</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Following code emulates slow initialization.</span></span><br><span class="line">    <span class="built_in">std</span>::this_thread::sleep_for(<span class="built_in">std</span>::chrono::milliseconds(<span class="number">500</span>));</span><br><span class="line">    Singleton *singleton = Singleton::GetInstance(<span class="number">23</span>);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; singleton-&gt;value() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"If you see the same value, then singleton was reused (yay!\n"</span></span><br><span class="line">              &lt;&lt; <span class="string">"If you see different values, then 2 singletons were created (booo!!)\n"</span></span><br><span class="line">              &lt;&lt; <span class="string">"RESULT:\n"</span>;</span><br><span class="line">    <span class="function"><span class="built_in">std</span>::thread <span class="title">t1</span><span class="params">(ThreadFoo)</span></span>;</span><br><span class="line">    <span class="function"><span class="built_in">std</span>::thread <span class="title">t2</span><span class="params">(ThreadBar)</span></span>;</span><br><span class="line">    t1.join();</span><br><span class="line">    t2.join();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Execution result:</span><br><span class="line">    If you see the same value, <span class="function">then singleton was <span class="title">reused</span> <span class="params">(yay!</span></span></span><br><span class="line"><span class="function"><span class="params">    If you see different values, then <span class="number">2</span> singletons were created (booo!!)</span></span></span><br><span class="line"><span class="function"><span class="params">    RESULT:</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="number">12</span></span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="number">12</span></span></span></span><br></pre></td></tr></table></figure>
+
+<h5 id="线程安全实现之双检查锁"><a href="#线程安全实现之双检查锁" class="headerlink" title="线程安全实现之双检查锁"></a>线程安全实现之双检查锁</h5><p>因为存在内存读写乱序（编译器问题），实则不安全。</p>
+<blockquote>
+<p>原因分析：<code>m_instance = new Singleton()</code>这句话可以分成三个步骤来执行：</p>
+<ul>
+<li>分配了一个<code>Singleton</code>类型对象所需要的内存；</li>
+<li>在分配的内存处构造<code>Singleton</code>类型的对象；</li>
+<li>把分配的内存的地址赋给指针<code>m_instance</code>。</li>
+</ul>
+<p>一般会认为这三个步骤是按顺序执行的，但实际上只能确定步骤<code>1</code>是最先执行的，步骤<code>2</code>和<code>3</code>却不一定。问题就出现在这。</p>
+<p>假如某个线程<code>A</code>在调用执行<code>m_instance = new Singleton()</code>的时候是按照<code>1,3,2</code>的顺序的，那么刚刚执行完步骤<code>3</code>给<code>Singleton</code>类型分配了内存（此时<code>m_instance</code>就不是<code>nullptr</code>了）就切换到了线程<code>B</code>，由于<code>m_instance</code>已经不是<code>nullptr</code>了，所以线程<code>B</code>会直接执行<code>return m_instance</code>得到一个对象，而这个对象并没有真正的被构造！严重bug就这么发生了。</p>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;mutex&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> &#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int</span> _value;</span><br><span class="line">    <span class="keyword">static</span> Singleton *_instance;</span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">std</span>::mutex _mutex;</span><br><span class="line">    Singleton(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span> value) : m_value(value) &#123;&#125;</span><br><span class="line">    ~Singleton() &#123;&#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Singleton() = <span class="keyword">delete</span>;</span><br><span class="line">    Singleton(<span class="keyword">const</span> Singleton &amp;) = <span class="keyword">delete</span>;</span><br><span class="line">    Singleton &amp;<span class="keyword">operator</span>=(<span class="keyword">const</span> Singleton &amp;) = <span class="keyword">delete</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 双检查锁版本</span></span><br><span class="line">    <span class="function"><span class="keyword">static</span> Singleton *<span class="title">GetInstance</span><span class="params">(<span class="keyword">int</span> value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(m_instance == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            <span class="function"><span class="built_in">std</span>::unique_lock&lt;<span class="built_in">std</span>::mutex&gt; <span class="title">lock</span><span class="params">(_mutex)</span></span>;</span><br><span class="line">            <span class="keyword">if</span>(_instance == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                _instance = <span class="keyword">new</span> Singleton(value);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> _instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">value</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123; <span class="keyword">return</span> _value; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Singleton *Singleton::_instance&#123;<span class="literal">nullptr</span>&#125;;</span><br><span class="line"><span class="built_in">std</span>::mutex Singleton::_mutex&#123;&#125;;</span><br></pre></td></tr></table></figure>
+
+<h5 id="五、使用场景"><a href="#五、使用场景" class="headerlink" title="五、使用场景"></a>五、使用场景</h5><ul>
+<li>如果程序中的某个类对于所有客户端只有一个可用的实例，可以使用单例模式。</li>
+</ul>
+<blockquote>
+<p>单例模式禁止通过除特殊构建方法以外的任何方式来创建自身类的对象。该方法可以创建一个新对象，但如果该对象已经被创建，则返回已有的对象。</p>
+</blockquote>
+<ul>
+<li>如果你需要更加严格地控制全局变量，可以使用单例模式。</li>
+</ul>
+<blockquote>
+<p>单例模式与全局变量不同，它保证类只存在一个实例。除了单例类自己以外，无法通过任何方式替换缓存的实例。</p>
+<p>请注意，你可以随时调整限制并设定生成单例实例的数量，只需修改<code>获取实例</code>方法，即 <code>GetInstance</code>中的代码即可实现。</p>
+</blockquote>
+<h5 id="六、优缺点"><a href="#六、优缺点" class="headerlink" title="六、优缺点"></a>六、优缺点</h5><ul>
+<li>你可以保证一个类只有一个实例。</li>
+<li>你获得了一个指向该实例的全局访问节点。</li>
+<li>仅在首次请求单例对象时对其进行初始化。</li>
+<li><del>违反了_单一职责原则_。该模式同时解决了两个问题。</del></li>
+<li><del>单例模式可能掩盖不良设计，比如程序各组件之间相互了解过多等。</del></li>
+<li><del>该模式在多线程环境下需要进行特殊处理，避免多个线程多次创建单例对象。</del></li>
+<li><del>单例的客户端代码单元测试可能会比较困难，因为许多测试框架以基于继承的方式创建模拟对象。 由于单例类的构造函数是私有的，而且绝大部分语言无法重写静态方法，所以你需要想出仔细考虑模拟单例的方法。要么干脆不编写测试代码，或者不使用单例模式。</del></li>
+</ul>
+<h5 id="七、与其它模式的关系"><a href="#七、与其它模式的关系" class="headerlink" title="七、与其它模式的关系"></a>七、与其它模式的关系</h5><ul>
+<li><strong>外观模式</strong>类通常可以转换为<strong>单例模</strong>式类，因为在大部分情况下一个外观对象就足够了。</li>
+<li>如果你能将对象的所有共享状态简化为一个享元对象，那么<strong>享元模式</strong>就和单例类似了。但这两个模式有两个根本性的不同。<ol>
+<li>只会有一个单例实体，但是享元类可以有多个实体，各实体的内在状态也可以不同。</li>
+<li>单例对象可以是可变的。享元对象是不可变的。</li>
+</ol>
+</li>
+<li><strong>抽象工厂模式</strong>、<strong>生成器模式</strong>和<strong>原型模式</strong>都可以用单例来实现。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag"># 设计模式</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/m7YQnSFO4l7CY8G6/" rel="prev" title="设计模式之抽象工厂模式（Abstract Factory）">
+      <i class="fa fa-chevron-left"></i> 设计模式之抽象工厂模式（Abstract Factory）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/iLIZBP2xmcHRS1WW/" rel="next" title="设计模式之观察者模式（Observer）">
+      设计模式之观察者模式（Observer） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC80OTQ0NS8yNTkzNw=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#一、动机"><span class="nav-number">1.</span> <span class="nav-text">一、动机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#二、解决方案"><span class="nav-number">2.</span> <span class="nav-text">二、解决方案</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#三、模板模式的结构"><span class="nav-number">3.</span> <span class="nav-text">三、模板模式的结构</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#四、Singleton代码示例"><span class="nav-number">4.</span> <span class="nav-text">四、Singleton代码示例</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#线程安全实现之双检查锁"><span class="nav-number">5.</span> <span class="nav-text">线程安全实现之双检查锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#五、使用场景"><span class="nav-number">6.</span> <span class="nav-text">五、使用场景</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#六、优缺点"><span class="nav-number">7.</span> <span class="nav-text">六、优缺点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#七、与其它模式的关系"><span class="nav-number">8.</span> <span class="nav-text">七、与其它模式的关系</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Liu Y.L."
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Liu Y.L.</p>
+  <div class="site-description" itemprop="description">寒江孤影-江湖故人-相逢何必曾相识</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yuanlehome" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuanlehome" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yuanlehome@163.com" title="E-Mail → mailto:yuanlehome@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/295413378" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;295413378" rel="noopener" target="_blank"><i class=" fa-fw"></i>Bilibili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://wpa.qq.com/msgrd?v=3&uin=804230989&site=qq&menu=yes" title="QQ → http:&#x2F;&#x2F;wpa.qq.com&#x2F;msgrd?v&#x3D;3&amp;uin&#x3D;804230989&amp;site&#x3D;qq&amp;menu&#x3D;yes" rel="noopener" target="_blank"><i class="fa fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Liu Y.L.</span>
+</div>
+
+<span>我已在此等候你 <span id="showDays"></span></span>
+<script>
+  var seconds = 1000;
+  var minutes = seconds * 60;
+  var hours = minutes * 60;
+  var days = hours * 24;
+  var years = days * 365;
+  var birthDay = Date.UTC(2020,04,04,00,00,00); // 这里设置建站时间
+  setInterval(function() {
+    var today = new Date();
+    var todayYear = today.getFullYear();
+    var todayMonth = today.getMonth()+1;
+    var todayDate = today.getDate();
+    var todayHour = today.getHours();
+    var todayMinute = today.getMinutes();
+    var todaySecond = today.getSeconds();
+    var now = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+    var diff = now - birthDay;
+    var diffYears = Math.floor(diff/years);
+    var diffDays = Math.floor((diff/days)-diffYears*365);
+    var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+    var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+    var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+      document.getElementById('showDays').innerHTML=""+diffYears+" 年 "+diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+  }, 1000);
+</script>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

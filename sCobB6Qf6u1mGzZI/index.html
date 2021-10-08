@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#7d574c">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#7d574c">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yuanlehome.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一、动机某些情况下我们可能会”过度的使用继承来扩展对象的功能“，由于继承为类型引入的静态特质（编译时装饰），使得这种扩展缺乏灵活性；并且随着子类的增多（扩展功能的增多），各种子类的组合（扩展功能的组合）会导致子类的膨胀。 如何使得”对象功能的扩展“能够根据需求来动态的实现？同时避免”扩展功能的增多“带来的子类膨胀问题？从而使得任何”功能扩展变化“所导致的影响降为最低。 装饰模式是一种结构型设计模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式之装饰器模式（Decorator）">
+<meta property="og:url" content="https://yuanlehome.github.io/sCobB6Qf6u1mGzZI/index.html">
+<meta property="og:site_name" content="LYL&#39;s Blog">
+<meta property="og:description" content="一、动机某些情况下我们可能会”过度的使用继承来扩展对象的功能“，由于继承为类型引入的静态特质（编译时装饰），使得这种扩展缺乏灵活性；并且随着子类的增多（扩展功能的增多），各种子类的组合（扩展功能的组合）会导致子类的膨胀。 如何使得”对象功能的扩展“能够根据需求来动态的实现？同时避免”扩展功能的增多“带来的子类膨胀问题？从而使得任何”功能扩展变化“所导致的影响降为最低。 装饰模式是一种结构型设计模式">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yuanlehome.github.io/sCobB6Qf6u1mGzZI/Inheritance_and_Aggregation.png">
+<meta property="og:image" content="https://yuanlehome.github.io/sCobB6Qf6u1mGzZI/structure_of_Decorator.png">
+<meta property="article:published_time" content="2021-09-27T13:35:42.000Z">
+<meta property="article:modified_time" content="2021-09-27T13:35:42.000Z">
+<meta property="article:author" content="Liu Y.L.">
+<meta property="article:tag" content="设计模式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yuanlehome.github.io/sCobB6Qf6u1mGzZI/Inheritance_and_Aggregation.png">
+
+<link rel="canonical" href="https://yuanlehome.github.io/sCobB6Qf6u1mGzZI/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>设计模式之装饰器模式（Decorator） | LYL's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">LYL's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/sCobB6Qf6u1mGzZI/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          设计模式之装饰器模式（Decorator）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-09-27 21:35:42" itemprop="dateCreated datePublished" datetime="2021-09-27T21:35:42+08:00">2021-09-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h5 id="一、动机"><a href="#一、动机" class="headerlink" title="一、动机"></a>一、动机</h5><p>某些情况下我们可能会”过度的使用继承来扩展对象的功能“，由于继承为类型引入的静态特质（编译时装饰），使得这种扩展缺乏灵活性；并且随着子类的增多（扩展功能的增多），各种子类的组合（扩展功能的组合）会导致子类的膨胀。</p>
+<p>如何使得”对象功能的扩展“能够根据需求来动态的实现？同时避免”扩展功能的增多“带来的子类膨胀问题？从而使得任何”功能扩展变化“所导致的影响降为最低。</p>
+<p>装饰模式是一种结构型设计模式，允许你通过将对象放入包含行为的特殊封装对象中来为原对象绑定新的行为。动态（组合）地给一个对象增加一些额外的职责。就增加功能而言，<code>Decorator</code>模式比生成子类（继承）更为灵活（消除重复代码以及减少子类个数）。</p>
+<h5 id="二、解决方案"><a href="#二、解决方案" class="headerlink" title="二、解决方案"></a>二、解决方案</h5><p>当你需要更改一个对象的行为时，其中一个想法就是扩展它所属的类（使用继承）。 但是， 继承可能引发一个严重的问题。</p>
+<ul>
+<li>继承是静态的。 你无法在运行时更改已有对象的行为， 只能使用由不同子类创建的对象来替代当前的整个对象。</li>
+<li>当子类过多时，将会造成子类代码膨胀。</li>
+</ul>
+<p>另一个方法是使用组合。两者的工作方式几乎一模一样：一个对象包含指向另一个对象的引用，并将部分工作委派给引用对象；继承中的对象则继承了父类的行为，它们自己能够完成这些工作。</p>
+<p><img src="Inheritance_and_Aggregation.png" alt="Inheritance_and_Aggregation"></p>
+<p>通过采用组合而非继承的手法，<code>Decorator</code>模式实现了再运行时动态扩展对象功能的能力，而且可以根据需求扩展多个功能。避免了使用继承带来的”灵活性差“和”多子类衍生问题”。</p>
+<p><code>Decorator</code>类在接口上表现为<code>is-a Component</code>的继承关系，即<code>Decorator</code>类继承了<code>Component</code>类所具有的接口。但是在实现上又表现为<code>has-a Component</code>的组合关系，即<code>Decorator</code>类有使用另外一个<code>Component</code>类。</p>
+<p><code>Decorator</code>模式的目的并非解决”多子类衍生的多继承“问题，其要点在于解决”主体类在多个方向上的扩展功能“——实为”装饰“的含义。</p>
+<h5 id="三、装饰器模式的结构"><a href="#三、装饰器模式的结构" class="headerlink" title="三、装饰器模式的结构"></a>三、装饰器模式的结构</h5><p><img src="structure_of_Decorator.png" alt="structure_of_Decorator"></p>
+<ol>
+<li><strong>部件</strong>（<code>Component</code>）声明封装器和被封装对象的公用接口。</li>
+<li><strong>具体部件</strong>（<code>Concrete Component</code>）类是被封装对象所属的类。它定义了基础行为，但装饰类可以改变这些行为。</li>
+<li><strong>基础装饰</strong>（<code>Base Decorator</code>）类拥有一个指向被封装对象的引用成员变量。该变量的类型应当被声明为通用部件接口，这样它就可以引用具体的部件和装饰。装饰基类会将所有操作委派给被封装的对象。</li>
+<li><strong>具体装饰类</strong>（<code>Concrete Decorators</code>）定义了可动态添加到部件的额外行为。具体装饰类会重写装饰基类的方法，并在调用父类方法之前或之后进行额外的行为。</li>
+<li><strong>客户端</strong>（<code>Client</code>）可以使用多层装饰来封装部件，只要它能使用通用接口与所有对象互动即可。</li>
+</ol>
+<h5 id="四、Decorator代码示例"><a href="#四、Decorator代码示例" class="headerlink" title="四、Decorator代码示例"></a>四、Decorator代码示例</h5><p>穿衣服是使用装饰的一个例子。觉得冷时，你可以穿一件毛衣。如果穿毛衣还觉得冷，你可以再套上一件夹克。如果遇到下雨，你还可以再穿一件雨衣。所有这些衣物都 “扩展” 了你的基本行为，但它们并不是你的一部分，如果你不再需要某件衣物，可以方便地随时脱掉。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 基本组件，是一个抽象类，声明了一个封装器和被封装对象的公用接口。</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Wear_base</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Wear_base() &#123;&#125;</span><br><span class="line">    <span class="keyword">virtual</span> ~Wear_base() &#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">wearing</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 具体组件类，是被封装对象所属的类。</span></span><br><span class="line"><span class="comment">// 它只定义了基础的行为，但装饰器类可以扩展这一行为。</span></span><br><span class="line"><span class="comment">// 如在本例子中，一个人只穿了内衣。</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Wear_underwear</span> :</span> <span class="keyword">public</span> Wear_base &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Wear_underwear() &#123;&#125;</span><br><span class="line">    <span class="keyword">virtual</span> ~Wear_underwear() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">wearing</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 这一行包括下面同一位置处的代码，用于调试时。</span></span><br><span class="line">        <span class="comment">// 用于观察运行过程中此接口函数的调用顺序。</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Wear_underwear::wearing()"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"(underwear)"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 基本装饰类，拥有一个被封装对象的引用成员变量，应被声明为基本组件的引用。</span></span><br><span class="line"><span class="comment">// 这样它就可以利用多态调用具体组件的接口。</span></span><br><span class="line"><span class="comment">// 同时也继承了基本组件类。用于规范具体装饰类的接口函数。</span></span><br><span class="line"><span class="comment">// 装饰基类会将所有操作委派给被封装的对象。</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DecoratorWear</span> :</span> <span class="keyword">public</span> Wear_base &#123;</span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    Wear_base *m_wear_base;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    DecoratorWear(Wear_base *wear_base) : m_wear_base(wear_base) &#123;&#125;</span><br><span class="line">    <span class="keyword">virtual</span> ~DecoratorWear() &#123; <span class="keyword">delete</span> m_wear_base; &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">wearing</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"DecoratorWear::wearing()"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">return</span> m_wear_base-&gt;wearing();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 具体装饰类，其中定义了可动态添加到具体组件的扩展行为。</span></span><br><span class="line"><span class="comment">// 重写了装饰基类的方法，并且在调用装饰基类方法之前进行行为的扩展。</span></span><br><span class="line"><span class="comment">// 本例为扩展穿裤子行为</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Wear_pants</span> :</span> <span class="keyword">public</span> DecoratorWear &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Wear_pants(Wear_base *wear_base) : DecoratorWear(wear_base) &#123;&#125;</span><br><span class="line">    ~Wear_pants() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">wearing</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Wear_pants::wearing()"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"(pants"</span> + DecoratorWear::wearing() + <span class="string">")"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 本例为扩展穿T-恤衫行为</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Wear_sweatshirt</span> :</span> <span class="keyword">public</span> DecoratorWear &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Wear_sweatshirt(Wear_base *wear_base) : DecoratorWear(wear_base) &#123;&#125;</span><br><span class="line">    ~Wear_sweatshirt() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">wearing</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Wear_sweatshirt::wearing()"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"(sweatshirt"</span> + DecoratorWear::wearing() + <span class="string">")"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 本例为扩展穿外套行为</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Wear_jacket</span> :</span> <span class="keyword">public</span> DecoratorWear &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Wear_jacket(Wear_base *wear_base) : DecoratorWear(wear_base) &#123;&#125;</span><br><span class="line">    ~Wear_jacket() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">wearing</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Wear_jacket::wearing()"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"(jacket"</span> + DecoratorWear::wearing() + <span class="string">")"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 客户端，使用通用接口与扩展后的最终对象进行互动。</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">clientCode</span><span class="params">(Wear_base *Wear_base)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; Wear_base-&gt;wearing() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 最开始是只穿了内衣的具体组件对象</span></span><br><span class="line">    Wear_base *w = <span class="keyword">new</span> Wear_underwear();</span><br><span class="line">    <span class="comment">// 先穿裤子</span></span><br><span class="line">    Wear_base *d1 = <span class="keyword">new</span> Wear_pants(w);</span><br><span class="line">    <span class="comment">// 再穿T-恤衫</span></span><br><span class="line">    Wear_base *d2 = <span class="keyword">new</span> Wear_sweatshirt(d1);</span><br><span class="line">    <span class="comment">// 最后穿上外套</span></span><br><span class="line">    Wear_base *d3 = <span class="keyword">new</span> Wear_jacket(d2);</span><br><span class="line"></span><br><span class="line">    clientCode(d3);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// DecoratorWear 析构函数里面已经写了释放 delete</span></span><br><span class="line">    <span class="comment">// delete w;</span></span><br><span class="line">    <span class="comment">// delete d1;</span></span><br><span class="line">    <span class="comment">// delete d2;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 最后形成的对象仍然需要自行 delete</span></span><br><span class="line">    <span class="keyword">delete</span> d3;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Execution result:</span><br><span class="line">    Wear_jacket::wearing()</span><br><span class="line">    DecoratorWear::wearing()</span><br><span class="line">    Wear_sweatshirt::wearing()</span><br><span class="line">    DecoratorWear::wearing()</span><br><span class="line">    Wear_pants::wearing()</span><br><span class="line">    DecoratorWear::wearing()</span><br><span class="line">    Wear_underwear::wearing()</span><br><span class="line">    (jacket(sweatshirt(pants(underwear))))</span><br></pre></td></tr></table></figure>
+
+<h5 id="五、使用场景"><a href="#五、使用场景" class="headerlink" title="五、使用场景"></a>五、使用场景</h5><ul>
+<li>如果你希望在无需修改代码的情况下即可使用对象，且希望在运行时为对象新增额外的行为，可以使用装饰模式。</li>
+</ul>
+<blockquote>
+<p>装饰能将业务逻辑组织为层次结构， 你可为各层创建一个装饰， 在运行时将各种不同逻辑组合成对象。 由于这些对象都遵循通用接口， 客户端代码能以相同的方式使用这些对象。</p>
+</blockquote>
+<ul>
+<li>如果用继承来扩展对象行为的方案难以实现或者根本不可行，你可以使用该模式。</li>
+</ul>
+<blockquote>
+<p>许多编程语言使用 <code>final</code>最终关键字来限制对某个类的进一步扩展。 复用最终类已有行为的唯一方法是使用装饰模式：用封装器对其进行封装。</p>
+</blockquote>
+<h5 id="六、优缺点"><a href="#六、优缺点" class="headerlink" title="六、优缺点"></a>六、优缺点</h5><ul>
+<li><p>你无需创建新子类即可扩展对象的行为。</p>
+</li>
+<li><p>你可以在运行时添加或删除对象的功能。</p>
+</li>
+<li><p>你可以用多个装饰封装对象来组合几种行为。</p>
+</li>
+<li><p>单一职责原则。 你可以将实现了许多不同行为的一个大类拆分为多个较小的类。</p>
+</li>
+<li><p><del>在封装器栈中删除特定封装器比较困难。</del></p>
+</li>
+<li><p><del>实现行为不受装饰栈顺序影响的装饰比较困难。</del></p>
+</li>
+<li><p><del>各层的初始化配置代码看上去可能会很糟糕。</del></p>
+</li>
+</ul>
+<h5 id="七、与其它模式的关系"><a href="#七、与其它模式的关系" class="headerlink" title="七、与其它模式的关系"></a>七、与其它模式的关系</h5><ul>
+<li><p>适配器模式可以对已有对象的接口进行修改， 装饰模式则能在不改变对象接口的前提下强化对象功能。 此外， 装饰还支持递归组合， 适配器则无法实现。</p>
+</li>
+<li><p>适配器能为被封装对象提供不同的接口， 代理模式能为对象提供相同的接口， 装饰则能为对象提供加强的接口。</p>
+</li>
+<li><p>责任链模式和装饰模式的类结构非常相似。 两者都依赖递归组合将需要执行的操作传递给一系列对象。 但是， 两者有几点重要的不同之处。</p>
+<p>  责任链的管理者可以相互独立地执行一切操作， 还可以随时停止传递请求。 另一方面， 各种装饰可以在遵循基本接口的情况下扩展对象的行为。 此外， 装饰无法中断请求的传递。</p>
+</li>
+<li><p>组合模式和装饰的结构图很相似， 因为两者都依赖递归组合来组织无限数量的对象。</p>
+<p>  装饰类似于组合， 但其只有一个子组件。 此外还有一个明显不同： 装饰为被封装对象添加了额外的职责， 组合仅对其子节点的结果进行了 “求和”。</p>
+<p>  但是， 模式也可以相互合作： 你可以使用装饰来扩展组合树中特定对象的行为。</p>
+</li>
+<li><p>大量使用组合和装饰的设计通常可从对于原型模式的使用中获益。 你可以通过该模式来复制复杂结构， 而非从零开始重新构造。</p>
+</li>
+<li><p>装饰可让你更改对象的外表， 策略模式则让你能够改变其本质。</p>
+</li>
+<li><p>装饰和代理有着相似的结构， 但是其意图却非常不同。 这两个模式的构建都基于组合原则， 也就是说一个对象应该将部分工作委派给另一个对象。 两者之间的不同之处在于代理通常自行管理其服务对象的生命周期， 而装饰的生成则总是由客户端进行控制。</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag"># 设计模式</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/iLIZBP2xmcHRS1WW/" rel="prev" title="设计模式之观察者模式（Observer）">
+      <i class="fa fa-chevron-left"></i> 设计模式之观察者模式（Observer）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/qc1TeyddGlAeNzht/" rel="next" title="设计模式之策略模式（Strategy）">
+      设计模式之策略模式（Strategy） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC80OTQ0NS8yNTkzNw=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#一、动机"><span class="nav-number">1.</span> <span class="nav-text">一、动机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#二、解决方案"><span class="nav-number">2.</span> <span class="nav-text">二、解决方案</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#三、装饰器模式的结构"><span class="nav-number">3.</span> <span class="nav-text">三、装饰器模式的结构</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#四、Decorator代码示例"><span class="nav-number">4.</span> <span class="nav-text">四、Decorator代码示例</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#五、使用场景"><span class="nav-number">5.</span> <span class="nav-text">五、使用场景</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#六、优缺点"><span class="nav-number">6.</span> <span class="nav-text">六、优缺点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#七、与其它模式的关系"><span class="nav-number">7.</span> <span class="nav-text">七、与其它模式的关系</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Liu Y.L."
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Liu Y.L.</p>
+  <div class="site-description" itemprop="description">寒江孤影-江湖故人-相逢何必曾相识</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yuanlehome" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuanlehome" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yuanlehome@163.com" title="E-Mail → mailto:yuanlehome@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/295413378" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;295413378" rel="noopener" target="_blank"><i class=" fa-fw"></i>Bilibili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://wpa.qq.com/msgrd?v=3&uin=804230989&site=qq&menu=yes" title="QQ → http:&#x2F;&#x2F;wpa.qq.com&#x2F;msgrd?v&#x3D;3&amp;uin&#x3D;804230989&amp;site&#x3D;qq&amp;menu&#x3D;yes" rel="noopener" target="_blank"><i class="fa fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Liu Y.L.</span>
+</div>
+
+<span>我已在此等候你 <span id="showDays"></span></span>
+<script>
+  var seconds = 1000;
+  var minutes = seconds * 60;
+  var hours = minutes * 60;
+  var days = hours * 24;
+  var years = days * 365;
+  var birthDay = Date.UTC(2020,04,04,00,00,00); // 这里设置建站时间
+  setInterval(function() {
+    var today = new Date();
+    var todayYear = today.getFullYear();
+    var todayMonth = today.getMonth()+1;
+    var todayDate = today.getDate();
+    var todayHour = today.getHours();
+    var todayMinute = today.getMinutes();
+    var todaySecond = today.getSeconds();
+    var now = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+    var diff = now - birthDay;
+    var diffYears = Math.floor(diff/years);
+    var diffDays = Math.floor((diff/days)-diffYears*365);
+    var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+    var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+    var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+      document.getElementById('showDays').innerHTML=""+diffYears+" 年 "+diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+  }, 1000);
+</script>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
