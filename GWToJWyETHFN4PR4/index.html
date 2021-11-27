@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#7d574c">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#7d574c">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yuanlehome.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="基本情况211本985硕，算半个科班，实习和项目都勉强算有，但都极其拿不出手。C++技术栈，八股文和算法题准备还算充分，由于相关书籍看的多，对于编程理解还算深刻。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2021年秋招经验经历总结">
+<meta property="og:url" content="https://yuanlehome.github.io/GWToJWyETHFN4PR4/index.html">
+<meta property="og:site_name" content="LYL&#39;s Blog">
+<meta property="og:description" content="基本情况211本985硕，算半个科班，实习和项目都勉强算有，但都极其拿不出手。C++技术栈，八股文和算法题准备还算充分，由于相关书籍看的多，对于编程理解还算深刻。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yuanlehome.github.io/GWToJWyETHFN4PR4/image-20210906111348235-16308980301811.png">
+<meta property="og:image" content="https://yuanlehome.github.io/GWToJWyETHFN4PR4/image-20210906162702353-16309168232733.png">
+<meta property="og:image" content="https://yuanlehome.github.io/GWToJWyETHFN4PR4/UeBN-hkrzvkv2490787.jpg">
+<meta property="article:published_time" content="2021-11-27T05:14:00.000Z">
+<meta property="article:modified_time" content="2021-11-27T05:14:00.000Z">
+<meta property="article:author" content="Liu Y.L.">
+<meta property="article:tag" content="面试经验">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yuanlehome.github.io/GWToJWyETHFN4PR4/image-20210906111348235-16308980301811.png">
+
+<link rel="canonical" href="https://yuanlehome.github.io/GWToJWyETHFN4PR4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>2021年秋招经验经历总结 | LYL's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">LYL's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yuanlehome.github.io/GWToJWyETHFN4PR4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Liu Y.L.">
+      <meta itemprop="description" content="寒江孤影-江湖故人-相逢何必曾相识">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LYL's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          2021年秋招经验经历总结
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-11-27 13:14:00" itemprop="dateCreated datePublished" datetime="2021-11-27T13:14:00+08:00">2021-11-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A7%8B%E6%8B%9B%E6%80%BB%E7%BB%93/" itemprop="url" rel="index"><span itemprop="name">秋招总结</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="基本情况"><a href="#基本情况" class="headerlink" title="基本情况"></a>基本情况</h4><p>211本985硕，算半个科班，实习和项目都勉强算有，但都极其拿不出手。C++技术栈，八股文和算法题准备还算充分，由于相关书籍看的多，对于编程理解还算深刻。</p>
+<a id="more"></a>
+
+
+
+<p>由于秋招结束的还算早，大大小小的厂都拿了。就经常出没于各大秋招交流群，水群水了一段时间。自己也闲着无事维护了美团和字节已意向群（分别有一千多人）。所以下面先介绍一些水群时学习到的行业”黑话“。</p>
+<ul>
+<li><p>hr：指人力资源小哥哥小姐姐，每个公司每个部门都有负责招聘的hr。一般会通过电话或微信的形式和你沟通面试事项；</p>
+</li>
+<li><p>hc：head count部门人头数，意味着该公司或部门还有几个人员缺口。因为有集邮大佬，一般意向书会超发；</p>
+</li>
+<li><p>活水：内部转岗；</p>
+</li>
+<li><p>jd：job description工作描述，就是公司发布的岗位描述页面；</p>
+</li>
+<li><p>offer：前期指录用意向书，后期就是正式签的三方；</p>
+</li>
+<li><p>白菜/sp/ssp：sp指special offer，ssp指special special offer，代表薪水的档位以及公司的诚意。一般是根据你的面试表现、学校学历、offer数量等综合实力认定的。比例大概为6:3:1，薪资差距一般在3k左右；</p>
+</li>
+<li><p>x<em>y：是大家说薪水的方式。比如说`24</em>16`，指一个月24k的基本（base）工资，一年如果绩效达标发16个月薪水；</p>
+</li>
+<li><p>base：有两层含义，根据语境可以是城市，即岗位工作地点，也可以是上面说的基本工资。可能得根据语境判断意思：</p>
+<ul>
+<li>「你意向base哪儿」，是问你的工作地点</li>
+<li>「你base有多少k」，问薪水，如24*16</li>
+</ul>
+</li>
+<li><p>oc：指offer call，指给你发录用意向电话或邮件；</p>
+</li>
+<li><p>a：两层意思，第一层是argue的缩写，指要求更高的薪水，比如本来是白菜的档位，你不满意，可以要求提升到sp的档位，即要求加薪。一般在10月份（秋招）谈薪的时候。比如，大家说：</p>
+<ul>
+<li>「字节能a腾讯吗」，「会不会把offer a没了」等等</li>
+</ul>
+<p>第二层是accept的缩写，指代码题做出来了。大家会说：</p>
+<ul>
+<li>「这题你a出来了吗」，「我笔试全a」等等</li>
+</ul>
+</li>
+<li><p>倒挂：指后入职的新人薪水比老员工高，互联网行业基本年年倒挂；</p>
+</li>
+<li><p>crud：指增删改查，即实现常见的业务需求接口，后台开发程序员经常吐槽自己天天在crud，做些没有技术含量的工作；</p>
+</li>
+<li><p>kpi：指关键绩效指标。有人说「某公司有刷kpi的行为」、「我被kpi了」，指某些公司有每年投递和面试的硬性指标要求，所以经常会拉很多人面试（就算知道你不合适，不想要你），面完就给你挂掉的行为；</p>
+</li>
+<li><p>361：指绩效人数划分比例，实行末尾淘汰制度，把绩效划分为三档，30% 的人绩效最好，一定有10%的人绩效不合格；</p>
+</li>
+<li><p>325：指阿里的绩效评分3.25，4分最高，3.25最低，3.25直接没有年终奖和薪水普调；</p>
+</li>
+<li><p>交叉面：指别的部门的人来面试，一般在自己面试的部门完成两到三轮面试后可能会出现，在腾讯中有一个组织叫做面委会，校招中主要针对WXG（微信事业群）进行加试；</p>
+</li>
+<li><p>mentor：指工作中的导师；</p>
+</li>
+<li><p>leader：指部门主管，一般是面试环节的最后一轮的面试官。</p>
+</li>
+</ul>
+<h4 id="秋招战况"><a href="#秋招战况" class="headerlink" title="秋招战况"></a>秋招战况</h4><p>整个面试过程，基本都是比较顺的，没有遇到那种捞了挂挂了捞的情况。以下公司根据收到意向书的时间顺序排列：</p>
+<ul>
+<li>字节，上海，商业化技术/后端转Go开发，部门负责抖音企业号和本地生活两大业务；</li>
+<li>浙江大华，杭州，服务器AI方向开发，好像需要用Python；</li>
+<li>科大讯飞，合肥研究院，AI平台相关C++开发；</li>
+<li>美团，北京/上海，平台/服务体验部/后台开发，做智能客服VoIP等音视频相关；</li>
+<li>百度，北京，AIG/深度学习技术平台部/深度学习框架架构研发，开发paddlepaddle的；</li>
+<li>网易雷火，杭州，游戏研发工程师，服务端方向；</li>
+<li>腾讯，深圳，CDG/金融科技/事务型开发，好像做香港微信支付相关后台开发。</li>
+</ul>
+<p>我最后签了北京百度。</p>
+<h4 id="投递和面试经历"><a href="#投递和面试经历" class="headerlink" title="投递和面试经历"></a>投递和面试经历</h4><p>秋招共投递了20家公司，但实际参加了面试的也就一半，有的是我拒了面试，也有的是简历没过。笔试面试主要集中在8月份（7月末小试牛刀，9月初收尾）。先直观感受一下这密集的日程安排。</p>
+<p><img src="image-20210906111348235-16308980301811.png" alt="image-20210906111348235"></p>
+<h5 id="百度"><a href="#百度" class="headerlink" title="百度"></a>百度</h5><p>百度的四大事业群（不全）：</p>
+<p><img src="image-20210906162702353-16309168232733.png" alt="image-20210906162702353"></p>
+<p>百度秋招分为提前批和正式批，只有提前批可以内推或者定向内推，正式批没有内推的机制。因此，想去百度的话一定要投递其提前批。百度是属于挂了又捞的，一个部门挂了，过两天另一个部门还会捞你面试。</p>
+<p>简历投递之后，在其官网可以看到自己的流程状态，简单介绍一下：</p>
+<ol>
+<li>简历处理中：刚投递完就是这个状态；</li>
+<li>部门筛选中：说明你的简历被分配到了某个部门，该部门hr正在筛选你的简历；</li>
+<li>面试流程中：说明你的简历通过了筛选，接下来等待你的是三轮面试，每一轮都有可能挂掉；</li>
+<li>简历共享中：面试没有通过，即挂了。挂的原因有很多，但接下来能做的只有等待，等其他部门捞你面试。这个时候，过来人的经验告诉你，如果公司有熟人（师兄师姐等等），可以联系他们的部门捞你。</li>
+<li>面试通过：恭喜你，面试通过，收到意向书。</li>
+</ol>
+<p>百度的面试一般分三轮，前两轮一定是技术面（基本是项目+八股+手撕代码+反问）。最后一轮是主管面，根据面试官的喜好，可以是技术面也可以是hr面，也即是说，可能会问技术问题，也可能会问成长经历、职业规划等hr问题。</p>
+<p>我是7.6号投递的提前批，由于当时倾向于去上海，就投递了base上海的，估计是上海太卷了（指hc太少），没约我面试，直接简历挂。挂了之后就学乖了，把base改成了北京，然后就顺利多了。</p>
+<p>面试经历：简历处理中 -&gt; 部门筛选中 -&gt; 简历共享中 -&gt; 联系了一位师兄捞我（感谢感谢感谢） -&gt; 部门筛选中 -&gt; 面试流程中 -&gt; 三面完成通过后 -&gt; 岗位不满意，拒了换部门和岗位重面（这里联系了另一位师兄，感谢感谢感谢） -&gt; 面试流程中 -&gt;  面试通过。</p>
+<p>原部门岗位：IDG测试部/测试开发工程师。连续三个工作日面完，hr口头告知通过，但一直没发意向书。</p>
+<p>新部门岗位：AIG/深度学习技术平台部/深度学习框架架构研发工程师。连续两天走完三面，三面主管当时告知通过，第二天发来了意向书。</p>
+<h5 id="阿里"><a href="#阿里" class="headerlink" title="阿里"></a>阿里</h5><p>我是7.23号投递的，阿里一次可以投递三个平行志愿，我当时就随便投了两个，其中一个直接简历挂，另一个至今还在简历评估中。</p>
+<p>阿里的笔试分很多批，投完简历之后任选一次参加即可。而且面试和笔试是分开的，就是说在笔试之前也可能发起面试。笔试时间一小时两道题，我当时是全a的。</p>
+<p>至今在简历评估中的部门是菜鸟，估计不招C++的吧。建议大家投递之前搞清楚再投递。</p>
+<p>后来九月底甚至十月份阿里有两个部门分别来了电话要约我面试，因为我当时已经有意向公司了，再加上令人不爽的投递和简历筛选经历，我就直接拒绝了。</p>
+<h5 id="腾讯"><a href="#腾讯" class="headerlink" title="腾讯"></a>腾讯</h5><p>先简单介绍一下腾讯的六大事业群。</p>
+<p><img src="UeBN-hkrzvkv2490787.jpg" alt="img"></p>
+<ul>
+<li><p>WXG</p>
+<p>负责微信生态体系的搭建和运营，依托微信基础产品，以及微信公众平台、小程序、微信支付、企业微信、微信搜索等开放平台，为各行各业的智慧化升级提供解决方案和连接能力。同时负责QQ邮箱、微信读书等产品的开发及运营。</p>
+</li>
+<li><p>IEG</p>
+<p>负责公司游戏、电竞等互动娱乐业务的研发、运营与发展。诵过系统性研究及前沿科技的探索和应用，不断为户创造更高品质的互动娱乐内容体验，助力公司在全球互动娱乐领域取得领先地位，并朕动公司相关业务共建繁荣向上的内容生态。</p>
+</li>
+<li><p>CDG</p>
+<p>CDG作为公司新业务孵化和新业态探索的平台，负责推动包括基础支付、金融应在内的金融科技业务、广告营销服务等重要领域的发展和创新。同时作为专业支持平台，为公司及各事业群提供战略规划、投资并购、国际拓展、市场公关等专业支持。</p>
+</li>
+<li><p>TEG</p>
+<p>负责为公司及各事业群提供技术及运营平台支持，负责研发管理和数据中心的建设与运营，并为用户提供全线产品和客户服务。同时牵头腾讯技术委员会，通过内部分布式开源协同，加强基础研发，建设技术中台等措施，支持业务创新。</p>
+</li>
+<li><p>CSIG</p>
+<p>负责推进公司云与产业互联网战略，依托云、AI等技术创新，打造智慧产业升级方案，探索用户与产业的创新互动，助力零售、医疗、教育、交通等产业数字化升级，同时协助企业更智能地服务用户，构建连接户与商业的智能产业新生态。</p>
+</li>
+<li><p>PCG</p>
+<p>负责公司互朕网平台和内容文化生态融合发展，整合QQ、QQ空间等社交平台，和应宝、浏览器等流量平台，以及新闻资讯、视频、体育、直播、动漫、影业等内容业务，推动IP跨平台、多形态发展，为更多户创造海量的优质数字内容体验。</p>
+</li>
+</ul>
+<p>以上都是官话，经过多方（脉脉）了解，受欢迎程度排名如下：WXG/IEG（卷且有钱） &gt; TEG/CDG（不卷且没钱） &gt; CSIG/PCG（卷且没钱）。</p>
+<p>腾讯也是典型的挂了捞、捞了挂的机制，捞你的部门不确定。腾讯的投递，需要注意的是，一开始会让你选一个意向事业群，你的简历会优先被该事业群的部门看到，面试也是该部门先发起。如果挂了，之后，所有事业群都会看到你的简历并发起面试，所以之后去哪儿就由不得你了。</p>
+<p>投腾讯的时候我有点怂了，就投了一个中规中矩的部门（指面试难度一般，HC一般，适合养老），CDG/金融科技岗，后台开发。</p>
+<p>腾讯的笔试和面试也是分开的，投递之后简历筛选通过，就会发起面试，笔试可以不做（真的有点难度）。</p>
+<p>我共经历了三轮面试，两轮技术面+hr面。如果投递的是WXG的话，还会多两轮面委面（就是交叉面），可见面试难度会更高。其中，腾讯的测评和云证（就验证一下你的身份证）一般会在hr面前后。就我而言，时间跨度为三周，每周面一轮，第三周hr面后两天就发来了意向书。一般情况下，云证完等十天半个月后oc或者挂掉。</p>
+<h5 id="美团"><a href="#美团" class="headerlink" title="美团"></a>美团</h5><p>美团先笔试，笔试通过才约面。笔试是两小时五道题，难度中等吧。一般来说，a出四道绝对进面试（其它不了解）。</p>
+<p>美团一般是2+1，即两轮技术面一轮hr面。有的部门是3+1，多一轮技术面。一开始以为三轮技术面的可能是sp，后来发现和sp没有关系，和部门有关。</p>
+<p>美团也是挂了会捞，捞你的部门也是不确定的。我是一把过，历时三周，一周面一轮，第三周hr面完后，第二天发来了意向。</p>
+<p>从我维护的美团意向群里可以看到，到家/到店事业群招人非常非常多，其次是优选。</p>
+<h5 id="字节跳动"><a href="#字节跳动" class="headerlink" title="字节跳动"></a>字节跳动</h5><p>在上海的话，国内大厂的研发中心属字节规模最大了。字节提前批免笔试，正式批需要笔试。也是典型的挂了捞，因此，早投递，机会更多。</p>
+<p>字节的面试一般是三轮，三轮都是技术面，一般来说，一面面试官是同事，二面面试官是其它部门的（也叫交叉面），三面面试官是部门主管。每轮都要至少手撕两道编程题。总的来说，字节的面试更注重代码能力。</p>
+<p>我在提前批启动几天后就投递了。一开始投递的是后端开发工程师-教育业务。投完第三天就约面了，第一面是校友，聊的就很愉快，这也给我后面的面试定下了基调。后面就都很顺利，就是时间跨度比较大，二面和一面隔了整整半个月（一面完当天就约了二面，由于面试官时间的原因）。三面完，如果通过的话，有个等待offer审批的过程，时间不定，一般都要一周多才出结果，我就等了10天才收到意向书。</p>
+<p>一周后，我放弃了这份意向书，主要是因为教育业务的原因，双减政策下来后，业务前景堪忧。后来，通过水群，从一位老哥那里知道了一个小道消息：拿了意向书之后，不满意的话，可以联系其它部门的hr申请直通终面。好家伙，之前一直犹豫不决就是因为怕重走一次三轮面试再挂了，这竟然有机会直接终面？！所以，在拿到美团意向书之后，当天，我就拒了教育业务的，申请了商业化技术的直通终面，终面就是主管面，同样也是顺利通过了。</p>
+<h5 id="网易（雷火）"><a href="#网易（雷火）" class="headerlink" title="网易（雷火）"></a>网易（雷火）</h5><p>雷火的笔试，或者说网易的笔试，出了名的又臭又长，三个小时五道编程题，难度基本中等偏上。我觉得是所有互联网公司笔试中最难的了。</p>
+<p>雷火的面试共四轮，其中一面有两轮平行面+一轮主管面+hr面。雷火的面试偏语言细节，基本是给很多段代码，让你分析运行结果，分析错误等等。因此，需要对C++语言本身掌握扎实。</p>
+<p>不过，雷火面试体验还挺好的。</p>
+<h5 id="拼多多"><a href="#拼多多" class="headerlink" title="拼多多"></a>拼多多</h5><p>投了提前批和正式批，都是笔试完就挂（笔试成绩拿了80%以上的分，还是挂）。笔试又臭又长又难，耽误时间。不说了，都是泪。</p>
+<h5 id="大华"><a href="#大华" class="headerlink" title="大华"></a>大华</h5><p>大华笔试不是通过牛客，就是自己的网站，主要是选择题和两道编程题（不用运行，编出来就行）。面试是两轮技术面+一轮hr面，都是电话面，每一轮大概半小时。二面面试官有点东西的，问的问题有点深度。</p>
+<p>总的来说面试体验还不错，推荐投递。</p>
+<h5 id="米哈游"><a href="#米哈游" class="headerlink" title="米哈游"></a>米哈游</h5><p>今年米哈游异常的卷。感觉有上万人投递，hc就600+？估计因为原神爆火的原因吧，反正校招群里一片哀嚎。。。</p>
+<p>米哈游提前批免笔试，正式批需要笔试。</p>
+<h5 id="深信服"><a href="#深信服" class="headerlink" title="深信服"></a>深信服</h5><p>一面挺顺利。二面挂了，当天晚上收到感谢信。效率很高！</p>
+<p>后面的公司有的投了没反应，有的约面比较晚就拒了面试，就没怎么可记录的了。包括海康威视、同花顺、vivo、TP-LINK、京东、中兴、BIGO、虎牙直播、oppo等。</p>
+<h4 id="部分面经"><a href="#部分面经" class="headerlink" title="部分面经"></a>部分面经</h4><ol>
+<li><p><a href="https://www.nowcoder.com/discuss/695476?source_id=profile_create_nctrack&channel=-1" target="_blank" rel="noopener">百度测试开发工程师一二三面面经_笔经面经_牛客网</a></p>
+</li>
+<li><p><a href="https://www.nowcoder.com/discuss/767898" target="_blank" rel="noopener">2021年秋招 雷火 米哈游 面经_笔经面经_牛客网</a></p>
+</li>
+</ol>
+<h4 id="秋招心得"><a href="#秋招心得" class="headerlink" title="秋招心得"></a>秋招心得</h4><p>零零散散的说一下。</p>
+<ul>
+<li>一定要尽早投递，投的越早越容易；</li>
+<li>前期建议拿小厂练手；</li>
+<li>C++选手建议首选百度腾讯，Java首选阿里美团，但去了字节基本都要转Go；</li>
+<li>宁去中厂核心不去大厂边缘，不要太有大厂情结；</li>
+<li>去某公司某部门之前在脉脉上问问有没有坑，虽然脉脉上除了Google微软没有能去的；</li>
+<li>貌似大厂实习转正拿sp的概率大很多；</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%9D%A2%E8%AF%95%E7%BB%8F%E9%AA%8C/" rel="tag"># 面试经验</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/tfQ2R0ndWz4uaMUM/" rel="prev" title="设计模式之模板模式（Template）">
+      <i class="fa fa-chevron-left"></i> 设计模式之模板模式（Template）
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC80OTQ0NS8yNTkzNw=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#基本情况"><span class="nav-number">1.</span> <span class="nav-text">基本情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#秋招战况"><span class="nav-number">2.</span> <span class="nav-text">秋招战况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#投递和面试经历"><span class="nav-number">3.</span> <span class="nav-text">投递和面试经历</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#百度"><span class="nav-number">3.1.</span> <span class="nav-text">百度</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#阿里"><span class="nav-number">3.2.</span> <span class="nav-text">阿里</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#腾讯"><span class="nav-number">3.3.</span> <span class="nav-text">腾讯</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#美团"><span class="nav-number">3.4.</span> <span class="nav-text">美团</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#字节跳动"><span class="nav-number">3.5.</span> <span class="nav-text">字节跳动</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#网易（雷火）"><span class="nav-number">3.6.</span> <span class="nav-text">网易（雷火）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#拼多多"><span class="nav-number">3.7.</span> <span class="nav-text">拼多多</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#大华"><span class="nav-number">3.8.</span> <span class="nav-text">大华</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#米哈游"><span class="nav-number">3.9.</span> <span class="nav-text">米哈游</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#深信服"><span class="nav-number">3.10.</span> <span class="nav-text">深信服</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#部分面经"><span class="nav-number">4.</span> <span class="nav-text">部分面经</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#秋招心得"><span class="nav-number">5.</span> <span class="nav-text">秋招心得</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Liu Y.L."
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Liu Y.L.</p>
+  <div class="site-description" itemprop="description">寒江孤影-江湖故人-相逢何必曾相识</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yuanlehome" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuanlehome" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yuanlehome@163.com" title="E-Mail → mailto:yuanlehome@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/295413378" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;295413378" rel="noopener" target="_blank"><i class=" fa-fw"></i>Bilibili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://wpa.qq.com/msgrd?v=3&uin=804230989&site=qq&menu=yes" title="QQ → http:&#x2F;&#x2F;wpa.qq.com&#x2F;msgrd?v&#x3D;3&amp;uin&#x3D;804230989&amp;site&#x3D;qq&amp;menu&#x3D;yes" rel="noopener" target="_blank"><i class="fa fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Liu Y.L.</span>
+</div>
+
+<span>我已在此等候你 <span id="showDays"></span></span>
+<script>
+  var seconds = 1000;
+  var minutes = seconds * 60;
+  var hours = minutes * 60;
+  var days = hours * 24;
+  var years = days * 365;
+  var birthDay = Date.UTC(2020,04,04,00,00,00); // 这里设置建站时间
+  setInterval(function() {
+    var today = new Date();
+    var todayYear = today.getFullYear();
+    var todayMonth = today.getMonth()+1;
+    var todayDate = today.getDate();
+    var todayHour = today.getHours();
+    var todayMinute = today.getMinutes();
+    var todaySecond = today.getSeconds();
+    var now = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+    var diff = now - birthDay;
+    var diffYears = Math.floor(diff/years);
+    var diffDays = Math.floor((diff/days)-diffYears*365);
+    var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+    var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+    var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+      document.getElementById('showDays').innerHTML=""+diffYears+" 年 "+diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+  }, 1000);
+</script>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
